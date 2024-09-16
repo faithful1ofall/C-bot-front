@@ -2,44 +2,214 @@
 import {
   Avatar,
   Box,
+  Button,
+  Checkbox,
   Flex,
+  FormControl,
   FormLabel,
+  Input,
   Icon,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  NumberInput,
+  NumberInputField,
   Select,
   SimpleGrid,
+  Text,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 // Assets
 import Usa from "assets/img/dashboards/usa.png";
 // Custom components
-import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import React from "react";
+import React, { useState } from "react";
 import {
   MdAddTask,
   MdAttachMoney,
   MdBarChart,
   MdFileCopy,
+  MdPerson,
+  MdAddAlert,
+  MdMoreVert,
 } from "react-icons/md";
-import CheckTable from "views/admin/default/components/CheckTable";
-import ComplexTable from "views/admin/default/components/ComplexTable";
-import DailyTraffic from "views/admin/default/components/DailyTraffic";
-import PieCard from "views/admin/default/components/PieCard";
-import Tasks from "views/admin/default/components/Tasks";
-import TotalSpent from "views/admin/default/components/TotalSpent";
-import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
-import {
-  columnsDataCheck,
-  columnsDataComplex,
-} from "views/admin/default/variables/columnsData";
-import tableDataCheck from "views/admin/default/variables/tableDataCheck.json";
-import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
+
 
 export default function UserReports() {
+
+  const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
+  const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
+  const { isOpen: isLinkStrategyOpen, onOpen: onLinkStrategyOpen, onClose: onLinkStrategyClose } = useDisclosure();
+
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const [users, setUsers] = useState([]);
+  const [apiKey, setApiKey] = useState("");
+  const [apiSecret, setApiSecret] = useState("");
+  const [newStrategyName, setNewStrategyName] = useState();
+  const [strategies, setStrategies] = useState([]);
+  const [selectedStrategyId, setSelectedStrategyId] = useState([]);
+  const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
+
+
+  // new parameters
+ // const [strategyName, setStrategyName] = useState('');
+  const [tradingViewLink, setTradingViewLink] = useState('');
+  const [tradingPairs, setTradingPairs] = useState('');
+  const [tradeDirection, setTradeDirection] = useState('Both');
+  const [timeFrame, setTimeFrame] = useState('1 Minute');
+  const [negativeCandleTrigger, setNegativeCandleTrigger] = useState(0);
+  const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
+  const [gridCalls, setGridCalls] = useState(1);
+  const [callPercentages, setCallPercentages] = useState(Array(10).fill(0)); // For Call 1 to Call 10 %
+  const [callNegativeTriggers, setCallNegativeTriggers] = useState(Array(9).fill(0)); // Call 2 to Call 10 -ve trigger
+  const [takeProfitPercentages, setTakeProfitPercentages] = useState(Array(10).fill(0)); // TP for each call
+  const [profitLock, setProfitLock] = useState(0);
+  const [stopLoss, setStopLoss] = useState(0);
+  const [takeProfit, setTakeProfit] = useState(0);
+  const [orderType, setOrderType] = useState('Limit');
+  const [isDelayEnabled, setIsDelayEnabled] = useState(false);
+   const [maxTradableAmount, setMaxTradableAmount] = useState(0);
+
+
+  const handleCallPercentageChange = (index, value) => {
+    const updatedCallPercentages = [...callPercentages];
+    updatedCallPercentages[index] = value;
+    setCallPercentages(updatedCallPercentages);
+  };
+
+  const handleCallNegativeTriggerChange = (index, value) => {
+    const updatedNegativeTriggers = [...callNegativeTriggers];
+    updatedNegativeTriggers[index] = value;
+    setCallNegativeTriggers(updatedNegativeTriggers);
+  };
+
+  const handleTPPercentageChange = (index, value) => {
+    const updatedTPs = [...takeProfitPercentages];
+    updatedTPs[index] = value;
+    setTakeProfitPercentages(updatedTPs);
+  };
+
+  const handleSubmit = () => {
+    const newStrategy = {
+      newStrategyName,
+      tradingViewLink,
+      tradingPairs,
+      tradeDirection,
+      timeFrame,
+      negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
+      gridCalls,
+      callPercentages: callPercentages.slice(0, gridCalls),
+      callNegativeTriggers: callNegativeTriggers.slice(0, gridCalls - 1),
+      takeProfitPercentages: takeProfitPercentages.slice(0, gridCalls),
+      profitLock,
+      stopLoss,
+      takeProfit,
+      orderType,
+      isDelayEnabled,
+      maxTradableAmount,
+    };
+    console.log(newStrategy);
+    // Send newStrategy to backend or save it in state
+  };
+
+
+  const handleAddUser = () => {
+    if (apiKey && apiSecret) {
+      const newUser = {
+        apiKey,
+        apiSecret,
+        strategyIds: [],
+      };
+      setUsers([...users, newUser]);
+      setApiKey("");
+      setApiSecret("");
+      onUserClose();
+    }
+  };
+
+ 
+/*   const handleEditStrategy = () => {
+    if (editingStrategyId !== null) {
+      const updatedStrategies = strategies.map(strategy =>
+        strategy.id === editingStrategyId
+          ? { ...strategy, name: newStrategyName }
+          : strategy
+      );
+      setStrategies(updatedStrategies);
+      setNewStrategyName("");
+      setEditingStrategyId(null);
+      onGlobalStrategyClose();
+    }
+  }; */
+
+
+  const handleShowStrategies = (userIndex) => {
+    const userStrategies = users[userIndex].strategyIds.map(
+      (strategyId) => strategies.find((strategy) => strategy.id === strategyId)
+    );
+    console.log(`Showing strategies for user ${userIndex}`, userStrategies);
+  };
+/* 
+  const handleStrategySelection = (strategyId) => {
+    setSelectedStrategyId(strategyId);
+    onLinkStrategyOpen();
+  }; */
+
+  const handleCreateStrategy = () => {
+    if (newStrategyName) {
+      // Check for duplicate strategy names
+      if (strategies.some(strategy => strategy.name === newStrategyName)) {
+        alert("Strategy with this name already exists.");
+        return;
+      }
+
+      const newStrategy = { id: strategies.length, name: newStrategyName };
+      setStrategies([...strategies, newStrategy]);
+      setNewStrategyName("");
+      onCreateStrategyClose();
+    }
+  };
+
+  const handleLinkStrategyToUser = () => {
+    if (selectedStrategyId !== null) {
+      const updatedUsers = users.map(user => ({
+        ...user,
+        strategyIds: user.strategyIds.includes(selectedStrategyId)
+          ? user.strategyIds
+          : [...user.strategyIds, selectedStrategyId],
+      }));
+      setUsers(updatedUsers);
+      setSelectedStrategyId(null);
+      onLinkStrategyClose();
+    }
+  };
+
+  const handleEditUser = (userIndex) => {
+    console.log(`Edit user ${userIndex}`);
+    // Add logic to edit the user here.
+  };
+
+  const handleStrategySelection = (strategyId) => {
+    setSelectedStrategyIds(prev => 
+      prev.includes(strategyId)
+        ? prev.filter(id => id !== strategyId)
+        : [...prev, strategyId]
+    );
+  };
+
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -124,27 +294,282 @@ export default function UserReports() {
         />
       </SimpleGrid>
 
-     {/*  <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
-        <TotalSpent />
-        <WeeklyRevenue />
+      <Flex justify="space-between" mt="40px">
+        <Button
+          leftIcon={<Icon as={MdPerson} />}
+          colorScheme="teal"
+          onClick={onUserOpen}
+        >
+          Add User
+        </Button>
+        <Button
+          leftIcon={<Icon as={MdAddAlert} />}
+          colorScheme="blue"
+          onClick={onCreateStrategyOpen}
+        >
+          Create Strategy
+        </Button>
+      </Flex>
+
+     {/* Add User Modal */}
+     <Modal isOpen={isUserOpen} onClose={onUserClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>API Key</FormLabel>
+              <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+            </FormControl>
+            <FormControl mt="4">
+              <FormLabel>API Secret</FormLabel>
+              <Input value={apiSecret} onChange={(e) => setApiSecret(e.target.value)} />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" onClick={handleAddUser}>
+              Add User
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
+        {users.map((user, index) => (
+          <Box key={index} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+            <Flex align="center" justify="space-between">
+              <Avatar src="https://bit.ly/dan-abramov" />
+              <Menu>
+                <MenuButton as={IconButton} icon={<MdMoreVert />} />
+                <MenuList>
+                  <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
+                  <MenuItem onClick={() => { setSelectedStrategyId(index); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => handleEditUser(index)}>Edit User</MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
+            <Box mt="4">
+              <Text>API Key: {user.apiKey}</Text>
+              <Text>API Secret: {user.apiSecret}</Text>
+              <Text>Strategies: {user.strategyIds.map(id => strategies.find(s => s.id === id)?.name || 'None').join(', ')}</Text>
+            </Box>
+          </Box>
+        ))}
       </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'>
-          <DailyTraffic />
-          <PieCard />
-        </SimpleGrid>
+
+      <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
+        {strategies.map((strategy) => (
+          <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+            <Flex align="center" justify="space-between">
+              <Text fontWeight="bold">{strategy.name}</Text>
+              <Menu>
+                <MenuButton as={IconButton} icon={<MdMoreVert />} />
+                <MenuList>
+                  <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Edit Strategy</MenuItem>
+                  <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Link to Users</MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
+          </Box>
+        ))}
       </SimpleGrid>
-      <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
-        />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'>
-          <Tasks />
-          <MiniCalendar h='100%' minW='100%' selectRange={false} />
-        </SimpleGrid>
-      </SimpleGrid> */}
+
+       {/* Link Strategy Modal */}
+       <Modal isOpen={isLinkStrategyOpen} onClose={onLinkStrategyClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Link Strategies to User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Select Strategies to Link</FormLabel>
+              <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
+                {strategies.map((strategy) => (
+                  <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+                    <Flex align="center" justify="space-between">
+                      <Text fontWeight="bold">{strategy.name}</Text>
+                      <Menu>
+                        <MenuButton as={IconButton} icon={<MdMoreVert />} />
+                        <MenuList>
+                          <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Edit Strategy</MenuItem>
+                          <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Link to Users</MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </Flex>
+                  </Box>
+                ))}
+              </SimpleGrid>
+
+              {strategies.map((strategy) => (
+                <Checkbox
+                  key={strategy.id}
+                  isChecked={selectedStrategyIds.includes(strategy.id)}
+                  onChange={() => handleStrategySelection(strategy.id)}
+                >
+                  {strategy.name}
+                </Checkbox>
+              ))}
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" onClick={handleLinkStrategyToUser}>
+              Link Strategies
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+       {/* Create Strategy Modal */}
+       <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create Strategy</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+           {/*  <FormControl>
+              <FormLabel>Strategy Name</FormLabel>
+              <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
+            </FormControl> */}
+            
+            <FormControl mb="4">
+              <FormLabel>Strategy Name</FormLabel>
+              <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
+            </FormControl>
+
+            <FormControl mb="4">
+              <FormLabel>TradingView Link</FormLabel>
+              <Input value={tradingViewLink} onChange={(e) => setTradingViewLink(e.target.value)} />
+            </FormControl>
+
+            <FormControl mb="4">
+              <FormLabel>Trading Pairs (comma-separated)</FormLabel>
+              <Input value={tradingPairs} onChange={(e) => setTradingPairs(e.target.value)} />
+            </FormControl>
+
+            <FormControl mb="4">
+              <FormLabel>Trade Direction</FormLabel>
+              <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
+                <option value="Long">Long</option>
+                <option value="Short">Short</option>
+                <option value="Both">Both</option>
+              </Select>
+            </FormControl>
+
+            <FormControl mb="4">
+              <FormLabel>Time Frame</FormLabel>
+              <Select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
+                <option value="1 Minute">1 Minute</option>
+                <option value="5 Minute">5 Minute</option>
+                <option value="15 Minute">15 Minute</option>
+                <option value="30 Minute">30 Minute</option>
+                <option value="1 Hour">1 Hour</option>
+                <option value="4 Hour">4 Hour</option>
+                <option value="12 Hour">12 Hour</option>
+              </Select>
+            </FormControl>
+
+            <FormControl mb="4">
+              <Flex alignItems="center">
+                <FormLabel>Negative Candle Change Trigger (%)</FormLabel>
+                <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
+              </Flex>
+              {isNegativeCandleEnabled && (
+                <NumberInput value={negativeCandleTrigger} onChange={(valueString) => setNegativeCandleTrigger(parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              )}
+            </FormControl>
+
+            <FormControl mb="4">
+              <FormLabel>Grid Calls (1-20)</FormLabel>
+              <NumberInput min={1} max={20} value={gridCalls} onChange={(valueString) => setGridCalls(parseInt(valueString))}>
+                <NumberInputField />
+              </NumberInput>
+            </FormControl>
+
+            {Array.from({ length: gridCalls }).map((_, index) => (
+              <FormControl key={index} mb="4">
+                <FormLabel>Call {index + 1} % of Funds</FormLabel>
+                <NumberInput value={callPercentages[index]} onChange={(valueString) => handleCallPercentageChange(index, parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            ))}
+
+            {Array.from({ length: negativeCandleTrigger }).map((_, index) => (
+              <FormControl key={index} mb="4">
+                <FormLabel>Call {index + 2} Negative % Trigger</FormLabel>
+                <NumberInput value={callNegativeTriggers[index]} onChange={(valueString) => handleCallNegativeTriggerChange(index, parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            ))}
+
+            {Array.from({ length: gridCalls }).map((_, index) => (
+              <FormControl key={index} mb="4">
+                <FormLabel>Call {index + 1} TP %</FormLabel>
+                <NumberInput value={takeProfitPercentages[index]} onChange={(valueString) => handleTPPercentageChange(index, parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+            ))}
+
+              <FormControl mb="4">
+                <FormLabel>Profit Lock %</FormLabel>
+                <NumberInput value={profitLock} onChange={(valueString) => setProfitLock(parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              <FormControl mb="4">
+                <FormLabel>Stop Loss % (SL%)</FormLabel>
+                <NumberInput value={stopLoss} onChange={(valueString) => setStopLoss(parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              <FormControl mb="4">
+                <FormLabel>Take Profit % (TP%)</FormLabel>
+                <NumberInput value={takeProfit} onChange={(valueString) => setTakeProfit(parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              <FormControl mb="4">
+                <FormLabel>Order Type (for SL/TP)</FormLabel>
+                <Select value={orderType} onChange={(e) => setOrderType(e.target.value)}>
+                  <option value="Limit">Limit Order</option>
+                  <option value="Market">Market Order</option>
+                </Select>
+              </FormControl>
+
+              <FormControl mb="4">
+                <Flex alignItems="center">
+                  <FormLabel>Delayed SL and TP</FormLabel>
+                  <Checkbox isChecked={isDelayEnabled} onChange={(e) => setIsDelayEnabled(e.target.checked)}>Enable</Checkbox>
+                </Flex>
+                {isDelayEnabled && (
+                  <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
+                    <p>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</p>
+                  </Box>
+                )}
+              </FormControl>
+
+              <FormControl mb="4">
+                <FormLabel>Max Tradable Amount</FormLabel>
+                <NumberInput value={maxTradableAmount} onChange={(valueString) => setMaxTradableAmount(parseFloat(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" onClick={handleSubmit}>
+              Create Strategy
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
