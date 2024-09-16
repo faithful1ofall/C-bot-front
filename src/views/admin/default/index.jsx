@@ -198,6 +198,18 @@ export default function UserReports() {
     }
   };
 
+  const handleUnlinkStrategyFromUser = () => {
+    if (selectedStrategyId !== null) {
+      const updatedUsers = users.map(user => ({
+        ...user,
+        strategyIds: user.strategyIds.filter(id => id !== selectedStrategyId),
+      }));
+      setUsers(updatedUsers);
+      setSelectedStrategyId(null);
+      onLinkStrategyClose();
+    }
+  };
+
   const handleStrategySelection = (strategyId) => {
     setSelectedStrategyIds(prev => 
       prev.includes(strategyId)
@@ -387,13 +399,9 @@ export default function UserReports() {
                   <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
                     <Flex align="center" justify="space-between">
                       <Text fontWeight="bold">{strategy.name}</Text>
-                      <Menu>
-                        <MenuButton as={IconButton} icon={<MdMoreVert />} />
-                        <MenuList>
-                          <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Edit Strategy</MenuItem>
-                          <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Link to Users</MenuItem>
-                        </MenuList>
-                      </Menu>
+                      <Button colorScheme="teal" onClick={handleLinkStrategyToUser}>
+                         {selectedStrategyIds.includes(strategy.id) ? 'Link' : 'Unlink'}
+                      </Button>
                     </Flex>
                   </Box>
                 ))}
