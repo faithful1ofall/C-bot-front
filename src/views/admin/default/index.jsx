@@ -34,7 +34,7 @@ import Usa from "assets/img/dashboards/usa.png";
 // Custom components
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MdAddTask,
   MdAttachMoney,
@@ -127,6 +127,41 @@ export default function UserReports() {
     setCallNegTriggers(newCallNegTriggers);
   };
 
+  const deleteStrategy = async (id) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        console.log('Strategy deleted successfully');
+      } else {
+        console.error('Failed to delete strategy');
+      }
+    } catch (error) {
+      console.error('Error deleting strategy:', error);
+    }
+  };
+  
+
+   // useEffect to fetch strategies on component mount
+   useEffect(() => {
+    const fetchStrategies = async () => {
+      try {        
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies`); // Adjust the URL based on your backend setup
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();  // Parse the JSON response
+        setStrategies(data);
+        console.log("responce data", data);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    fetchStrategies();
+  }, []);
+
   const handleSubmit = async() => {
     const newStrategy = {
       id: idCounter,
@@ -151,7 +186,6 @@ export default function UserReports() {
     };
 
     try {
-      console.log(process.env.REACT_APP_BACKENDAPI);
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
         method: 'POST',
         headers: {
