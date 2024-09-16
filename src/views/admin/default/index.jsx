@@ -489,7 +489,7 @@ export default function UserReports() {
                 {index === 0 && (
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Funds %</FormLabel>
-                    <NumberInput min={0} max={100} value={call1Funds} onChange={(valueString) => handleCall1FundsChange(index, parseFloat(valueString))}>
+                    <NumberInput min={0} max={100} value={call1Funds} onChange={(valueString) => handleCall1FundsChange(parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
@@ -498,7 +498,7 @@ export default function UserReports() {
                 {index === 0 && (
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Funds %</FormLabel>
-                    <NumberInput min={0} max={100} value={call1TP} onChange={(valueString) => handleCall1TPChange(index, parseFloat(valueString))}>
+                    <NumberInput min={0} max={100} value={call1TP} onChange={(valueString) => handleCall1TPChange(parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
