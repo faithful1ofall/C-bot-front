@@ -81,11 +81,11 @@ export default function UserReports() {
   const [leverage, setLeverage] = useState(10); // Leverage state
 
   // State for Call 1
-  const [call1Funds, setCall1Funds] = useState();
-  const [call1TP, setCall1TP] = useState();
+  const [call1Funds, setCall1Funds] = useState(0);
+  const [call1TP, setCall1TP] = useState(0);
  
-  const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(call1Funds)); // Funds percentage for each call
-  const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(call1TP)); // TP percentage for each call
+  const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(0)); // Funds percentage for each call
+  const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(0)); // TP percentage for each call
   const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill(0)); // Negative trigger percentage for each call
 
 
@@ -102,6 +102,12 @@ export default function UserReports() {
   const handleCall1FundsChange = (value) => {
     setCall1Funds(value);
   };
+
+  const handleSyncCallValues = () => {
+    setCallFunds(Array(gridCalls).fill(call1Funds));
+    setCallTPs(Array(gridCalls).fill(call1TP));
+  };
+
 
   const handleCallTPChange = (index, value) => {
     const newCallTPs = [...callTPs];
@@ -480,16 +486,18 @@ export default function UserReports() {
                 {index > 0 && (
                 <FormControl mb="4">
                   <FormLabel>Call {index + 1} Funds %</FormLabel>
-                  <NumberInput min={0} max={100} value={callFunds[index]} onChange={(valueString) => handleCallFundsChange(index, parseFloat(valueString))}>
+                  <NumberInput min={0} max={100} value={callFunds[index] || 0} onChange={(valueString) => handleCallFundsChange(index, parseFloat(valueString))}>
                     <NumberInputField />
                   </NumberInput>
                 </FormControl>
                 )}
 
+               
+
                 {index === 0 && (
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Funds %</FormLabel>
-                    <NumberInput min={0} max={100} value={call1Funds} onChange={(valueString) => handleCall1FundsChange(parseFloat(valueString))}>
+                    <NumberInput min={0} max={100} value={call1Funds || 0} onChange={(valueString) => handleCall1FundsChange(parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
@@ -498,7 +506,7 @@ export default function UserReports() {
                 {index === 0 && (
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Funds %</FormLabel>
-                    <NumberInput min={0} max={100} value={call1TP} onChange={(valueString) => handleCall1TPChange(parseFloat(valueString))}>
+                    <NumberInput min={0} max={100} value={call1TP || 0} onChange={(valueString) => handleCall1TPChange(parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
@@ -507,7 +515,7 @@ export default function UserReports() {
                 {index > 0 && (
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} TP%</FormLabel>
-                    <NumberInput min={0} max={100} value={callTPs[index]} onChange={(valueString) => handleCallTPChange(index, parseFloat(valueString))}>
+                    <NumberInput min={0} max={100} value={callTPs[index] || 0} onChange={(valueString) => handleCallTPChange(index, parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
@@ -518,11 +526,18 @@ export default function UserReports() {
                 {index > 0 && negativeCandleTrigger > 0 && ( // Show only if index > 0, i.e., Call 2 or later
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
-                    <NumberInput min={-100} max={0} value={callNegTriggers[index]} onChange={(valueString) => handleCallNegTriggerChange(index, parseFloat(valueString))}>
+                    <NumberInput min={-100} max={0} value={callNegTriggers[index] || 0} onChange={(valueString) => handleCallNegTriggerChange(index, parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
                 )}
+
+                {index === 0 && (
+                  <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
+                    Sync Call 1 Values to All
+                  </Button>
+                )}
+                 
               </Box>
             ))}
               <FormControl mb="4">
