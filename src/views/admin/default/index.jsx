@@ -73,40 +73,55 @@ export default function UserReports() {
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState(0);
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
   const [gridCalls, setGridCalls] = useState(1);
-  const [callPercentages, setCallPercentages] = useState(Array(10).fill(0)); // For Call 1 to Call 10 %
-  const [callNegativeTriggers, setCallNegativeTriggers] = useState(Array(9).fill(0)); // Call 2 to Call 10 -ve trigger
-  const [takeProfitPercentages, setTakeProfitPercentages] = useState(Array(10).fill(0)); // TP for each call
   const [profitLock, setProfitLock] = useState(0);
   const [stopLoss, setStopLoss] = useState(0);
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
   const [maxTradableAmount, setMaxTradableAmount] = useState(0);
-  const [leverage, setLeverage] = useState(1); // Leverage state
+  const [leverage, setLeverage] = useState(10); // Leverage state
+
+  // State for Call 1
+  const [call1Funds, setCall1Funds] = useState(0);
+  const [call1TP, setCall1TP] = useState(0);
+ 
+  const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(call1Funds)); // Funds percentage for each call
+  const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(call1TP)); // TP percentage for each call
+  const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill(0)); // Negative trigger percentage for each call
+
  // const [checkBalance, setCheckBalance] = useState(false); // Check balance state
   // const [hedgeMode, setHedgeMode] = useState(false); // Hedge mode state
 
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
   const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
 
-
-
-  const handleCallPercentageChange = (index, value) => {
-    const updatedCallPercentages = [...callPercentages];
-    updatedCallPercentages[index] = value;
-    setCallPercentages(updatedCallPercentages);
+  const handleCallFundsChange = (index, value) => {
+    const newCallFunds = [...callFunds];
+    newCallFunds[index] = value;
+    setCallFunds(newCallFunds);
   };
 
-  const handleCallNegativeTriggerChange = (index, value) => {
-    const updatedNegativeTriggers = [...callNegativeTriggers];
-    updatedNegativeTriggers[index] = value;
-    setCallNegativeTriggers(updatedNegativeTriggers);
+
+  const handleCall1FundsChange = (value) => {
+    setCall1Funds(value);
+  //  setCallFunds(Array(gridCalls).fill(value));
   };
 
-  const handleTPPercentageChange = (index, value) => {
-    const updatedTPs = [...takeProfitPercentages];
-    updatedTPs[index] = value;
-    setTakeProfitPercentages(updatedTPs);
+  const handleCallTPChange = (index, value) => {
+    const newCallTPs = [...callTPs];
+    newCallTPs[index] = value;
+    setCallTPs(newCallTPs);
+  };
+
+  const handleCall1TPChange = (value) => {
+    setCall1TP(value);
+   // setCallTPs(Array(gridCalls).fill(value));
+  };
+
+  const handleCallNegTriggerChange = (index, value) => {
+    const newCallNegTriggers = [...callNegTriggers];
+    newCallNegTriggers[index] = value;
+    setCallNegTriggers(newCallNegTriggers);
   };
 
   const handleSubmit = () => {
@@ -118,9 +133,11 @@ export default function UserReports() {
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
       gridCalls,
-      callPercentages: callPercentages.slice(0, gridCalls),
-      callNegativeTriggers: callNegativeTriggers.slice(0, gridCalls - 1),
-      takeProfitPercentages: takeProfitPercentages.slice(0, gridCalls),
+      calls: callFunds.map((funds, index) => ({
+        funds,
+        tp: callTPs[index],
+        negTrigger: callNegTriggers[index],
+      })),
       profitLock,
       stopLoss,
       takeProfit,
@@ -148,47 +165,11 @@ export default function UserReports() {
     }
   };
 
- 
-/*   const handleEditStrategy = () => {
-    if (editingStrategyId !== null) {
-      const updatedStrategies = strategies.map(strategy =>
-        strategy.id === editingStrategyId
-          ? { ...strategy, name: newStrategyName }
-          : strategy
-      );
-      setStrategies(updatedStrategies);
-      setNewStrategyName("");
-      setEditingStrategyId(null);
-      onGlobalStrategyClose();
-    }
-  }; */
-
-
   const handleShowStrategies = (userIndex) => {
     const userStrategies = users[userIndex].strategyIds.map(
       (strategyId) => strategies.find((strategy) => strategy.id === strategyId)
     );
     console.log(`Showing strategies for user ${userIndex}`, userStrategies);
-  };
-/* 
-  const handleStrategySelection = (strategyId) => {
-    setSelectedStrategyId(strategyId);
-    onLinkStrategyOpen();
-  }; */
-
-  const handleCreateStrategy = () => {
-    if (newStrategyName) {
-      // Check for duplicate strategy names
-      if (strategies.some(strategy => strategy.name === newStrategyName)) {
-        alert("Strategy with this name already exists.");
-        return;
-      }
-
-      const newStrategy = { id: strategies.length, name: newStrategyName };
-      setStrategies([...strategies, newStrategy]);
-      setNewStrategyName("");
-      onCreateStrategyClose();
-    }
   };
 
   const handleLinkStrategyToUser = () => {
@@ -483,7 +464,7 @@ export default function UserReports() {
                 <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
               </Flex>
               {isNegativeCandleEnabled && (
-                <NumberInput value={negativeCandleTrigger} onChange={(valueString) => setNegativeCandleTrigger(parseFloat(valueString))}>
+                <NumberInput value={negativeCandleTrigger || 0} onChange={(valueString) => setNegativeCandleTrigger(parseFloat(valueString))}>
                   <NumberInputField />
                 </NumberInput>
               )}
@@ -491,38 +472,64 @@ export default function UserReports() {
 
             <FormControl mb="4">
               <FormLabel>Grid Calls (1-20)</FormLabel>
-              <NumberInput min={1} max={20} value={gridCalls} onChange={(valueString) => setGridCalls(parseInt(valueString))}>
+              <NumberInput min={1} max={20} value={gridCalls || 0} onChange={(valueString) => setGridCalls(parseInt(valueString))}>
                 <NumberInputField />
               </NumberInput>
-            </FormControl>
+            </FormControl>    
 
-            {Array.from({ length: gridCalls }).map((_, index) => (
-              <FormControl key={index} mb="4">
-                <FormLabel>Call {index + 1} % of Funds</FormLabel>
-                <NumberInput value={callPercentages[index]} onChange={(valueString) => handleCallPercentageChange(index, parseFloat(valueString))}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
+            {/* Loop through each call and display grouped inputs */}
+            {Array.from({ length: gridCalls || 0 }, (_, index) => (
+              <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
+                <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>
+
+                {index > 0 && (
+                <FormControl mb="4">
+                  <FormLabel>Call {index + 1} Funds %</FormLabel>
+                  <NumberInput min={0} max={100} value={callFunds[index]} onChange={(valueString) => handleCallFundsChange(index, parseFloat(valueString))}>
+                    <NumberInputField />
+                  </NumberInput>
+                </FormControl>
+                )}
+
+                {index === 0 && (
+                  <FormControl mb="4">
+                    <FormLabel>Call {index + 1} Funds %</FormLabel>
+                    <NumberInput min={0} max={100} value={call1Funds} onChange={(valueString) => handleCall1FundsChange(index, parseFloat(valueString))}>
+                      <NumberInputField />
+                    </NumberInput>
+                  </FormControl>
+                )}
+
+                {index === 0 && (
+                  <FormControl mb="4">
+                    <FormLabel>Call {index + 1} Funds %</FormLabel>
+                    <NumberInput min={0} max={100} value={call1TP} onChange={(valueString) => handleCall1TPChange(index, parseFloat(valueString))}>
+                      <NumberInputField />
+                    </NumberInput>
+                  </FormControl>
+                )}
+
+                {index > 0 && (
+                  <FormControl mb="4">
+                    <FormLabel>Call {index + 1} TP%</FormLabel>
+                    <NumberInput min={0} max={100} value={callTPs[index]} onChange={(valueString) => handleCallTPChange(index, parseFloat(valueString))}>
+                      <NumberInputField />
+                    </NumberInput>
+                  </FormControl>
+                )}
+                  
+
+                {/* Call Negative Trigger */}
+                {index > 0 && negativeCandleTrigger > 0 && ( // Show only if index > 0, i.e., Call 2 or later
+                  <FormControl mb="4">
+                    <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
+                    <NumberInput min={-100} max={0} value={callNegTriggers[index]} onChange={(valueString) => handleCallNegTriggerChange(index, parseFloat(valueString))}>
+                      <NumberInputField />
+                    </NumberInput>
+                  </FormControl>
+                )}
+              </Box>
             ))}
-
-            {Array.from({ length: negativeCandleTrigger }).map((_, index) => (
-              <FormControl key={index} mb="4">
-                <FormLabel>Call {index + 2} Negative % Trigger</FormLabel>
-                <NumberInput value={callNegativeTriggers[index]} onChange={(valueString) => handleCallNegativeTriggerChange(index, parseFloat(valueString))}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-            ))}
-
-            {Array.from({ length: gridCalls }).map((_, index) => (
-              <FormControl key={index} mb="4">
-                <FormLabel>Call {index + 1} TP %</FormLabel>
-                <NumberInput value={takeProfitPercentages[index]} onChange={(valueString) => handleTPPercentageChange(index, parseFloat(valueString))}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-            ))}
-
               <FormControl mb="4">
                 <FormLabel>Profit Lock %</FormLabel>
                 <NumberInput value={profitLock} onChange={(valueString) => setProfitLock(parseFloat(valueString))}>
