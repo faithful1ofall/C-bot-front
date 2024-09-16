@@ -127,11 +127,10 @@ export default function UserReports() {
     setCallNegTriggers(newCallNegTriggers);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     const newStrategy = {
       id: idCounter,
       name: newStrategyName,
-      tradingViewLink,
       tradingPairs,
       tradeDirection,
       timeFrame,
@@ -151,12 +150,31 @@ export default function UserReports() {
       leverage,
     };
 
+    try {
+      console.log(process.env.REACT_APP_BACKENDAPI);
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(newStrategy),
+      });
+  
+      if (response.ok) {
+        console.log('Strategy added successfully');
+      } else {
+        console.error('Error adding strategy');
+      }
+    } catch (error) {
+      console.error('Request failed', error);
+    }
+
     setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
 
     // Update the ID counter
     setIdCounter(idCounter + 1);
 
-    console.log(strategies);
+    console.log("newStrategy", newStrategy);
 
     onCreateStrategyClose();
     // Send newStrategy to backend or save it in state
