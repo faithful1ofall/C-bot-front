@@ -215,17 +215,37 @@ export default function UserReports() {
   };
 
 
-  const handleAddUser = () => {
+  const handleAddUser = async() => {
     if (apiKey && apiSecret) {
       const newUser = {
         apiKey,
         apiSecret,
         strategyIds: [],
       };
-      setUsers([...users, newUser]);
-      setApiKey("");
-      setApiSecret("");
-      onUserClose();
+
+      try {
+        const response = await fetch('http://localhost:5000/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newUser),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setUsers([...users, data.user]); // Add the new user to the list
+          setApiKey("");
+          setApiSecret("");
+          onUserClose(); // Close modal or form
+          console.log('User added successfully:', data);
+        } else {
+          console.error('Error adding user:', data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   };
 
