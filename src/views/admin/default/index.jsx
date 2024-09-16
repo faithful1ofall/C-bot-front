@@ -298,13 +298,6 @@ export default function UserReports() {
         >
           Add User
         </Button>
-        <Button
-          leftIcon={<Icon as={MdAddAlert} />}
-          colorScheme="blue"
-          onClick={onCreateStrategyOpen}
-        >
-          Create Strategy
-        </Button>
       </Flex>
 
      {/* Add User Modal */}
@@ -331,7 +324,7 @@ export default function UserReports() {
         </ModalContent>
       </Modal>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
         {users.map((user, index) => (
           <Box key={index} p="5" shadow="md" borderWidth="1px" borderRadius="md">
             <Flex align="center" justify="space-between">
@@ -353,6 +346,15 @@ export default function UserReports() {
           </Box>
         ))}
       </SimpleGrid>
+
+      <Button
+          mt="40px"
+          leftIcon={<Icon as={MdAddAlert} />}
+          colorScheme="blue"
+          onClick={onCreateStrategyOpen}
+        >
+          Create Strategy
+        </Button>
 
       <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
         {strategies.map((strategy) => (
