@@ -341,7 +341,7 @@ export default function UserReports() {
                 <MenuList>
                   <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
                   <MenuItem onClick={() => { setSelectedStrategyId(index); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => { setApiKey(user.apiKey); setApiSecret(user.apiSecret); onUserOpen();}}>Edit User</MenuItem>
+                  <MenuItem onClick={() => onUserOpen() }>Delete User</MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
