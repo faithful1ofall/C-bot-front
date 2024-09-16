@@ -91,6 +91,8 @@ export default function UserReports() {
 
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
   const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
+  const [idCounter, setIdCounter] = useState(strategies.length > 0 ? Math.max(...strategies.map(s => s.id)) + 1 : 1); // Initialize ID counter
+
 
   const handleCallFundsChange = (index, value) => {
     const newCallFunds = [...callFunds];
@@ -127,7 +129,8 @@ export default function UserReports() {
 
   const handleSubmit = () => {
     const newStrategy = {
-      newStrategyName,
+      id: idCounter,
+      name: newStrategyName,
       tradingViewLink,
       tradingPairs,
       tradeDirection,
@@ -150,7 +153,12 @@ export default function UserReports() {
 
     setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
 
+    // Update the ID counter
+    setIdCounter(idCounter + 1);
+
     console.log(strategies);
+
+    onCreateStrategyClose();
     // Send newStrategy to backend or save it in state
   };
 
@@ -188,11 +196,6 @@ export default function UserReports() {
       setSelectedStrategyId(null);
       onLinkStrategyClose();
     }
-  };
-
-  const handleEditUser = (userIndex) => {
-    console.log(`Edit user ${userIndex}`);
-    // Add logic to edit the user here.
   };
 
   const handleStrategySelection = (strategyId) => {
@@ -338,7 +341,7 @@ export default function UserReports() {
                 <MenuList>
                   <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
                   <MenuItem onClick={() => { setSelectedStrategyId(index); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => handleEditUser(index)}>Edit User</MenuItem>
+                  <MenuItem onClick={() => { setApiKey(user.apiKey); setApiSecret(user.apiSecret); onUserOpen();}}>Edit User</MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
