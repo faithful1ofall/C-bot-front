@@ -86,7 +86,7 @@ export default function UserReports() {
  
   const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(0)); // Funds percentage for each call
   const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(0)); // TP percentage for each call
-  const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill(0)); // Negative trigger percentage for each call
+  const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill()); // Negative trigger percentage for each call
 
 
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
@@ -147,7 +147,10 @@ export default function UserReports() {
       maxTradableAmount,
       leverage,
     };
-    console.log(newStrategy);
+
+    setStrategies(newStrategy);
+    
+    console.log(strategies);
     // Send newStrategy to backend or save it in state
   };
 
@@ -417,11 +420,27 @@ export default function UserReports() {
           <ModalHeader>Create Strategy</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-           {/*  <FormControl>
-              <FormLabel>Strategy Name</FormLabel>
-              <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
-            </FormControl> */}
-            
+            {/* Check Balance - Display Only */}
+            <FormControl mb="4">
+              <Flex alignItems="center">
+                <FormLabel>Check Balance before trading</FormLabel>
+                <Text>{checkBalance || "No Balance"}</Text>
+              </Flex>
+            </FormControl>
+
+            {/* Hedge Mode - Display Only */}
+            <FormControl mb="4">
+              <Flex alignItems="center">
+                <FormLabel>Hedge Mode</FormLabel>
+                <Text>{hedgeMode ? 'Enabled' : 'Disabled'}</Text>
+              </Flex>
+              {hedgeMode && (
+                <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
+                  <p>With Hedge Mode enabled, the bot can open both long and short positions at the same time.</p>
+                </Box>
+              )}
+            </FormControl>
+          
             <FormControl mb="4">
               <FormLabel>Strategy Name</FormLabel>
               <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
@@ -595,26 +614,6 @@ export default function UserReports() {
                 </NumberInput>
               </FormControl>
 
-              {/* Check Balance - Display Only */}
-              <FormControl mb="4">
-                <Flex alignItems="center">
-                  <FormLabel>Check Balance before trading</FormLabel>
-                  <Text>{checkBalance ? 'Enabled' : 'Disabled'}</Text>
-                </Flex>
-              </FormControl>
-
-              {/* Hedge Mode - Display Only */}
-              <FormControl mb="4">
-                <Flex alignItems="center">
-                  <FormLabel>Hedge Mode</FormLabel>
-                  <Text>{hedgeMode ? 'Enabled' : 'Disabled'}</Text>
-                </Flex>
-                {hedgeMode && (
-                  <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
-                    <p>With Hedge Mode enabled, the bot can open both long and short positions at the same time.</p>
-                  </Box>
-                )}
-              </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="teal" onClick={handleSubmit}>
