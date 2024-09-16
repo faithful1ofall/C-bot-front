@@ -148,8 +148,8 @@ export default function UserReports() {
       leverage,
     };
 
-    setStrategies(newStrategy);
-    
+    setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
+
     console.log(strategies);
     // Send newStrategy to backend or save it in state
   };
