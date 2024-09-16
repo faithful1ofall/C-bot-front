@@ -81,7 +81,14 @@ export default function UserReports() {
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
-   const [maxTradableAmount, setMaxTradableAmount] = useState(0);
+  const [maxTradableAmount, setMaxTradableAmount] = useState(0);
+  const [leverage, setLeverage] = useState(1); // Leverage state
+ // const [checkBalance, setCheckBalance] = useState(false); // Check balance state
+  // const [hedgeMode, setHedgeMode] = useState(false); // Hedge mode state
+
+  const checkBalance = strategies?.checkBalance || false; // Default value from strategy
+  const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
+
 
 
   const handleCallPercentageChange = (index, value) => {
@@ -120,6 +127,7 @@ export default function UserReports() {
       orderType,
       isDelayEnabled,
       maxTradableAmount,
+      leverage,
     };
     console.log(newStrategy);
     // Send newStrategy to backend or save it in state
@@ -561,6 +569,34 @@ export default function UserReports() {
                 <NumberInput value={maxTradableAmount} onChange={(valueString) => setMaxTradableAmount(parseFloat(valueString))}>
                   <NumberInputField />
                 </NumberInput>
+              </FormControl>
+
+              <FormControl mb="4">
+                <FormLabel>Leverage</FormLabel>
+                <NumberInput min={1} max={100} value={leverage} onChange={(valueString) => setLeverage(parseInt(valueString))}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              {/* Check Balance - Display Only */}
+              <FormControl mb="4">
+                <Flex alignItems="center">
+                  <FormLabel>Check Balance before trading</FormLabel>
+                  <Text>{checkBalance ? 'Enabled' : 'Disabled'}</Text>
+                </Flex>
+              </FormControl>
+
+              {/* Hedge Mode - Display Only */}
+              <FormControl mb="4">
+                <Flex alignItems="center">
+                  <FormLabel>Hedge Mode</FormLabel>
+                  <Text>{hedgeMode ? 'Enabled' : 'Disabled'}</Text>
+                </Flex>
+                {hedgeMode && (
+                  <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
+                    <p>With Hedge Mode enabled, the bot can open both long and short positions at the same time.</p>
+                  </Box>
+                )}
               </FormControl>
           </ModalBody>
           <ModalFooter>
