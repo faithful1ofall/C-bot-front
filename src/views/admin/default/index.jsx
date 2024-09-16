@@ -65,7 +65,6 @@ export default function UserReports() {
 
 
   // new parameters
- // const [strategyName, setStrategyName] = useState('');
   const [tradingViewLink, setTradingViewLink] = useState('');
   const [tradingPairs, setTradingPairs] = useState('');
   const [tradeDirection, setTradeDirection] = useState('Both');
@@ -82,15 +81,13 @@ export default function UserReports() {
   const [leverage, setLeverage] = useState(10); // Leverage state
 
   // State for Call 1
-  const [call1Funds, setCall1Funds] = useState(0);
-  const [call1TP, setCall1TP] = useState(0);
+  const [call1Funds, setCall1Funds] = useState();
+  const [call1TP, setCall1TP] = useState();
  
   const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(call1Funds)); // Funds percentage for each call
   const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(call1TP)); // TP percentage for each call
   const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill(0)); // Negative trigger percentage for each call
 
- // const [checkBalance, setCheckBalance] = useState(false); // Check balance state
-  // const [hedgeMode, setHedgeMode] = useState(false); // Hedge mode state
 
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
   const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
@@ -104,7 +101,6 @@ export default function UserReports() {
 
   const handleCall1FundsChange = (value) => {
     setCall1Funds(value);
-  //  setCallFunds(Array(gridCalls).fill(value));
   };
 
   const handleCallTPChange = (index, value) => {
@@ -115,7 +111,6 @@ export default function UserReports() {
 
   const handleCall1TPChange = (value) => {
     setCall1TP(value);
-   // setCallTPs(Array(gridCalls).fill(value));
   };
 
   const handleCallNegTriggerChange = (index, value) => {
