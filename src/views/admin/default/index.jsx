@@ -160,6 +160,20 @@ export default function UserReports() {
     }
   };
 
+  const fetchStrategies = async () => {
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies`); // Adjust the URL based on your backend setup
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();  // Parse the JSON response
+      setStrategies(data);
+      console.log("responce data", data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   const deleteStrategy = async (id) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`, {
@@ -168,6 +182,7 @@ export default function UserReports() {
   
       if (response.ok) {
         console.log('Strategy deleted successfully');
+        fetchStrategies();
       } else {
         console.error('Failed to delete strategy');
       }
@@ -176,25 +191,7 @@ export default function UserReports() {
     }
   };
   
-
-   // useEffect to fetch strategies on component mount
    useEffect(() => {
-    const fetchStrategies = async () => {
-      try {        
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies`); // Adjust the URL based on your backend setup
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();  // Parse the JSON response
-        setStrategies(data);
-        console.log("responce data", data);
-      } catch (err) {
-        console.error(err.message);
-      }
-    };
-
-   
-
     fetchUsers();
     fetchStrategies();
   }, []);
