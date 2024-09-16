@@ -127,6 +127,39 @@ export default function UserReports() {
     setCallNegTriggers(newCallNegTriggers);
   };
 
+  const fetchUsers = async () => {
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`); // Adjust the URL based on your backend setup
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();  // Parse the JSON response
+      setUsers(data); // Add the new user to the list
+      console.log("responce user data", data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const deleteuser = async (id) => {
+
+    console.log("user id", id);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${id}`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        console.log('User deleted successfully');
+        fetchUsers();
+      } else {
+        console.error('Failed to delete User');
+      }
+    } catch (error) {
+      console.error('Error deleting User:', error);
+    }
+  };
+
   const deleteStrategy = async (id) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`, {
@@ -159,6 +192,10 @@ export default function UserReports() {
         console.error(err.message);
       }
     };
+
+   
+
+    fetchUsers();
     fetchStrategies();
   }, []);
 
@@ -224,7 +261,7 @@ export default function UserReports() {
       };
 
       try {
-        const response = await fetch('http://localhost:5000/api/users', {
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -418,13 +455,12 @@ export default function UserReports() {
                 <MenuList>
                   <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
                   <MenuItem onClick={() => { setSelectedStrategyId(index); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => onUserOpen() }>Delete User</MenuItem>
+                  <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
             <Box mt="4">
               <Text>API Key: {user.apiKey}</Text>
-              <Text>API Secret: {user.apiSecret}</Text>
               <Text>Strategies: {user.strategyIds.map(id => strategies.find(s => s.id === id)?.name || 'None').join(', ')}</Text>
             </Box>
           </Box>
@@ -450,6 +486,7 @@ export default function UserReports() {
                 <MenuList>
                   <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Edit Strategy</MenuItem>
                   <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Link to Users</MenuItem>
+                  <MenuItem onClick={() => deleteStrategy(strategy.id) }>Delete Strategy</MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
