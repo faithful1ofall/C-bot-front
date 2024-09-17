@@ -184,8 +184,6 @@ export default function UserReports() {
    useEffect(() => {
     fetchUsers();
     fetchStrategies();
-
-
   }, []);
 
   const handleSubmit = async() => {
@@ -265,6 +263,9 @@ export default function UserReports() {
       }
 
       console.log("newStrategy Update", newStrategy);
+
+      fetchUsers();
+      fetchStrategies();
 
       onCreateStrategyClose();
       
@@ -349,7 +350,7 @@ export default function UserReports() {
       }
     }
   };
-  
+
   const handleLinkStrategyToUser = async(userId, strategyid, boole) => {
 
     if (boole) {
