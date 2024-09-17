@@ -137,6 +137,7 @@ export default function UserReports() {
       }
       const data = await response.json();  // Parse the JSON response
       setUsers(data);
+      console.log(data);
     } catch (err) {
       console.error(err.message);
     }
@@ -211,7 +212,6 @@ export default function UserReports() {
 
   const handleSubmit = async() => {
     const newStrategy = {
-      id: idCounter,
       name: newStrategyName,
       tradingPairs,
       tradeDirection,
@@ -319,28 +319,49 @@ export default function UserReports() {
     }
   };
 
-  const handleLinkStrategyToUser = async(userId, strategyid) => {
+  const handleLinkStrategyToUser = async(userId, strategyid, boole) => {
 
-    console.log("selected user id", userId);
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      const data = await response.json();
-      console.log("linking", data);
-
-      if (response.ok) {
-        fetchUsers();
-      } else {
-        console.error('Error adding user:', data.error);
+    if (boole) {
+      try {
+        await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        console.error('Error:', error);
       }
-    } catch (error) {
-      console.error('Error:', error);
+      fetchUsers();
+
+        const updatedStrategyIds = selectedStrategyIds.filter(id => id !== strategyid);
+  
+        // Set the new array as the state
+        setSelectedStrategyIds(updatedStrategyIds);
+
+    } else {
+
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        const data = await response.json();
+        console.log("linking", data);
+
+        if (response.ok) {
+          fetchUsers();
+
+          const updatedStrategyIds = [...selectedStrategyIds, strategyid];
+    
+          // Set the new array as the state
+          setSelectedStrategyIds(updatedStrategyIds);
+         } else {
+          console.error('Error adding user:', data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
 
     
@@ -504,7 +525,7 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
-                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.name)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                 </MenuList>
               </Menu>
@@ -535,7 +556,6 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Edit Strategy</MenuItem>
-                  <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Link to Users</MenuItem>
                   <MenuItem onClick={() => deleteStrategy(strategy.id) }>Delete Strategy</MenuItem>
                 </MenuList>
               </Menu>
@@ -558,33 +578,15 @@ export default function UserReports() {
                   <Box key={`${strategy.id}-${strategy.id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
                     <Flex align="center" justify="space-between">
                       <Text fontWeight="bold">{strategy.name}</Text>
-                      <Button colorScheme="teal" onClick={() => {
-                        console.log('Selected Strategy IDs:', selectedStrategyIds.includes(strategy.id), strategy.id); // Log selected strategy IDs
-                        handleLinkStrategyToUser(selectedStrategyId, strategy.id);
-                      }}>
-                        {selectedStrategyIds.includes(strategy.id) ? 'Link' : 'Unlink'}
+                      <Button colorScheme="teal" onClick={() => handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))}>
+                        {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
                       </Button>
                     </Flex>
                   </Box>
                 ))}
               </SimpleGrid>
-
-              {/* {strategies.map((strategy) => (
-                <Checkbox
-                  key={strategy.id}
-                  isChecked={selectedStrategyIds.includes(strategy.id)}
-                  onChange={() => handleStrategySelection(strategy.id)}
-                >
-                  {strategy.name}
-                </Checkbox>
-              ))} */}
             </FormControl>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="teal" onClick={ () => handleLinkStrategyToUser(selectedStrategyIds, strategy.id)}>
-              Link Strategies
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
 
