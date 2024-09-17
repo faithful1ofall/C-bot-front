@@ -80,10 +80,7 @@ export default function UserReports() {
   const [isEdit, SetEdit] = useState(false);  
   const [maxTradableAmount, setMaxTradableAmount] = useState(0);
   const [leverage, setLeverage] = useState(10); // Leverage state
-
-  // State for Call 1
-  const [call1Funds, setCall1Funds] = useState(0);
-  const [call1TP, setCall1TP] = useState(0);
+  const [originalStrategy, setOriginalStrategy] = useState(null);
  
   const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(0)); // Funds percentage for each call
   const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(0)); // TP percentage for each call
@@ -92,8 +89,6 @@ export default function UserReports() {
 
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
   const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
-  const [idCounter, setIdCounter] = useState(strategies.length > 0 ? Math.max(...strategies.map(s => s.id)) + 1 : 1); // Initialize ID counter
-
 
   const handleCallFundsChange = (index, value) => {
     const newCallFunds = [...callFunds];
@@ -102,13 +97,10 @@ export default function UserReports() {
   };
 
 
-  const handleCall1FundsChange = (value) => {
-    setCall1Funds(value);
-  };
 
   const handleSyncCallValues = () => {
-    setCallFunds(Array(gridCalls).fill(call1Funds));
-    setCallTPs(Array(gridCalls).fill(call1TP));
+    setCallFunds(Array(gridCalls).fill(callFunds[0]));
+    setCallTPs(Array(gridCalls).fill(callTPs[0]));
   };
 
 
@@ -118,9 +110,6 @@ export default function UserReports() {
     setCallTPs(newCallTPs);
   };
 
-  const handleCall1TPChange = (value) => {
-    setCall1TP(value);
-  };
 
   const handleCallNegTriggerChange = (index, value) => {
     const newCallNegTriggers = [...callNegTriggers];
@@ -206,6 +195,7 @@ export default function UserReports() {
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
       gridCalls,
+      
       calls: callFunds.map((funds, index) => ({
         funds,
         tp: callTPs[index],
@@ -220,7 +210,7 @@ export default function UserReports() {
       leverage,
     };
 
-    if (!isEdit){
+    if (!isEdit || isEdit === 0){
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
           method: 'POST',
@@ -241,25 +231,37 @@ export default function UserReports() {
 
       setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
 
-      // Update the ID counter
-      setIdCounter(idCounter + 1);
-
       console.log("newStrategy", newStrategy);
 
       onCreateStrategyClose();
 
     } else {
 
+
+      console.log("isEdit", isEdit);
+
+      // Create an object with only the changed fields
+      const updatedFields = {};
+
+      Object.keys(newStrategy).forEach((key) => {
+        if (newStrategy[key] !== originalStrategy[key]) {
+          updatedFields[key] = newStrategy[key];
+        }
+      });
+
+      console.log(updatedFields);
+
       try {
         
-          const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
+          const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${isEdit}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body:  JSON.stringify(newStrategy),
+          body:  JSON.stringify(updatedFields),
         });
 
+        console.log(response);
         if (response.ok) {
           console.log('Strategy updated successfully');
         } else {
@@ -287,7 +289,11 @@ export default function UserReports() {
       if (!response1.ok) {
         throw new Error(`HTTP error! status: ${response1.status}`);
       }
-      const data1 = await response1.json();  
+      const data1 = await response1.json(); 
+      
+      console.log("edit data", data1);
+
+      setOriginalStrategy(data1);
 
       setNewStrategyName(data1.name);
       setTradingPairs(data1.tradingPairs);
@@ -299,6 +305,8 @@ export default function UserReports() {
       setCallFunds(data1.calls.map(call => call.funds));
       setCallTPs(data1.calls.map(call => call.tp));
       setCallNegTriggers(data1.calls.map(call => call.negTrigger));
+
+      
 
       setProfitLock(data1.profitLock);
       setStopLoss(data1.stopLoss);
@@ -354,22 +362,6 @@ export default function UserReports() {
       (strategyId) => strategies.find((strategy) => strategy.id === strategyId)
     );
     console.log(`Showing strategies for user ${userIndex}`, userStrategies);
-  };
-
-  const fetchUsersLinkedToStrategy = async (strategyId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${strategyId}/users`);
-      
-      if (!response.ok) {
-        throw new Error(`Error fetching users: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      console.log('Users linked to strategy:', data.users);
-      return data.users;
-    } catch (error) {
-      console.error('Error fetching users linked to strategy:', error);
-    }
   };
 
   const handleLinkStrategyToUser = async(userId, strategyid, boole) => {
@@ -699,18 +691,16 @@ export default function UserReports() {
               <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
                 <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>
 
-                {index > 0 && (
                 <FormControl mb="4">
                   <FormLabel>Call {index + 1} Funds %</FormLabel>
                   <NumberInput min={0} max={100} value={callFunds[index] || 0} onChange={(valueString) => handleCallFundsChange(index, parseFloat(valueString))}>
                     <NumberInputField />
                   </NumberInput>
                 </FormControl>
-                )}
 
                
 
-                {index === 0 && (
+                {/* {index === 0 && (
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Funds %</FormLabel>
                     <NumberInput min={0} max={100} value={call1Funds || 0} onChange={(valueString) => handleCall1FundsChange(parseFloat(valueString))}>
@@ -726,16 +716,15 @@ export default function UserReports() {
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
-                )}
+                )} */}
 
-                {index > 0 && (
+
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} TP%</FormLabel>
                     <NumberInput min={0} max={100} value={callTPs[index] || 0} onChange={(valueString) => handleCallTPChange(index, parseFloat(valueString))}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
-                )}
                   
 
                 {/* Call Negative Trigger */}
