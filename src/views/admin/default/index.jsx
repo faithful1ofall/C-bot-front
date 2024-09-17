@@ -235,7 +235,7 @@ export default function UserReports() {
 
       onCreateStrategyClose();
 
-    } else {
+    } else if (isEdit > 0) {
 
 
       console.log("isEdit", isEdit);
@@ -251,6 +251,7 @@ export default function UserReports() {
 
       console.log(updatedFields);
 
+      
       try {
         
           const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${isEdit}`, {
@@ -271,7 +272,7 @@ export default function UserReports() {
         console.error('Request failed', error);
       }
 
-      console.log("newStrategy UPdate", newStrategy);
+      console.log("newStrategy Update", newStrategy);
 
       onCreateStrategyClose();
       
