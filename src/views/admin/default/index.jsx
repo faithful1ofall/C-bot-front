@@ -77,6 +77,7 @@ export default function UserReports() {
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
+  const [isEdit, SetEdit] = useState(false);  
   const [maxTradableAmount, setMaxTradableAmount] = useState(0);
   const [leverage, setLeverage] = useState(10); // Leverage state
 
@@ -197,19 +198,6 @@ export default function UserReports() {
 
   }, []);
 
-  const doesStrategyHaveLinkedUser = (strategyId, useridmatch) => {
-    const linked = users.some(user => user.strategyIds.includes(strategyId));
-    const userid = users.filter(user => user.strategyIds.includes(strategyId)).map(user => user.id);
-
-    if (userid[0] === useridmatch){
-      setIsLinked(true);
-    } else {
-      setIsLinked(false);
-    }
-
-    console.log("LInked", linked, userid[0]);
-  };
-
   const handleSubmit = async() => {
     const newStrategy = {
       name: newStrategyName,
@@ -232,34 +220,99 @@ export default function UserReports() {
       leverage,
     };
 
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body:  JSON.stringify(newStrategy),
-      });
-  
-      if (response.ok) {
-        console.log('Strategy added successfully');
-      } else {
-        console.error('Error adding strategy');
+    if (!isEdit){
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body:  JSON.stringify(newStrategy),
+        });
+    
+        if (response.ok) {
+          console.log('Strategy added successfully');
+        } else {
+          console.error('Error adding strategy');
+        }
+      } catch (error) {
+        console.error('Request failed', error);
       }
-    } catch (error) {
+
+      setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
+
+      // Update the ID counter
+      setIdCounter(idCounter + 1);
+
+      console.log("newStrategy", newStrategy);
+
+      onCreateStrategyClose();
+
+    } else {
+
+      try {
+        
+          const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body:  JSON.stringify(newStrategy),
+        });
+
+        if (response.ok) {
+          console.log('Strategy updated successfully');
+        } else {
+          console.error('Error Updating strategy');
+        }
+      } catch (error) {
+        console.error('Request failed', error);
+      }
+
+      console.log("newStrategy UPdate", newStrategy);
+
+      onCreateStrategyClose();
+      
+      SetEdit(null);
+
+    }
+  };
+
+
+  const handleEdit = async(editid) => {
+    try {
+      
+      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`);
+
+      if (!response1.ok) {
+        throw new Error(`HTTP error! status: ${response1.status}`);
+      }
+      const data1 = await response1.json();  
+
+      setNewStrategyName(data1.name);
+      setTradingPairs(data1.tradingPairs);
+      setTradeDirection(data1.tradeDirection);
+      setTimeFrame(data1.timeFrame);
+      setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
+      setGridCalls(data1.gridCalls);
+
+      setCallFunds(data1.calls.map(call => call.funds));
+      setCallTPs(data1.calls.map(call => call.tp));
+      setCallNegTriggers(data1.calls.map(call => call.negTrigger));
+
+      setProfitLock(data1.profitLock);
+      setStopLoss(data1.stopLoss);
+      setTakeProfit(data1.takeProfit);
+      setOrderType(data1.orderType);
+      setIsDelayEnabled(data1.isDelayEnabled);
+      setMaxTradableAmount(data1.maxTradableAmount);
+      setLeverage(data1.leverage);
+
+    }  catch (error) {
       console.error('Request failed', error);
     }
 
-    setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
-
-    // Update the ID counter
-    setIdCounter(idCounter + 1);
-
-    console.log("newStrategy", newStrategy);
-
-    onCreateStrategyClose();
-    // Send newStrategy to backend or save it in state
-  };
+  }
 
 
   const handleAddUser = async() => {
@@ -363,39 +416,6 @@ export default function UserReports() {
         console.error('Error:', error);
       }
     }
-
-    
-   /*  if (selectedStrategyId !== null) {
-      const updatedUsers = users.map(user => ({
-        ...user,
-        strategyIds: user.strategyIds.includes(selectedStrategyId)
-          ? user.strategyIds
-          : [...user.strategyIds, selectedStrategyId],
-      }));
-      setUsers(updatedUsers);
-      setSelectedStrategyId(null);
-      onLinkStrategyClose();
-    } */
-  };
-
-  const handleUnlinkStrategyFromUser = () => {
-    if (selectedStrategyId !== null) {
-      const updatedUsers = users.map(user => ({
-        ...user,
-        strategyIds: user.strategyIds.filter(id => id !== selectedStrategyId),
-      }));
-      setUsers(updatedUsers);
-      setSelectedStrategyId(null);
-      onLinkStrategyClose();
-    }
-  };
-
-  const handleStrategySelection = (strategyId) => {
-    setSelectedStrategyIds(prev => 
-      prev.includes(strategyId)
-        ? prev.filter(id => id !== strategyId)
-        : [...prev, strategyId]
-    );
   };
 
   return (
@@ -555,7 +575,7 @@ export default function UserReports() {
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                  <MenuItem onClick={() => handleStrategySelection(strategy.id)}>Edit Strategy</MenuItem>
+                  <MenuItem onClick={() => {SetEdit(strategy.id); handleEdit(strategy.id); onCreateStrategyOpen();}}>Edit Strategy</MenuItem>
                   <MenuItem onClick={() => deleteStrategy(strategy.id) }>Delete Strategy</MenuItem>
                 </MenuList>
               </Menu>
@@ -594,7 +614,7 @@ export default function UserReports() {
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create Strategy</ModalHeader>
+          <ModalHeader>{isEdit ? 'Update Strategy' : 'Create Strategy'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {/* Check Balance - Display Only */}
@@ -793,8 +813,8 @@ export default function UserReports() {
 
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="teal" onClick={handleSubmit}>
-              Create Strategy
+            <Button colorScheme="teal" onClick={handleSubmit}>   
+              {isEdit ? 'Update Strategy' : 'Create Strategy'}
             </Button>
           </ModalFooter>
         </ModalContent>
