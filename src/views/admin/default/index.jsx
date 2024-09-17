@@ -186,6 +186,30 @@ export default function UserReports() {
     fetchStrategies();
   }, []);
 
+ const tradinghook = async() => {
+
+  const hooking = {
+      ticker: "BTCUSDT", 
+      price: "61000", 
+      time: "Testing", 
+      condition: "Long", 
+      customMessage: "Testing", 
+      strategy: "test",
+  }
+   try {
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body:  JSON.stringify(hooking),
+        });
+
+        console.log("hooking", await response.json())
+      }
+
+    }
+
   const handleSubmit = async() => {
     const newStrategy = {
       name: newStrategyName,
@@ -299,8 +323,6 @@ export default function UserReports() {
       setCallFunds(data1.calls.map(call => call.funds));
       setCallTPs(data1.calls.map(call => call.tp));
       setCallNegTriggers(data1.calls.map(call => call.negTrigger));
-
-      
 
       setProfitLock(data1.profitLock);
       setStopLoss(data1.stopLoss);
@@ -488,6 +510,13 @@ export default function UserReports() {
           onClick={onUserOpen}
         >
           Add User
+        </Button>
+        <Button
+          leftIcon={<Icon as={MdPerson} />}
+          colorScheme="teal"
+          onClick={}
+        >
+          Test Webhook
         </Button>
       </Flex>
 
