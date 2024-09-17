@@ -172,6 +172,7 @@ export default function UserReports() {
   
       if (response.ok) {
         fetchStrategies();
+        fetchUsers();
       } else {
         console.error('Failed to delete strategy');
       }
@@ -251,7 +252,7 @@ export default function UserReports() {
       
       try {
         
-          const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${isEdit}`, {
+        await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${isEdit}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -348,14 +349,7 @@ export default function UserReports() {
       }
     }
   };
-
-  const handleShowStrategies = (userIndex) => {
-    const userStrategies = users[userIndex].strategyIds.map(
-      (strategyId) => strategies.find((strategy) => strategy.id === strategyId)
-    );
-    console.log(`Showing strategies for user ${userIndex}`, userStrategies);
-  };
-
+  
   const handleLinkStrategyToUser = async(userId, strategyid, boole) => {
 
     if (boole) {
