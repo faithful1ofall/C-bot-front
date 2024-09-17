@@ -235,7 +235,7 @@ export default function UserReports() {
 
       onCreateStrategyClose();
 
-    } else if (isEdit > 0) {
+    } else {
 
 
       console.log("isEdit", isEdit);
@@ -248,9 +248,6 @@ export default function UserReports() {
           updatedFields[key] = newStrategy[key];
         }
       });
-
-      console.log(updatedFields);
-
       
       try {
         
@@ -262,12 +259,6 @@ export default function UserReports() {
           body:  JSON.stringify(updatedFields),
         });
 
-        console.log(response);
-        if (response.ok) {
-          console.log('Strategy updated successfully');
-        } else {
-          console.error('Error Updating strategy');
-        }
       } catch (error) {
         console.error('Request failed', error);
       }
