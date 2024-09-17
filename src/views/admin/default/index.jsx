@@ -134,8 +134,7 @@ export default function UserReports() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();  // Parse the JSON response
-      setUsers(data); // Add the new user to the list
-      console.log("responce user data", data);
+      setUsers(data);
     } catch (err) {
       console.error(err.message);
     }
@@ -150,7 +149,6 @@ export default function UserReports() {
       });
   
       if (response.ok) {
-        console.log('User deleted successfully');
         fetchUsers();
       } else {
         console.error('Failed to delete User');
@@ -168,7 +166,6 @@ export default function UserReports() {
       }
       const data = await response.json();  // Parse the JSON response
       setStrategies(data);
-      console.log("responce data", data);
     } catch (err) {
       console.error(err.message);
     }
@@ -181,7 +178,6 @@ export default function UserReports() {
       });
   
       if (response.ok) {
-        console.log('Strategy deleted successfully');
         fetchStrategies();
       } else {
         console.error('Failed to delete strategy');
@@ -290,8 +286,32 @@ export default function UserReports() {
     console.log(`Showing strategies for user ${userIndex}`, userStrategies);
   };
 
-  const handleLinkStrategyToUser = () => {
-    if (selectedStrategyId !== null) {
+  const handleLinkStrategyToUser = async(userId, strategyid) => {
+
+    console.log("selected user id", userId);
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const data = await response.json();
+      console.log("linking", data);
+
+      if (response.ok) {
+        fetchUsers();
+      } else {
+        console.error('Error adding user:', data.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+    
+   /*  if (selectedStrategyId !== null) {
       const updatedUsers = users.map(user => ({
         ...user,
         strategyIds: user.strategyIds.includes(selectedStrategyId)
@@ -301,7 +321,7 @@ export default function UserReports() {
       setUsers(updatedUsers);
       setSelectedStrategyId(null);
       onLinkStrategyClose();
-    }
+    } */
   };
 
   const handleUnlinkStrategyFromUser = () => {
@@ -451,7 +471,7 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
-                  <MenuItem onClick={() => { setSelectedStrategyId(index); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                 </MenuList>
               </Menu>
@@ -505,7 +525,7 @@ export default function UserReports() {
                   <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
                     <Flex align="center" justify="space-between">
                       <Text fontWeight="bold">{strategy.name}</Text>
-                      <Button colorScheme="teal" onClick={handleLinkStrategyToUser}>
+                      <Button colorScheme="teal" onClick={ () => handleLinkStrategyToUser(selectedStrategyId, strategy.id)}>
                          {selectedStrategyIds.includes(strategy.id) ? 'Link' : 'Unlink'}
                       </Button>
                     </Flex>
@@ -525,7 +545,7 @@ export default function UserReports() {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="teal" onClick={handleLinkStrategyToUser}>
+            <Button colorScheme="teal" onClick={ () => handleLinkStrategyToUser(selectedStrategyIds, strategy.id)}>
               Link Strategies
             </Button>
           </ModalFooter>
