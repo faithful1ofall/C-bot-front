@@ -537,7 +537,6 @@ export default function UserReports() {
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                  <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                 </MenuList>
