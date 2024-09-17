@@ -127,6 +127,8 @@ export default function UserReports() {
     setCallNegTriggers(newCallNegTriggers);
   };
 
+
+
   const fetchUsers = async () => {
     try {        
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`); // Adjust the URL based on your backend setup
@@ -190,7 +192,22 @@ export default function UserReports() {
    useEffect(() => {
     fetchUsers();
     fetchStrategies();
+
+
   }, []);
+
+  const doesStrategyHaveLinkedUser = (strategyId, useridmatch) => {
+    const linked = users.some(user => user.strategyIds.includes(strategyId));
+    const userid = users.filter(user => user.strategyIds.includes(strategyId)).map(user => user.id);
+
+    if (userid[0] === useridmatch){
+      setIsLinked(true);
+    } else {
+      setIsLinked(false);
+    }
+
+    console.log("LInked", linked, userid[0]);
+  };
 
   const handleSubmit = async() => {
     const newStrategy = {
@@ -284,6 +301,22 @@ export default function UserReports() {
       (strategyId) => strategies.find((strategy) => strategy.id === strategyId)
     );
     console.log(`Showing strategies for user ${userIndex}`, userStrategies);
+  };
+
+  const fetchUsersLinkedToStrategy = async (strategyId) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${strategyId}/users`);
+      
+      if (!response.ok) {
+        throw new Error(`Error fetching users: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('Users linked to strategy:', data.users);
+      return data.users;
+    } catch (error) {
+      console.error('Error fetching users linked to strategy:', error);
+    }
   };
 
   const handleLinkStrategyToUser = async(userId, strategyid) => {
@@ -464,14 +497,14 @@ export default function UserReports() {
 
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
         {users.map((user, index) => (
-          <Box key={index} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+          <Box key={`${index}-${index}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
             <Flex align="center" justify="space-between">
               <Avatar src="https://bit.ly/dan-abramov" />
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => handleShowStrategies(index)}>Show Strategies</MenuItem>
-                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.name)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                 </MenuList>
               </Menu>
@@ -522,18 +555,21 @@ export default function UserReports() {
               <FormLabel>Select Strategies to Link</FormLabel>
               <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
                 {strategies.map((strategy) => (
-                  <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+                  <Box key={`${strategy.id}-${strategy.id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
                     <Flex align="center" justify="space-between">
                       <Text fontWeight="bold">{strategy.name}</Text>
-                      <Button colorScheme="teal" onClick={ () => handleLinkStrategyToUser(selectedStrategyId, strategy.id)}>
-                         {selectedStrategyIds.includes(strategy.id) ? 'Link' : 'Unlink'}
+                      <Button colorScheme="teal" onClick={() => {
+                        console.log('Selected Strategy IDs:', selectedStrategyIds.includes(strategy.id), strategy.id); // Log selected strategy IDs
+                        handleLinkStrategyToUser(selectedStrategyId, strategy.id);
+                      }}>
+                        {selectedStrategyIds.includes(strategy.id) ? 'Link' : 'Unlink'}
                       </Button>
                     </Flex>
                   </Box>
                 ))}
               </SimpleGrid>
 
-              {strategies.map((strategy) => (
+              {/* {strategies.map((strategy) => (
                 <Checkbox
                   key={strategy.id}
                   isChecked={selectedStrategyIds.includes(strategy.id)}
@@ -541,7 +577,7 @@ export default function UserReports() {
                 >
                   {strategy.name}
                 </Checkbox>
-              ))}
+              ))} */}
             </FormControl>
           </ModalBody>
           <ModalFooter>
