@@ -187,16 +187,10 @@ export default function UserReports() {
   }, []);
 
  const tradinghook = async() => {
-
-  const hooking = {
-      ticker: "BTCUSDT", 
-      price: "61000", 
-      time: "Testing", 
-      condition: "Long", 
-      customMessage: "Testing", 
+    const hooking = { 
       strategy: "test",
-  }
-   try {
+    };
+      try {
         const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`, {
           method: 'POST',
           headers: {
@@ -205,15 +199,19 @@ export default function UserReports() {
           body:  JSON.stringify(hooking),
         });
 
-        console.log("hooking", await response.json())
+        const data = await response.json();
+
+        console.log("hooking", data);
+      }  catch (error) {
+        console.error('Request failed', error);
       }
 
-    }
+  }
 
   const handleSubmit = async() => {
     const newStrategy = {
       name: newStrategyName,
-      tradingPairs,
+      tradingPair: tradingPairs,
       tradeDirection,
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
@@ -314,7 +312,7 @@ export default function UserReports() {
       setOriginalStrategy(data1);
 
       setNewStrategyName(data1.name);
-      setTradingPairs(data1.tradingPairs);
+      setTradingPairs(data1.tradingPair);
       setTradeDirection(data1.tradeDirection);
       setTimeFrame(data1.timeFrame);
       setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
@@ -514,7 +512,7 @@ export default function UserReports() {
         <Button
           leftIcon={<Icon as={MdPerson} />}
           colorScheme="teal"
-          onClick={}
+          onClick={tradinghook}
         >
           Test Webhook
         </Button>
@@ -656,7 +654,7 @@ export default function UserReports() {
             </FormControl>
 
             <FormControl mb="4">
-              <FormLabel>Trading Pairs (comma-separated)</FormLabel>
+              <FormLabel>Trading Pair</FormLabel>
               <Input value={tradingPairs} onChange={(e) => setTradingPairs(e.target.value)} />
             </FormControl>
 
