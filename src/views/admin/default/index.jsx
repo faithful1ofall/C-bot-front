@@ -661,8 +661,8 @@ export default function UserReports() {
             <FormControl mb="4">
               <FormLabel>Trade Direction</FormLabel>
               <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
-                <option value="Buy">Long</option>
-                <option value="Sell">Short</option>
+                <option value="Buy">Buy</option>
+                <option value="Sell">Sell</option>
               </Select>
             </FormControl>
 
