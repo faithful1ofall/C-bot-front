@@ -705,35 +705,14 @@ export default function UserReports() {
 
                 <FormControl mb="4">
                   <FormLabel>Call {index + 1} Funds %</FormLabel>
-                  <NumberInput min={0} max={100} value={callFunds[index] || 0} onChange={(valueString) => handleCallFundsChange(index, parseFloat(valueString))}>
+                  <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
                     <NumberInputField />
                   </NumberInput>
-                </FormControl>
-
-               
-
-                {/* {index === 0 && (
-                  <FormControl mb="4">
-                    <FormLabel>Call {index + 1} Funds %</FormLabel>
-                    <NumberInput min={0} max={100} value={call1Funds || 0} onChange={(valueString) => handleCall1FundsChange(parseFloat(valueString))}>
-                      <NumberInputField />
-                    </NumberInput>
-                  </FormControl>
-                )}
-
-                {index === 0 && (
-                  <FormControl mb="4">
-                    <FormLabel>Call {index + 1} Funds %</FormLabel>
-                    <NumberInput min={0} max={100} value={call1TP || 0} onChange={(valueString) => handleCall1TPChange(parseFloat(valueString))}>
-                      <NumberInputField />
-                    </NumberInput>
-                  </FormControl>
-                )} */}
-
+                </FormControl>               
 
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} TP%</FormLabel>
-                    <NumberInput min={0} max={100} value={callTPs[index] || 0} onChange={(valueString) => handleCallTPChange(index, parseFloat(valueString))}>
+                    <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
@@ -743,7 +722,7 @@ export default function UserReports() {
                 {index > 0 && negativeCandleTrigger > 0 && ( // Show only if index > 0, i.e., Call 2 or later
                   <FormControl mb="4">
                     <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
-                    <NumberInput min={-100} max={0} value={callNegTriggers[index] || 0} onChange={(valueString) => handleCallNegTriggerChange(index, parseFloat(valueString))}>
+                    <NumberInput min={-100} max={0} value={callNegTriggers[index] || ""} onChange={(valueString) => handleCallNegTriggerChange(index, isNaN(valueString) ? 0 : valueString)}>
                       <NumberInputField />
                     </NumberInput>
                   </FormControl>
@@ -759,21 +738,21 @@ export default function UserReports() {
             ))}
               <FormControl mb="4">
                 <FormLabel>Profit Lock %</FormLabel>
-                <NumberInput value={profitLock} onChange={(valueString) => setProfitLock(parseFloat(valueString))}>
+                <NumberInput value={profitLock || ""} onChange={(valueString) => setProfitLock(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
 
               <FormControl mb="4">
                 <FormLabel>Stop Loss % (SL%)</FormLabel>
-                <NumberInput value={stopLoss} onChange={(valueString) => setStopLoss(parseFloat(valueString))}>
+                <NumberInput value={stopLoss || ""} onChange={(valueString) => setStopLoss(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
 
               <FormControl mb="4">
                 <FormLabel>Take Profit % (TP%)</FormLabel>
-                <NumberInput value={takeProfit} onChange={(valueString) => setTakeProfit(parseFloat(valueString))}>
+                <NumberInput value={takeProfit || ""} onChange={(valueString) => setTakeProfit(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
@@ -800,14 +779,14 @@ export default function UserReports() {
 
               <FormControl mb="4">
                 <FormLabel>Max Tradable Amount</FormLabel>
-                <NumberInput value={maxTradableAmount} onChange={(valueString) => setMaxTradableAmount(parseFloat(valueString))}>
+                <NumberInput value={maxTradableAmount || ""} onChange={(valueString) => setMaxTradableAmount(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
 
               <FormControl mb="4">
                 <FormLabel>Leverage</FormLabel>
-                <NumberInput min={1} max={100} value={leverage} onChange={(valueString) => setLeverage(parseInt(valueString))}>
+                <NumberInput min={1} max={100} value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
