@@ -713,7 +713,7 @@ export default function UserReports() {
 
             <FormControl mb="4">
               <Flex alignItems="center">
-                <FormLabel>Negative Candle Change Trigger (%)</FormLabel>
+                <FormLabel>Negative Value Trigger (%)</FormLabel>
                 <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
               </Flex>
               {isNegativeCandleEnabled && (
@@ -724,8 +724,8 @@ export default function UserReports() {
             </FormControl>
 
             <FormControl mb="4">
-              <FormLabel>Grid Calls (1-20)</FormLabel>
-              <NumberInput min={1} max={20} value={gridCalls || 0} onChange={(valueString) => setGridCalls(parseInt(valueString))}>
+              <FormLabel>Grid Calls</FormLabel>
+              <NumberInput value={gridCalls || ""} onChange={(valueString) => setGridCalls(parseInt(valueString))}>
                 <NumberInputField />
               </NumberInput>
             </FormControl>    
