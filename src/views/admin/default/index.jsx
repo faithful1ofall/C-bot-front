@@ -41,6 +41,7 @@ import {
   MdMoreVert,
 } from "react-icons/md";
 import GeneralExchangeSettingsModal from './components/usersettings';
+import TransferModal from './components/Transfer';
 
 
 export default function UserReports() {
@@ -61,6 +62,7 @@ export default function UserReports() {
   });
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
+  const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
   const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
   const { isOpen: isLinkStrategyOpen, onOpen: onLinkStrategyOpen, onClose: onLinkStrategyClose } = useDisclosure();
 
@@ -603,7 +605,9 @@ export default function UserReports() {
                 <MenuList>
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => setIsGeneralSettingsOpen(true) }>User/Exchange Settings</MenuItem>
+                  <MenuItem onClick={() => onTransferOpen() }>Transfer Funds</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
+                  
                 </MenuList>
               </Menu>
             </Flex>
@@ -614,6 +618,9 @@ export default function UserReports() {
           </Box>
         ))}
       </SimpleGrid>
+
+
+      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} />
 
       <Button
           mt="40px"
