@@ -16,7 +16,6 @@ import {
   SliderThumb,
   Checkbox,
   CheckboxGroup,
-  Button,
   Text,
   RadioGroup,
   Radio,

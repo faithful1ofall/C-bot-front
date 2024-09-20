@@ -315,6 +315,30 @@ export default function UserReports() {
     }
   };
 
+  const handleCreate = () => {
+    // Clear all the form values by resetting them to their initial/default state
+    setOriginalStrategy(null); // No original strategy for creation
+    setNewStrategyName(''); // Clear strategy name
+    setTradingPairs([]); // Empty array for trading pairs
+    setTradeDirection(''); // Clear trade direction
+    setTimeFrame(''); // Clear time frame
+    setNegativeCandleTrigger(null); // Reset to null or default value
+    setGridCalls([]); // Clear grid calls
+  
+    setCallFunds([]); // Clear call funds
+    setCallTPs([]); // Clear call take-profits
+    setCallNegTriggers([]); // Clear call negative triggers
+  
+    setProfitLock(''); // Clear profit lock
+    setStopLoss(''); // Clear stop loss
+    setTakeProfit(''); // Clear take profit
+    setOrderType(''); // Clear order type
+    setIsDelayEnabled(false); // Reset delay enabled flag to false
+    setMaxTradableAmount(''); // Clear max tradable amount
+    setLeverage(''); // Clear leverage
+  };
+  
+
 
   const handleEdit = async(editid) => {
     try {
@@ -595,7 +619,7 @@ export default function UserReports() {
           mt="40px"
           leftIcon={<Icon as={MdAddAlert} />}
           colorScheme="blue"
-          onClick={onCreateStrategyOpen}
+          onClick={() => {SetEdit(""); handleCreate(); onCreateStrategyOpen();}}
         >
           Create Strategy
         </Button>
