@@ -713,6 +713,11 @@ export default function UserReports() {
                 value={tradingPairs || ''}
                 onChange={(e) => setTradingPairs(e.target.value)}
               >
+              {settings.selectedTradingPairs.map((pair) => (
+                <option key={pair} value={pair}>
+                  {pair}
+                </option>
+              ))}
                 <option value="BTCUSDT">BTC/USDT</option>
                 <option value="ETHUSDT">ETH/USDT</option>
                 <option value="BNBUSDT">BNB/USDT</option>
