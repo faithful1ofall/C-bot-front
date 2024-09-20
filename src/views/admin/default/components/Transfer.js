@@ -13,12 +13,15 @@ import {
   Input,
   Select,
   Text,
+  useToast,
 } from '@chakra-ui/react';
+
 
 const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) => {
   const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
   const [transferAmount, setTransferAmount] = useState();
   const [asset, setAsset] = useState('USDT');
+  const toast = useToast();
 
   const handleTransfer = async () => {
     try {
@@ -37,6 +40,14 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
       } */
 
       const data = await response.json();
+      // Show success toast popup
+      toast({
+        title: 'Transfer Successful',
+        description: `You have successfully transferred ${transferAmount} ${asset}.`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
       console.log('Transfer successful:', data);
       await fetchAccountinfo(userid);
       // Reset modal state after success
