@@ -65,7 +65,7 @@ export default function UserReports() {
 
 
   // new parameters
-  const [tradingViewLink, setTradingViewLink] = useState('');
+  
   const [tradingPairs, setTradingPairs] = useState('');
   const [tradeDirection, setTradeDirection] = useState('Both');
   const [timeFrame, setTimeFrame] = useState('1 Minute');
@@ -89,6 +89,8 @@ export default function UserReports() {
 
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
   const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
+
+  const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
 
   const handleCallFundsChange = (index, value) => {
     const newCallFunds = [...callFunds];
@@ -650,32 +652,50 @@ export default function UserReports() {
 
             <FormControl mb="4">
               <FormLabel>TradingView Link</FormLabel>
-              <Input value={tradingViewLink} onChange={(e) => setTradingViewLink(e.target.value)} />
+              <Input value={tradingViewLink} isReadOnly />
             </FormControl>
 
             <FormControl mb="4">
               <FormLabel>Trading Pair</FormLabel>
-              <Input value={tradingPairs} onChange={(e) => setTradingPairs(e.target.value)} />
+              <Select
+                value={tradingPairs || ''}
+                onChange={(e) => setTradingPairs(e.target.value)}
+              >
+                <option value="BTCUSDT">BTC/USDT</option>
+                <option value="ETHUSDT">ETH/USDT</option>
+                <option value="BNBUSDT">BNB/USDT</option>
+                <option value="XRPUSDT">XRP/USDT</option>
+                <option value="ADAUSDT">ADA/USDT</option>
+                <option value="SOLUSDT">SOL/USDT</option>
+                <option value="DOTUSDT">DOT/USDT</option>
+                <option value="LTCUSDT">LTC/USDT</option>
+                <option value="AVAXUSDT">AVAX/USDT</option>
+                <option value="MATICUSDT">MATIC/USDT</option>
+                <option value="DOGEUSDT">DOGE/USDT</option>
+                <option value="SHIBUSDT">SHIBA/USDT</option>
+                <option value="ATOMUSDT">ATOM/USDT</option>
+                <option value="XLMUSDT">XLM/USDT</option>
+              </Select>
             </FormControl>
 
             <FormControl mb="4">
               <FormLabel>Trade Direction</FormLabel>
               <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
-                <option value="Buy">Buy</option>
-                <option value="Sell">Sell</option>
+                <option value="Buy">Long/Buy</option>
+                <option value="Sell">Short/Sell</option>
               </Select>
             </FormControl>
 
             <FormControl mb="4">
               <FormLabel>Time Frame</FormLabel>
               <Select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
-                <option value="1 Minute">1 Minute</option>
-                <option value="5 Minute">5 Minute</option>
-                <option value="15 Minute">15 Minute</option>
-                <option value="30 Minute">30 Minute</option>
-                <option value="1 Hour">1 Hour</option>
-                <option value="4 Hour">4 Hour</option>
-                <option value="12 Hour">12 Hour</option>
+                <option value="1m">1 Minute</option>
+                <option value="5m">5 Minute</option>
+                <option value="15m">15 Minute</option>
+                <option value="30m">30 Minute</option>
+                <option value="1h">1 Hour</option>
+                <option value="4h">4 Hour</option>
+                <option value="12h">12 Hour</option>
               </Select>
             </FormControl>
 
@@ -750,12 +770,12 @@ export default function UserReports() {
                 </NumberInput>
               </FormControl>
 
-              <FormControl mb="4">
+             {/*  <FormControl mb="4">
                 <FormLabel>Take Profit % (TP%)</FormLabel>
                 <NumberInput value={takeProfit || ""} onChange={(valueString) => setTakeProfit(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
-              </FormControl>
+              </FormControl> */}
 
               <FormControl mb="4">
                 <FormLabel>Order Type (for SL/TP)</FormLabel>
