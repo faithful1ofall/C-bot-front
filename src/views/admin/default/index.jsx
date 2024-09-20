@@ -44,9 +44,23 @@ import {
   MdAddAlert,
   MdMoreVert,
 } from "react-icons/md";
+import GeneralExchangeSettingsModal from './components/usersettings';
 
 
 export default function UserReports() {
+
+  const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState({
+    selectedTradingPair: 'BTC/USDT',
+    futuresBalance: 1000,
+    minBalance: 500,
+    maxBalance: 5000,
+    leverage: 10,
+    hedgeMode: 'oneWay',
+    marginMode: 'cross',
+    assetMode: 'single',
+    tradingPairs: ['BTC/USDT', 'ETH/USDT', 'BNB/USDT']
+  });
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
@@ -110,6 +124,11 @@ export default function UserReports() {
     const newCallTPs = [...callTPs];
     newCallTPs[index] = value;
     setCallTPs(newCallTPs);
+  };
+
+  const handleStickSettings = () => {
+    console.log('Applying the defined settings:', settings);
+    // Add logic to stick the settings for the bot
   };
 
 
@@ -520,6 +539,14 @@ export default function UserReports() {
         </Button>
       </Flex>
 
+      <GeneralExchangeSettingsModal
+        isOpen={isGeneralSettingsOpen}
+        onClose={() => setIsGeneralSettingsOpen(false)}
+        settings={settings}
+        setSettings={setSettings}
+        handleStickSettings={handleStickSettings}
+      />
+
      {/* Add User Modal */}
      <Modal isOpen={isUserOpen} onClose={onUserClose}>
         <ModalOverlay />
@@ -553,6 +580,7 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => setIsGeneralSettingsOpen(true) }>User/Exchange Settings</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                 </MenuList>
               </Menu>
@@ -616,6 +644,8 @@ export default function UserReports() {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+
 
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
