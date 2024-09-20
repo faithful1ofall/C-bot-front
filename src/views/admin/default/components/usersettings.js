@@ -30,9 +30,6 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
           <FormControl mt="4">
             <FormLabel>Futures Account Type</FormLabel>
             <Text>Default: USD-M futures</Text>
-            <Button mt="2" colorScheme="teal" onClick={() => setSettings({ ...settings, accountType: 'USD-M' })}>
-              Reset to USD-M Futures
-            </Button>
           </FormControl>
 
           {/* Trading Pair Selection */}
@@ -67,11 +64,11 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
             <Select value={leverage} onChange={(e) => setSettings({ ...settings, leverage: e.target.value })}>
               {[5, 10, 20, 50, 100].map((lev) => (
                 <option key={lev} value={lev}>
-                  {lev}x
+                  x
                 </option>
               ))}
             </Select>
-            <Text mt="2">Default leverage is 10x.</Text>
+            <Text mt="2">Default leverage is {leverage}x.</Text>
           </FormControl>
 
           {/* Hedge Mode / One Way Mode */}
@@ -83,7 +80,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
                 <Radio value="hedge">Hedge Mode</Radio>
               </Stack>
             </RadioGroup>
-            <Text mt="2">Default mode is One Way.</Text>
+            <Text mt="2">Default mode is {value == 'oneWay' ? 'One Way' : 'Hedge Mode'}.</Text>
           </FormControl>
 
           {/* Cross/Isolated Mode */}
