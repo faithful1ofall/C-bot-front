@@ -444,7 +444,7 @@ export default function UserReports() {
         columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
         gap='20px'
         mb='20px'>
-        <MiniStatistics
+        {/* <MiniStatistics
           startContent={
             <IconBox
               w='56px'
@@ -493,7 +493,7 @@ export default function UserReports() {
           }
           name='Your balance'
           value='$1,000'
-        />
+        /> */}
         <MiniStatistics
           startContent={
             <IconBox
