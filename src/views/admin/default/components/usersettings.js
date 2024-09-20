@@ -80,7 +80,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
                 <Radio value="hedge">Hedge Mode</Radio>
               </Stack>
             </RadioGroup>
-            <Text mt="2">Default mode is {value == 'oneWay' ? 'One Way' : 'Hedge Mode'}.</Text>
+            <Text mt="2">Default mode is {hedgeMode == 'oneWay' ? 'One Way' : 'Hedge Mode'}.</Text>
           </FormControl>
 
           {/* Cross/Isolated Mode */}
