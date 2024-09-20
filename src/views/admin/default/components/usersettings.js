@@ -9,6 +9,13 @@ import {
   FormControl,
   FormLabel,
   Select,
+  Slider,
+  SliderMark,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Checkbox,
+  CheckboxGroup,
   Button,
   Text,
   RadioGroup,
@@ -17,7 +24,7 @@ import {
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
 const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, handleStickSettings }) => {
-  const { selectedTradingPair, futuresBalance, minBalance, maxBalance, leverage, hedgeMode, marginMode, assetMode, tradingPairs } = settings;
+  const { selectedTradingPair, futuresBalance, minBalance, maxBalance, leverage, hedgeMode, marginMode, assetMode, tradingPairs, selectedTradingPairs } = settings;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -36,7 +43,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
           <FormControl mt="4">
             <FormLabel>Select Trading Pair</FormLabel>
             <Select value={selectedTradingPair} onChange={(e) => setSettings({ ...settings, selectedTradingPair: e.target.value })}>
-              {tradingPairs.map((pair) => (
+              {selectedTradingPairs.map((pair) => (
                 <option key={pair} value={pair}>
                   {pair}
                 </option>
@@ -44,6 +51,24 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
             </Select>
             <Text mt="2">Default trading pair is set in bot settings.</Text>
           </FormControl>
+
+          <FormControl mt="4">
+            <FormLabel>Select Trading Pairs</FormLabel>
+            
+            {/* Multiple selection of trading pairs using checkboxes */}
+            <CheckboxGroup 
+                value={selectedTradingPairs} 
+                onChange={(selectedPairs) => setSettings({ ...settings, selectedTradingPairs: selectedPairs })}>
+                {tradingPairs.map((pair) => (
+                <Checkbox key={pair} value={pair}>
+                    {pair}
+                </Checkbox>
+                ))}
+            </CheckboxGroup>
+
+            <Text mt="2">Default trading pairs are set in bot settings.</Text>
+           </FormControl>
+
 
           {/* User Account Balance */}
           <FormControl mt="4">
@@ -61,15 +86,35 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
           <FormControl mt="4">
             <FormLabel>Leverage Settings</FormLabel>
             <Text>Current Leverage: {leverage}x</Text>
-            <Select value={leverage} onChange={(e) => setSettings({ ...settings, leverage: e.target.value })}>
-              {[5, 10, 20, 50, 100].map((lev) => (
-                <option key={lev} value={lev}>
-                  {lev}x
-                </option>
-              ))}
-            </Select>
+            
+            {/* Leverage Slider */}
+            <Slider 
+                value={leverage} 
+                onChange={(val) => setSettings({ ...settings, leverage: val })} 
+                min={1} 
+                max={50} 
+                step={1}
+            >
+                {/* Checkpoints at 10x, 25x, 30x */}
+                <SliderMark value={10} mt="1" ml="-2.5" fontSize="sm">
+                10x
+                </SliderMark>
+                <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
+                25x
+                </SliderMark>
+                <SliderMark value={30} mt="1" ml="-2.5" fontSize="sm">
+                30x
+                </SliderMark>
+
+                <SliderTrack>
+                <SliderFilledTrack />
+                </SliderTrack>
+                <SliderThumb boxSize={6} />
+            </Slider>
+            
             <Text mt="2">Default leverage is {leverage}x.</Text>
-          </FormControl>
+            </FormControl>
+
 
           {/* Hedge Mode / One Way Mode */}
           <FormControl mt="4">
@@ -108,13 +153,15 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
 
           {/* Stick Settings Button */}
           <FormControl mt="6">
-            <Button colorScheme="green" onClick={handleStickSettings}>
-              Stick Settings
-            </Button>
+            <Checkbox 
+                isChecked={settings.stickSettings} 
+                onChange={(e) => setSettings({ ...settings, stickSettings: e.target.checked })}>
+                Stick Settings
+            </Checkbox>
             <Text mt="2">
-              The bot ensures these settings are applied before any trade execution.
+                The bot ensures these settings are applied before any trade execution.
             </Text>
-          </FormControl>
+            </FormControl>
         </ModalBody>
       </ModalContent>
     </Modal>

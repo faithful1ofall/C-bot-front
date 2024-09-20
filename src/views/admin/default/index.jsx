@@ -55,7 +55,9 @@ export default function UserReports() {
     hedgeMode: 'oneWay',
     marginMode: 'cross',
     assetMode: 'single',
-    tradingPairs: ['BTC/USDT', 'ETH/USDT', 'BNB/USDT']
+    tradingPairs: ['BTC/USDT', 'ETH/USDT', 'BNB/USDT'],
+    selectedTradingPairs: [],
+    stickSettings: false
   });
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
