@@ -619,7 +619,7 @@ export default function UserReports() {
       </SimpleGrid>
 
 
-      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} />
+      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo}/>
 
       <Button
           mt="40px"

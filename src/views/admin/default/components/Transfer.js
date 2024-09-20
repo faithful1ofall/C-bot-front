@@ -15,7 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-const TransferModal = ({ isOpen, onClose, balance, userid }) => {
+const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) => {
   const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
   const [transferAmount, setTransferAmount] = useState();
   const [asset, setAsset] = useState('USDT');
@@ -38,10 +38,10 @@ const TransferModal = ({ isOpen, onClose, balance, userid }) => {
 
       const data = await response.json();
       console.log('Transfer successful:', data);
+      await fetchAccountinfo(userid);
       // Reset modal state after success
       setTransferAmount(0);
       setTransferDirection('');
-      onClose();
     } catch (error) {
       console.error('Transfer error:', error);
     }
