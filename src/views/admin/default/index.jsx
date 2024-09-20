@@ -46,20 +46,10 @@ import TransferModal from './components/Transfer';
 
 export default function UserReports() {
 
+  const selectedTradingPairs = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT']
+
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
-  const [settings, setSettings] = useState({
-    selectedTradingPair: 'BTC/USDT',
-    futuresBalance: 1000,
-    minBalance: 500,
-    maxBalance: 5000,
-    leverage: 10,
-    hedgeMode: 'oneWay',
-    marginMode: 'cross',
-    assetMode: 'single',
-    tradingPairs: ['BTC/USDT', 'ETH/USDT', 'BNB/USDT'],
-    selectedTradingPairs: [],
-    stickSettings: false
-  });
+
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
@@ -76,6 +66,8 @@ export default function UserReports() {
   const [strategies, setStrategies] = useState([]);
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
+  const [transferuserid, setTransferUserId] = useState('');
+  
 
 
   // new parameters
@@ -101,6 +93,7 @@ export default function UserReports() {
   const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill()); // Negative trigger percentage for each call
 
 
+  const [accountinfo, setAccountinfo] = useState();
   const checkBalance = strategies?.checkBalance || false; // Default value from strategy
   const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
 
@@ -126,16 +119,24 @@ export default function UserReports() {
     setCallTPs(newCallTPs);
   };
 
-  const handleStickSettings = () => {
-    console.log('Applying the defined settings:', settings);
-    // Add logic to stick the settings for the bot
-  };
-
 
   const handleCallNegTriggerChange = (index, value) => {
     const newCallNegTriggers = [...callNegTriggers];
     newCallNegTriggers[index] = value;
     setCallNegTriggers(newCallNegTriggers);
+  };
+
+  const fetchAccountinfo = async (accuserid) => {
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}`); // Adjust the URL based on your backend setup
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();  // Parse the JSON response
+      setAccountinfo(data);
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
 
@@ -351,8 +352,6 @@ export default function UserReports() {
         throw new Error(`HTTP error! status: ${response1.status}`);
       }
       const data1 = await response1.json(); 
-      
-      console.log("edit data", data1);
 
       setOriginalStrategy(data1);
 
@@ -565,10 +564,10 @@ export default function UserReports() {
 
       <GeneralExchangeSettingsModal
         isOpen={isGeneralSettingsOpen}
-        onClose={() => setIsGeneralSettingsOpen(false)}
-        settings={settings}
-        setSettings={setSettings}
-        handleStickSettings={handleStickSettings}
+        onClose={() => {setIsGeneralSettingsOpen(false); setTransferUserId("");}}
+        userid={transferuserid}
+        balance={accountinfo}
+        tradingPairs={selectedTradingPairs}
       />
 
      {/* Add User Modal */}
@@ -604,8 +603,8 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => setIsGeneralSettingsOpen(true) }>User/Exchange Settings</MenuItem>
-                  <MenuItem onClick={() => onTransferOpen() }>Transfer Funds</MenuItem>
+                  <MenuItem onClick={() => { setTransferUserId(user.id); setIsGeneralSettingsOpen(true);}}>User/Exchange Settings</MenuItem>
+                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen(); }}>Transfer Funds</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                   
                 </MenuList>
@@ -620,7 +619,7 @@ export default function UserReports() {
       </SimpleGrid>
 
 
-      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={checkBalance} />
+      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} />
 
       <Button
           mt="40px"
@@ -720,25 +719,11 @@ export default function UserReports() {
                 value={tradingPairs || ''}
                 onChange={(e) => setTradingPairs(e.target.value)}
               >
-              {settings.selectedTradingPairs.map((pair) => (
+              {selectedTradingPairs.map((pair) => (
                 <option key={pair} value={pair}>
                   {pair}
                 </option>
               ))}
-                <option value="BTCUSDT">BTC/USDT</option>
-                <option value="ETHUSDT">ETH/USDT</option>
-                <option value="BNBUSDT">BNB/USDT</option>
-                <option value="XRPUSDT">XRP/USDT</option>
-                <option value="ADAUSDT">ADA/USDT</option>
-                <option value="SOLUSDT">SOL/USDT</option>
-                <option value="DOTUSDT">DOT/USDT</option>
-                <option value="LTCUSDT">LTC/USDT</option>
-                <option value="AVAXUSDT">AVAX/USDT</option>
-                <option value="MATICUSDT">MATIC/USDT</option>
-                <option value="DOGEUSDT">DOGE/USDT</option>
-                <option value="SHIBUSDT">SHIBA/USDT</option>
-                <option value="ATOMUSDT">ATOM/USDT</option>
-                <option value="XLMUSDT">XLM/USDT</option>
               </Select>
             </FormControl>
 
@@ -795,34 +780,53 @@ export default function UserReports() {
             </FormControl>    
 
             {/* Loop through each call and display grouped inputs */}
-            {Array.from({ length: gridCalls || 0 }, (_, index) => (
+            {Array.from({ length: gridCalls + negativeCandleTrigger || 0 }, (_, index) => (
               <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
                 <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>
 
-                <FormControl mb="4">
-                  <FormLabel>Call {index + 1} Funds %</FormLabel>
-                  <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
-                    <NumberInputField />
-                  </NumberInput>
-                </FormControl>               
+                {index === 0  && (
+                  <Box mb="4" key={index}>
+                    <FormControl mb="4">
+                      <FormLabel>Call {index + 1} Funds %</FormLabel>
+                      <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
 
-                  <FormControl mb="4">
-                    <FormLabel>Call {index + 1} TP%</FormLabel>
-                    <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
-                      <NumberInputField />
-                    </NumberInput>
-                  </FormControl>
-                  
+                    <FormControl mb="4">
+                      <FormLabel>Call {index + 1} TP%</FormLabel>
+                      <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+                  </Box>
+                 )}                
 
-                {/* Call Negative Trigger */}
-                {index > 0 && negativeCandleTrigger > 0 && ( // Show only if index > 0, i.e., Call 2 or later
-                  <FormControl mb="4">
-                    <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
-                    <NumberInput min={-100} max={0} value={callNegTriggers[index] || ""} onChange={(valueString) => handleCallNegTriggerChange(index, isNaN(valueString) ? 0 : valueString)}>
-                      <NumberInputField />
-                    </NumberInput>
-                  </FormControl>
-                )}
+
+                  {index > 0 && negativeCandleTrigger > 0 && (
+                    <Box mb="4" key={index}>
+                      <FormControl mb="4">
+                        <FormLabel>Call {index + 1} Funds %</FormLabel>
+                        <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
+                          <NumberInputField />
+                        </NumberInput>
+                      </FormControl>
+
+                      <FormControl mb="4">
+                        <FormLabel>Call {index + 1} TP%</FormLabel>
+                        <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
+                          <NumberInputField />
+                        </NumberInput>
+                      </FormControl>
+
+                      <FormControl mb="4">
+                        <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
+                        <NumberInput min={-100} max={0} value={callNegTriggers[index] || ""} onChange={(valueString) => handleCallNegTriggerChange(index, isNaN(valueString) ? 0 : valueString)}>
+                          <NumberInputField />
+                        </NumberInput>
+                      </FormControl>
+                    </Box>
+                  )}
 
                 {index === 0 && (
                   <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>

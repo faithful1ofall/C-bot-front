@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -24,8 +24,66 @@ import {
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
-const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, handleSave }) => {
-  const { selectedTradingPair, futuresBalance, minBalance, maxBalance, leverage, hedgeMode, marginMode, assetMode, tradingPairs, selectedTradingPairs } = settings;
+const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid, tradingPairs }) => {
+  
+  const [settings, setSettings] = useState({});
+  
+  const [originalsettings, setOriginalSettings] = useState(null);
+
+  const { selectedTradingPair, leverage, stickSettings, hedgeMode, assetMode, selectedTradingPairs } = settings;
+
+  const fetchSettings = async (useridset) => {
+    if(useridset){
+      try {        
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useridset}/settings`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setSettings(data.settings);
+        setOriginalSettings(data.settings);
+      } catch (err) {
+        console.error(err.message);
+      }
+    }    
+  };
+
+  useEffect(() => {
+    fetchSettings(userid);
+  }, [userid]);
+
+  const handleSave = async () => {
+
+    const updatedFields = {};
+
+    console.log("COMPARE",settings, originalsettings);
+
+    Object.keys(settings).forEach((key) => {
+      if (settings[key] !== originalsettings[key]) {
+        updatedFields[key] = settings[key];
+      }
+    });
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userid}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFields),
+      });
+
+      if (!response.ok) {
+        throw new Error('Settings save failed');
+      }
+
+      const data = await response.json();
+      console.log('Settings save successful:', data);
+      // Reset modal state after success
+      onClose();
+    } catch (error) {
+      console.error('Settings error:', error);
+    }
+  };
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -47,7 +105,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
             <CheckboxGroup 
                 value={selectedTradingPairs} 
                 onChange={(selectedPairs) => setSettings({ ...settings, selectedTradingPairs: selectedPairs })}>
-                {tradingPairs.map((pair) => (
+                {tradingPairs?.map((pair) => (
                 <Checkbox key={pair} value={pair}>
                     {pair}
                 </Checkbox>
@@ -58,7 +116,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
            <FormControl mt="4">
             <FormLabel>Select Default Trading Pair</FormLabel>
             <Select value={selectedTradingPair} onChange={(e) => setSettings({ ...settings, selectedTradingPair: e.target.value })}>
-              {selectedTradingPairs.map((pair) => (
+              {selectedTradingPairs?.map((pair) => (
                 <option key={pair} value={pair}>
                   {pair}
                 </option>
@@ -71,13 +129,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
           {/* User Account Balance */}
           <FormControl mt="4">
             <FormLabel>User Account Balance</FormLabel>
-            <Text>Available balance in Futures Account: {futuresBalance} USD</Text>
-            <Text>Min/Max balance check: {minBalance} USD - {maxBalance} USD</Text>
-            {futuresBalance < minBalance || futuresBalance > maxBalance ? (
-              <Text color="red.500" mt="2">Balance is outside the defined range.</Text>
-            ) : (
-              <Text color="green.500" mt="2">Balance is within the defined range.</Text>
-            )}
+            <Text>Available balance in Futures Account (USDT): {balance?.balance.availableBalance || 0} USDT</Text>
           </FormControl>
 
           {/* Leverage Settings */}
@@ -119,15 +171,15 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
             <FormLabel>Hedge Mode/One Way Mode</FormLabel>
             <RadioGroup onChange={(value) => setSettings({ ...settings, hedgeMode: value })} value={hedgeMode}>
               <Stack direction="row">
-                <Radio value="oneWay">One Way</Radio>
-                <Radio value="hedge">Hedge Mode</Radio>
+                <Radio value="false">One Way</Radio>
+                <Radio value="true">Hedge Mode</Radio>
               </Stack>
             </RadioGroup>
-            <Text mt="2">Default mode is {hedgeMode === 'oneWay' ? 'One Way' : 'Hedge Mode'}.</Text>
+            <Text mt="2">Default mode is {hedgeMode === 'false' ? 'One Way' : 'Hedge Mode'}.</Text>
           </FormControl>
 
           {/* Cross/Isolated Mode */}
-          <FormControl mt="4">
+          {/* <FormControl mt="4">
             <FormLabel>Cross/Isolated Mode</FormLabel>
             <RadioGroup onChange={(value) => setSettings({ ...settings, marginMode: value })} value={marginMode}>
               <Stack direction="row">
@@ -135,15 +187,15 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
                 <Radio value="isolated">Isolated</Radio>
               </Stack>
             </RadioGroup>
-          </FormControl>
+          </FormControl> */}
 
           {/* Single Asset / Multi Asset Mode */}
           <FormControl mt="4">
             <FormLabel>Single Asset / Multi Asset Mode</FormLabel>
             <RadioGroup onChange={(value) => setSettings({ ...settings, assetMode: value })} value={assetMode}>
               <Stack direction="row">
-                <Radio value="single">Single Asset Mode (SAM)</Radio>
-                <Radio value="multi">Multi Asset Mode (MAM)</Radio>
+                <Radio value="false">Single Asset Mode (SAM)</Radio>
+                <Radio value="true">Multi Asset Mode (MAM)</Radio>
               </Stack>
             </RadioGroup>
             <Text mt="2">Default is Single Asset Mode (SAM).</Text>
@@ -152,7 +204,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
           {/* Stick Settings Button */}
           <FormControl mt="6">
             <Checkbox 
-                isChecked={settings.stickSettings} 
+                isChecked={stickSettings} 
                 onChange={(e) => setSettings({ ...settings, stickSettings: e.target.checked })}>
                 Stick Settings
             </Checkbox>

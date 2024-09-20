@@ -15,19 +15,20 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-const TransferModal = ({ isOpen, onClose, balance }) => {
+const TransferModal = ({ isOpen, onClose, balance, userid }) => {
   const [transferDirection, setTransferDirection] = useState('MAIN_UMFUTURE'); // Default direction
   const [transferAmount, setTransferAmount] = useState('');
   const [asset, setAsset] = useState('');
 
   const handleTransfer = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${userid}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          direction: transferDirection,
-          amount: transferAmount,
+            transfertype: transferDirection,
+            asset: asset,
+            amount: transferAmount,
         }),
       });
 
@@ -75,7 +76,7 @@ const TransferModal = ({ isOpen, onClose, balance }) => {
                 onChange={(e) => setAsset(e.target.value)}
                 >
                 <option value="USDT">USDT</option>
-                <option value="BUSD">BUSD</option>
+                <option value="BUSD">USDC</option>
                 </Select>
           </FormControl>
 
@@ -90,7 +91,13 @@ const TransferModal = ({ isOpen, onClose, balance }) => {
           </FormControl>
 
           <Text mt={4}>
-            Available Balance: {balance}
+            Futures Available Balance (USDT): {balance?.balance.availableBalance || 0}
+          </Text>
+          <Text mt={4}>
+            Spot Available Balance (USDT): {balance?.balance.spotavailableBalance || 0}
+          </Text>
+          <Text mt={4}>
+            Funding Available Balance (USDT): {balance?.balance.fundingBalance || 0}
           </Text>
         </ModalBody>
 
