@@ -6,6 +6,7 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  ModalFooter,
   FormControl,
   FormLabel,
   Select,
@@ -14,6 +15,7 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Button,
   Checkbox,
   CheckboxGroup,
   Text,
@@ -22,7 +24,7 @@ import {
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
-const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, handleStickSettings }) => {
+const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, handleSave }) => {
   const { selectedTradingPair, futuresBalance, minBalance, maxBalance, leverage, hedgeMode, marginMode, assetMode, tradingPairs, selectedTradingPairs } = settings;
 
   return (
@@ -158,7 +160,13 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
                 The bot ensures these settings are applied before any trade execution.
             </Text>
             </FormControl>
+
         </ModalBody>
+        <ModalFooter>
+            <Button colorScheme="teal" onClick={handleSave}>   
+              Save Settings
+            </Button>
+          </ModalFooter>
       </ModalContent>
     </Modal>
   );

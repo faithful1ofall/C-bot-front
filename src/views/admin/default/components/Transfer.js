@@ -15,13 +15,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-const TransferModal = ({ isOpen, onClose }) => {
-  const [transferDirection, setTransferDirection] = useState('spot-to-futures'); // Default direction
+const TransferModal = ({ isOpen, onClose, balance }) => {
+  const [transferDirection, setTransferDirection] = useState('MAIN_UMFUTURE'); // Default direction
   const [transferAmount, setTransferAmount] = useState('');
+  const [asset, setAsset] = useState('');
 
   const handleTransfer = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/transfer`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -58,9 +59,24 @@ const TransferModal = ({ isOpen, onClose }) => {
               value={transferDirection}
               onChange={(e) => setTransferDirection(e.target.value)}
             >
-              <option value="spot-to-futures">Spot to Futures</option>
-              <option value="futures-to-spot">Futures to Spot</option>
+              <option value="MAIN_UMFUTURE">Spot to USDⓈ-M Futures</option>
+              <option value="UMFUTURE_MAIN">USDⓈ-M Futures to Spot</option>
+              <option value="MAIN_FUNDING">Spot to Funding</option>
+              <option value="FUNDING_MAIN">Funding to Spot</option>
+              <option value="FUNDING_UMFUTURE">Funding to USDⓈ-M Futures</option>
+              <option value="UMFUTURE_FUNDING">USDⓈ-M Futures to Funding</option>
             </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Asset</FormLabel>
+                <Select
+                value={asset}
+                onChange={(e) => setAsset(e.target.value)}
+                >
+                <option value="USDT">USDT</option>
+                <option value="BUSD">BUSD</option>
+                </Select>
           </FormControl>
 
           <FormControl mt={4}>
@@ -74,7 +90,7 @@ const TransferModal = ({ isOpen, onClose }) => {
           </FormControl>
 
           <Text mt={4}>
-            Available Balance: {/* balamnce*/}
+            Available Balance: {balance}
           </Text>
         </ModalBody>
 

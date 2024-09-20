@@ -620,7 +620,7 @@ export default function UserReports() {
       </SimpleGrid>
 
 
-      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} />
+      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={checkBalance} />
 
       <Button
           mt="40px"
