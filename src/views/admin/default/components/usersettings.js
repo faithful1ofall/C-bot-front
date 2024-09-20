@@ -40,20 +40,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
 
           {/* Trading Pair Selection */}
           <FormControl mt="4">
-            <FormLabel>Select Trading Pair</FormLabel>
-            <Select value={selectedTradingPair} onChange={(e) => setSettings({ ...settings, selectedTradingPair: e.target.value })}>
-              {selectedTradingPairs.map((pair) => (
-                <option key={pair} value={pair}>
-                  {pair}
-                </option>
-              ))}
-            </Select>
-            <Text mt="2">Default trading pair is set in bot settings.</Text>
-          </FormControl>
-
-          <FormControl mt="4">
-            <FormLabel>Select Trading Pairs</FormLabel>
-            
+            <FormLabel>Select Trading Pairs to be Used</FormLabel>
             {/* Multiple selection of trading pairs using checkboxes */}
             <CheckboxGroup 
                 value={selectedTradingPairs} 
@@ -64,9 +51,19 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
                 </Checkbox>
                 ))}
             </CheckboxGroup>
-
-            <Text mt="2">Default trading pairs are set in bot settings.</Text>
            </FormControl>
+           
+           <FormControl mt="4">
+            <FormLabel>Select Default Trading Pair</FormLabel>
+            <Select value={selectedTradingPair} onChange={(e) => setSettings({ ...settings, selectedTradingPair: e.target.value })}>
+              {selectedTradingPairs.map((pair) => (
+                <option key={pair} value={pair}>
+                  {pair}
+                </option>
+              ))}
+            </Select>
+            <Text mt="2">Default trading pair is {selectedTradingPair}.</Text>
+          </FormControl>
 
 
           {/* User Account Balance */}
