@@ -16,9 +16,9 @@ import {
 } from '@chakra-ui/react';
 
 const TransferModal = ({ isOpen, onClose, balance, userid }) => {
-  const [transferDirection, setTransferDirection] = useState('MAIN_UMFUTURE'); // Default direction
-  const [transferAmount, setTransferAmount] = useState('');
-  const [asset, setAsset] = useState('');
+  const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
+  const [transferAmount, setTransferAmount] = useState();
+  const [asset, setAsset] = useState('USDT');
 
   const handleTransfer = async () => {
     try {
@@ -32,15 +32,15 @@ const TransferModal = ({ isOpen, onClose, balance, userid }) => {
         }),
       });
 
-      if (!response.ok) {
+      /* if (!response.ok) {
         throw new Error('Transfer failed');
-      }
+      } */
 
       const data = await response.json();
       console.log('Transfer successful:', data);
       // Reset modal state after success
-      setTransferAmount('');
-      setTransferDirection('spot-to-futures');
+      setTransferAmount(0);
+      setTransferDirection('');
       onClose();
     } catch (error) {
       console.error('Transfer error:', error);
@@ -85,7 +85,7 @@ const TransferModal = ({ isOpen, onClose, balance, userid }) => {
             <Input
               placeholder="Enter amount"
               type="number"
-              value={transferAmount}
+              value={transferAmount || ""}
               onChange={(e) => setTransferAmount(e.target.value)}
             />
           </FormControl>
