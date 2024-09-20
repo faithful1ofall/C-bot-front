@@ -683,19 +683,31 @@ export default function UserReports() {
               <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
                 <option value="Buy">Long/Buy</option>
                 <option value="Sell">Short/Sell</option>
+                <option value="Sell">Both</option>
               </Select>
             </FormControl>
 
             <FormControl mb="4">
               <FormLabel>Time Frame</FormLabel>
               <Select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
+              <option value="15s">15 Seconds</option>
+                <option value="30s">30 Seconds</option>
+                <option value="45s">45 Seconds</option>
                 <option value="1m">1 Minute</option>
+                <option value="2m">2 Minute</option>
+                <option value="3m">3 Minute</option>
                 <option value="5m">5 Minute</option>
                 <option value="15m">15 Minute</option>
                 <option value="30m">30 Minute</option>
                 <option value="1h">1 Hour</option>
+                <option value="2h">2 Hour</option>
                 <option value="4h">4 Hour</option>
+                <option value="6h">6 Hour</option>
+                <option value="8h">8 Hour</option>
                 <option value="12h">12 Hour</option>
+                <option value="24h">24 Hour</option>
+                <option value="48h">48 Hour</option>
+                <option value="72h">72 Hour</option>
               </Select>
             </FormControl>
 
