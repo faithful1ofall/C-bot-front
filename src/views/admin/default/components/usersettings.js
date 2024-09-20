@@ -64,7 +64,7 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, settings, setSettings, 
             <Select value={leverage} onChange={(e) => setSettings({ ...settings, leverage: e.target.value })}>
               {[5, 10, 20, 50, 100].map((lev) => (
                 <option key={lev} value={lev}>
-                  x
+                  {lev}x
                 </option>
               ))}
             </Select>
