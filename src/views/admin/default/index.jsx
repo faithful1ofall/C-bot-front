@@ -23,8 +23,11 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  RadioGroup,
+  Radio,
   Select,
   SimpleGrid,
+  Stack,
   Text,
   useColorModeValue,
   useDisclosure,
@@ -34,8 +37,11 @@ import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
 import React, { useState, useEffect } from "react";
 import {
-  MdAddTask,
-  MdFileCopy,
+  MdAttachMoney,
+  MdAutorenew,
+  MdShowChart,
+  MdCheckCircle,
+  MdCancel,
   MdPerson,
   MdAddAlert,
   MdMoreVert,
@@ -68,7 +74,7 @@ export default function UserReports() {
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
   const [offset, setOffset] = useState();
-  
+  const [marginMode, setmarginMode] = useState();
 
 
   // new parameters
@@ -253,6 +259,7 @@ export default function UserReports() {
       maxTradableAmount,
       leverage,
       offset,
+      marginMode,
     };
 
     if (!isEdit || isEdit === 0){
@@ -342,6 +349,7 @@ export default function UserReports() {
     setMaxTradableAmount(''); // Clear max tradable amount
     setLeverage(''); // Clear leverage
     setOffset('');
+    setmarginMode('');
   };
   
 
@@ -376,6 +384,8 @@ export default function UserReports() {
       setIsDelayEnabled(data1.isDelayEnabled);
       setMaxTradableAmount(data1.maxTradableAmount);
       setLeverage(data1.leverage);
+      setOffset(data1.offset);
+      setmarginMode(data1.marginMode);
 
     }  catch (error) {
       console.error('Request failed', error);
@@ -467,84 +477,80 @@ export default function UserReports() {
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
-        columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
-        gap='20px'
-        mb='20px'>
-        {/* <MiniStatistics
+        columns={{ base: 2, lg: 2 }}
+        gap="20px"
+        mb="20px">
+        <MiniStatistics
           startContent={
             <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdBarChart} color={brandColor} />
-              }
+              w="56px"
+              h="56px"
+              bg="linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)"
+              icon={<Icon w="28px" h="28px" as={MdPerson} color="white" />}
             />
           }
-          name='Earnings'
-          value='$350.4'
+          name="No of Users"
+          value="500"
         />
         <MiniStatistics
           startContent={
             <IconBox
-              w='56px'
-              h='56px'
+              w="56px"
+              h="56px"
               bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdAttachMoney} color={brandColor} />
-              }
+              icon={<Icon w="32px" h="32px" as={MdAttachMoney} color={brandColor} />}
             />
           }
-          name='Spend this month'
-          value='$642.39'
-        />
-        <MiniStatistics growth='+23%' name='Sales' value='$574.34' />
-        <MiniStatistics
-          endContent={
-            <Flex me='-16px' mt='10px'>
-              <FormLabel htmlFor='balance'>
-                <Avatar src={Usa} />
-              </FormLabel>
-              <Select
-                id='balance'
-                variant='mini'
-                mt='5px'
-                me='0px'
-                defaultValue='usd'>
-                <option value='usd'>USD</option>
-                <option value='eur'>EUR</option>
-                <option value='gba'>GBA</option>
-              </Select>
-            </Flex>
-          }
-          name='Your balance'
-          value='$1,000'
-        /> */}
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg='linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
-              icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
-            />
-          }
-          name='New Tasks'
-          value='154'
+          name="No of Trades"
+          value="2500"
         />
         <MiniStatistics
           startContent={
             <IconBox
-              w='56px'
-              h='56px'
+              w="56px"
+              h="56px"
               bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdFileCopy} color={brandColor} />
-              }
+              icon={<Icon w="32px" h="32px" as={MdAutorenew} color={brandColor} />}
             />
           }
-          name='Total Projects'
-          value='2935'
+          name="No of Active Trades"
+          value="120"
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w="56px"
+              h="56px"
+              bg={boxBg}
+              icon={<Icon w="32px" h="32px" as={MdShowChart} color={brandColor} />}
+            />
+          }
+          name="No of Strategies"
+          value="35"
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w="56px"
+              h="56px"
+              bg={boxBg}
+              icon={<Icon w="32px" h="32px" as={MdCheckCircle} color={brandColor} />}
+            />
+          }
+          name="No of Successful Trades"
+          value="2300"
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w="56px"
+              h="56px"
+              bg={boxBg}
+              icon={<Icon w="32px" h="32px" as={MdCancel} color={brandColor} />}
+            />
+          }
+          name="No of Failed Trades"
+          value="200"
         />
       </SimpleGrid>
 
@@ -891,6 +897,16 @@ export default function UserReports() {
                 <NumberInput min={1} max={100} value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
+              </FormControl>
+
+              <FormControl mt="4">
+                <FormLabel>Cross/Isolated Mode</FormLabel>
+                <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
+                  <Stack direction="row">
+                    <Radio value="cross">Cross</Radio>
+                    <Radio value="isolated">Isolated</Radio>
+                  </Stack>
+                </RadioGroup>
               </FormControl>
 
           </ModalBody>
