@@ -31,6 +31,7 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  Switch
 } from "@chakra-ui/react";
 // Custom components
 import MiniStatistics from "components/card/MiniStatistics";
@@ -55,6 +56,8 @@ export default function UserReports() {
   const selectedTradingPairs = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT']
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
+  const [expandedStrategyId, setExpandedStrategyId] = useState(null);
+
 
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
@@ -66,6 +69,8 @@ export default function UserReports() {
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
   const [users, setUsers] = useState([]);
+  const [name, setName] = useState("");
+  const [hookkey, setHookKey] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [apiSecret, setApiSecret] = useState("");
   const [newStrategyName, setNewStrategyName] = useState();
@@ -101,8 +106,6 @@ export default function UserReports() {
 
 
   const [accountinfo, setAccountinfo] = useState();
-  const checkBalance = strategies?.checkBalance || false; // Default value from strategy
-  const hedgeMode = strategies?.hedgeMode || false; // Default value from strategy
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
 
@@ -240,6 +243,7 @@ export default function UserReports() {
   const handleSubmit = async() => {
     const newStrategy = {
       name: newStrategyName,
+      hookkey: hookkey,
       tradingPair: tradingPairs,
       tradeDirection,
       timeFrame,
@@ -331,26 +335,33 @@ export default function UserReports() {
     // Clear all the form values by resetting them to their initial/default state
     setOriginalStrategy(null); // No original strategy for creation
     setNewStrategyName(''); // Clear strategy name
-    setTradingPairs([]); // Empty array for trading pairs
-    setTradeDirection(''); // Clear trade direction
-    setTimeFrame(''); // Clear time frame
-    setNegativeCandleTrigger(null); // Reset to null or default value
-    setGridCalls([]); // Clear grid calls
-  
-    setCallFunds([]); // Clear call funds
-    setCallTPs([]); // Clear call take-profits
-    setCallNegTriggers([]); // Clear call negative triggers
-  
-    setProfitLock(''); // Clear profit lock
-    setStopLoss(''); // Clear stop loss
-    setTakeProfit(''); // Clear take profit
-    setOrderType(''); // Clear order type
-    setIsDelayEnabled(false); // Reset delay enabled flag to false
-    setMaxTradableAmount(''); // Clear max tradable amount
-    setLeverage(''); // Clear leverage
-    setOffset('');
-    setmarginMode('');
+    setHookKey('');
   };
+
+  const handleactive = async (strategyIdd, currentstatus) => {
+
+    const activate = {
+      active: !currentstatus,
+    };
+    
+    try {
+      
+      await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${strategyIdd}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(activate),
+      });
+
+    } catch (error) {
+      console.error('Request failed', error);
+    }
+
+    
+    await fetchStrategies();
+    console.log("activate Update", activate);
+  }
   
 
 
@@ -372,6 +383,7 @@ export default function UserReports() {
       setTimeFrame(data1.timeFrame);
       setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
       setGridCalls(data1.gridCalls);
+      setHookKey(data1.hookkey);
 
       setCallFunds(data1.calls.map(call => call.funds));
       setCallTPs(data1.calls.map(call => call.tp));
@@ -395,8 +407,9 @@ export default function UserReports() {
 
 
   const handleAddUser = async() => {
-    if (apiKey && apiSecret) {
+    if (apiKey && apiSecret && name) {
       const newUser = {
+        name,
         apiKey,
         apiSecret,
         strategyIds: [],
@@ -587,6 +600,10 @@ export default function UserReports() {
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
+              <FormLabel>User Name</FormLabel>
+              <Input value={name} onChange={(e) => setName(e.target.value)} />
+            </FormControl>
+            <FormControl>
               <FormLabel>API Key</FormLabel>
               <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
             </FormControl>
@@ -620,7 +637,7 @@ export default function UserReports() {
               </Menu>
             </Flex>
             <Box mt="4">
-              <Text>API Key: {user.apiKey}</Text>
+              <Text>User Name: {user?.name}</Text>
               <Text>Strategies: {user.strategyIds.map(id => strategies.find(s => s.id === id)?.name || 'None').join(', ')}</Text>
             </Box>
           </Box>
@@ -642,16 +659,240 @@ export default function UserReports() {
       <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
         {strategies.map((strategy) => (
           <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
-            <Flex align="center" justify="space-between">
+            <Flex align="center" justify="space-between"  onClick={() => {
+              SetEdit(strategy.id);
+              handleEdit(strategy.id); // Assuming you use this to set form data
+              setExpandedStrategyId((prev) => (prev === strategy.id ? null : strategy.id)); // Toggle form visibility
+            }}>
               <Text fontWeight="bold">{strategy.name}</Text>
+             
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                  <MenuItem onClick={() => {SetEdit(strategy.id); handleEdit(strategy.id); onCreateStrategyOpen();}}>Edit Strategy</MenuItem>
+                <MenuItem
+                    onClick={() => {
+                      SetEdit(strategy.id);
+                      handleEdit(strategy.id); // Assuming you use this to set form data
+                      setExpandedStrategyId((prev) => (prev === strategy.id ? null : strategy.id)); // Toggle form visibility
+                    }}
+                  >
+                    {expandedStrategyId === strategy.id ? 'Close Form' : 'Edit Strategy'}
+                  </MenuItem>
                   <MenuItem onClick={() => deleteStrategy(strategy.id) }>Delete Strategy</MenuItem>
                 </MenuList>
               </Menu>
+              <Switch
+                isChecked={strategy.active}
+                onChange={() => { handleactive(strategy.id, strategy.active);}}
+                colorScheme="teal"
+              />
             </Flex>
+             {/* Collapsible Form */}
+              {expandedStrategyId === strategy.id && (
+                <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+                  {/* Form Content Goes Here */}
+                  <FormControl mb="4">
+                    <FormLabel>Strategy Name</FormLabel>
+                    <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
+                  </FormControl>
+
+                  <FormControl mb="4">
+                    <FormLabel>Hook Key</FormLabel>
+                    <Input value={hookkey} onChange={(e) => setHookKey(e.target.value)} />
+                  </FormControl>
+
+
+                  <FormControl mb="4">
+                    <FormLabel>TradingView Link</FormLabel>
+                    <Input value={tradingViewLink} isReadOnly />
+                  </FormControl>
+
+                  <FormControl mb="4">
+                      <FormLabel>Leverage</FormLabel>
+                      <NumberInput min={1} max={100} value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    <FormControl mt="4">
+                      <FormLabel>Cross/Isolated Mode</FormLabel>
+                      <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
+                        <Stack direction="row">
+                          <Radio value="cross">Cross</Radio>
+                          <Radio value="isolated">Isolated</Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </FormControl>
+
+                  <FormControl mb="4">
+                    <FormLabel>Trading Pair</FormLabel>
+                    <Select
+                      value={tradingPairs || ''}
+                      onChange={(e) => setTradingPairs(e.target.value)}
+                    >
+                      {selectedTradingPairs.map((pair) => (
+                        <option key={pair} value={pair}>
+                          {pair}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl mb="4">
+                    <FormLabel>Trade Direction</FormLabel>
+                    <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
+                      <option value="Buy">Long/Buy</option>
+                      <option value="Sell">Short/Sell</option>
+                      <option value="Sell">Both</option>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl mb="4">
+                    <FormLabel>Time Frame</FormLabel>
+                    <Select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
+                    <option value="15s">15 Seconds</option>
+                      <option value="30s">30 Seconds</option>
+                      <option value="45s">45 Seconds</option>
+                      <option value="1m">1 Minute</option>
+                      <option value="2m">2 Minute</option>
+                      <option value="3m">3 Minute</option>
+                      <option value="5m">5 Minute</option>
+                      <option value="15m">15 Minute</option>
+                      <option value="30m">30 Minute</option>
+                      <option value="1h">1 Hour</option>
+                      <option value="2h">2 Hour</option>
+                      <option value="4h">4 Hour</option>
+                      <option value="6h">6 Hour</option>
+                      <option value="8h">8 Hour</option>
+                      <option value="12h">12 Hour</option>
+                      <option value="24h">24 Hour</option>
+                      <option value="48h">48 Hour</option>
+                      <option value="72h">72 Hour</option>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl mb="4">
+                    <Flex alignItems="center">
+                      <FormLabel>Negative Value Trigger (%)</FormLabel>
+                      <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
+                    </Flex>
+                    {isNegativeCandleEnabled && (
+                      <NumberInput value={negativeCandleTrigger || ""} onChange={(valueString) => setNegativeCandleTrigger(parseInt(valueString))}>
+                        <NumberInputField />
+                      </NumberInput>
+                    )}
+                  </FormControl>
+
+                  <FormControl mb="4">
+                    <FormLabel>Initial Call</FormLabel>
+                  </FormControl>
+
+                  <Box mt="4" p="4" bg="gray.100" borderRadius="md">
+                    <Text fontSize="lg" fontWeight="bold">Call 1</Text>
+
+                    <FormControl mb="4">
+                      <FormLabel>Call 1 Funds %</FormLabel>
+                      <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    <FormControl mb="4">
+                      <FormLabel>Call 1 TP%</FormLabel>
+                      <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    {/* Sync Call 1 Values */}
+                    <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
+                      Sync Call 1 Values to All
+                    </Button>
+                  </Box>   
+
+                  {/* Loop through each call and display grouped inputs */}
+                  {isNegativeCandleEnabled && (
+                    Array.from({ length: negativeCandleTrigger }, (_, index) => (
+                    <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
+                      
+                      <Text fontSize="lg" fontWeight="bold">Call {index + 2}</Text>   
+
+
+                          <Box  mb="4" key={index}>
+                            <FormControl mb="4">
+                              <FormLabel>Call {index + 2} Funds %</FormLabel>
+                              <NumberInput  min={0} max={100} value={callFunds[index + 1] || ""} onChange={(valueString) => handleCallFundsChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
+                                <NumberInputField />
+                              </NumberInput>
+                            </FormControl>
+
+                            <FormControl mb="4">
+                              <FormLabel>Call {index + 2} TP%</FormLabel>
+                              <NumberInput min={0} max={100} value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
+                                <NumberInputField />
+                              </NumberInput>
+                            </FormControl>
+
+                            <FormControl mb="4">
+                              <FormLabel>Call {index + 2} Negative Trigger %</FormLabel>
+                              <NumberInput value={callNegTriggers[index + 1] || ""} onChange={(valueString) => handleCallNegTriggerChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
+                                <NumberInputField />
+                              </NumberInput>
+                            </FormControl>
+                          </Box>                 
+                    </Box>
+                  )))}
+                    <FormControl mb="4">
+                      <FormLabel>Profit Lock %</FormLabel>
+                      <NumberInput value={profitLock || ""} onChange={(valueString) => setProfitLock(isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    <FormControl mb="4">
+                      <FormLabel>Stop Loss % (SL%)</FormLabel>
+                      <NumberInput value={stopLoss || ""} onChange={(valueString) => setStopLoss(isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    <FormControl mb="4">
+                      <FormLabel>Order Type (for SL/TP)</FormLabel>
+                      <Select value={orderType} onChange={(e) => setOrderType(e.target.value)}>
+                        <option value="Limit">Limit Order</option>
+                        <option value="Market">Market Order</option>
+                      </Select>
+                    </FormControl>
+
+                    <FormControl mb="4">
+                      <Flex alignItems="center">
+                        <FormLabel>Delayed SL and TP</FormLabel>
+                        <Checkbox isChecked={isDelayEnabled} onChange={(e) => setIsDelayEnabled(e.target.checked)}>Enable</Checkbox>
+                      </Flex>
+                      {isDelayEnabled && (
+                        <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
+                          <p>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</p>
+                          <FormLabel>Offset %</FormLabel>
+                            <NumberInput value={offset || ""} onChange={(valueString) => setOffset(isNaN(valueString) ? 0 : valueString)}>
+                              <NumberInputField />
+                            </NumberInput>
+                        </Box>
+                      )}
+                    </FormControl>
+
+                    <FormControl mb="4">
+                      <FormLabel>Max Tradable Amount</FormLabel>
+                      <NumberInput value={maxTradableAmount || ""} onChange={(valueString) => setMaxTradableAmount(isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    
+                  <Button mt="4" colorScheme="teal" onClick={handleSubmit}>
+                    {isEdit ? 'Update Strategy' : 'Create Strategy'}
+                  </Button>
+                </Box>
+              )}
           </Box>
         ))}
       </SimpleGrid>
@@ -682,8 +923,6 @@ export default function UserReports() {
         </ModalContent>
       </Modal>
 
-
-
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
         <ModalOverlay />
@@ -691,30 +930,14 @@ export default function UserReports() {
           <ModalHeader>{isEdit ? 'Update Strategy' : 'Create Strategy'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {/* Check Balance - Display Only */}
-            <FormControl mb="4">
-              <Flex alignItems="center">
-                <FormLabel>Check Balance before trading</FormLabel>
-                <Text>{checkBalance || "No Balance"}</Text>
-              </Flex>
-            </FormControl>
 
-            {/* Hedge Mode - Display Only */}
-            <FormControl mb="4">
-              <Flex alignItems="center">
-                <FormLabel>Hedge Mode</FormLabel>
-                <Text>{hedgeMode ? 'Enabled' : 'Disabled'}</Text>
-              </Flex>
-              {hedgeMode && (
-                <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
-                  <p>With Hedge Mode enabled, the bot can open both long and short positions at the same time.</p>
-                </Box>
-              )}
-            </FormControl>
-          
-            <FormControl mb="4">
+          <FormControl>
               <FormLabel>Strategy Name</FormLabel>
-              <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
+              <Input value={name} onChange={(e) => setName(e.target.value)} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Webhook Key</FormLabel>
+              <Input value={hookkey} onChange={(e) => setHookKey(e.target.value)} />
             </FormControl>
 
             <FormControl mb="4">
@@ -722,194 +945,8 @@ export default function UserReports() {
               <Input value={tradingViewLink} isReadOnly />
             </FormControl>
 
-            <FormControl mb="4">
-              <FormLabel>Trading Pair</FormLabel>
-              <Select
-                value={tradingPairs || ''}
-                onChange={(e) => setTradingPairs(e.target.value)}
-              >
-              {selectedTradingPairs.map((pair) => (
-                <option key={pair} value={pair}>
-                  {pair}
-                </option>
-              ))}
-              </Select>
-            </FormControl>
-
-            <FormControl mb="4">
-              <FormLabel>Trade Direction</FormLabel>
-              <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
-                <option value="Buy">Long/Buy</option>
-                <option value="Sell">Short/Sell</option>
-                <option value="Sell">Both</option>
-              </Select>
-            </FormControl>
-
-            <FormControl mb="4">
-              <FormLabel>Time Frame</FormLabel>
-              <Select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
-              <option value="15s">15 Seconds</option>
-                <option value="30s">30 Seconds</option>
-                <option value="45s">45 Seconds</option>
-                <option value="1m">1 Minute</option>
-                <option value="2m">2 Minute</option>
-                <option value="3m">3 Minute</option>
-                <option value="5m">5 Minute</option>
-                <option value="15m">15 Minute</option>
-                <option value="30m">30 Minute</option>
-                <option value="1h">1 Hour</option>
-                <option value="2h">2 Hour</option>
-                <option value="4h">4 Hour</option>
-                <option value="6h">6 Hour</option>
-                <option value="8h">8 Hour</option>
-                <option value="12h">12 Hour</option>
-                <option value="24h">24 Hour</option>
-                <option value="48h">48 Hour</option>
-                <option value="72h">72 Hour</option>
-              </Select>
-            </FormControl>
-
-            <FormControl mb="4">
-              <Flex alignItems="center">
-                <FormLabel>Negative Value Trigger (%)</FormLabel>
-                <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
-              </Flex>
-              {isNegativeCandleEnabled && (
-                <NumberInput value={negativeCandleTrigger || ""} onChange={(valueString) => setNegativeCandleTrigger(parseInt(valueString))}>
-                  <NumberInputField />
-                </NumberInput>
-              )}
-            </FormControl>
-
-            <FormControl mb="4">
-              <FormLabel>Initial Call</FormLabel>
-            </FormControl>
-
-            <Box mt="4" p="4" bg="gray.100" borderRadius="md">
-              <Text fontSize="lg" fontWeight="bold">Call 1</Text>
-
-              <FormControl mb="4">
-                <FormLabel>Call 1 Funds %</FormLabel>
-                <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl mb="4">
-                <FormLabel>Call 1 TP%</FormLabel>
-                <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              {/* Sync Call 1 Values */}
-              <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
-                Sync Call 1 Values to All
-              </Button>
-            </Box>   
-
-            {/* Loop through each call and display grouped inputs */}
-            {isNegativeCandleEnabled && (
-              Array.from({ length: negativeCandleTrigger }, (_, index) => (
-              <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
-                
-                <Text fontSize="lg" fontWeight="bold">Call {index + 2}</Text>   
-
-
-                    <Box  mb="4" key={index}>
-                      <FormControl mb="4">
-                        <FormLabel>Call {index + 2} Funds %</FormLabel>
-                        <NumberInput  min={0} max={100} value={callFunds[index + 1] || ""} onChange={(valueString) => handleCallFundsChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                          <NumberInputField />
-                        </NumberInput>
-                      </FormControl>
-
-                      <FormControl mb="4">
-                        <FormLabel>Call {index + 2} TP%</FormLabel>
-                        <NumberInput min={0} max={100} value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                          <NumberInputField />
-                        </NumberInput>
-                      </FormControl>
-
-                      <FormControl mb="4">
-                        <FormLabel>Call {index + 2} Negative Trigger %</FormLabel>
-                        <NumberInput value={callNegTriggers[index + 1] || ""} onChange={(valueString) => handleCallNegTriggerChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                          <NumberInputField />
-                        </NumberInput>
-                      </FormControl>
-                    </Box>                 
-              </Box>
-            )))}
-              <FormControl mb="4">
-                <FormLabel>Profit Lock %</FormLabel>
-                <NumberInput value={profitLock || ""} onChange={(valueString) => setProfitLock(isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl mb="4">
-                <FormLabel>Stop Loss % (SL%)</FormLabel>
-                <NumberInput value={stopLoss || ""} onChange={(valueString) => setStopLoss(isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-             {/*  <FormControl mb="4">
-                <FormLabel>Take Profit % (TP%)</FormLabel>
-                <NumberInput value={takeProfit || ""} onChange={(valueString) => setTakeProfit(isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl> */}
-
-              <FormControl mb="4">
-                <FormLabel>Order Type (for SL/TP)</FormLabel>
-                <Select value={orderType} onChange={(e) => setOrderType(e.target.value)}>
-                  <option value="Limit">Limit Order</option>
-                  <option value="Market">Market Order</option>
-                </Select>
-              </FormControl>
-
-              <FormControl mb="4">
-                <Flex alignItems="center">
-                  <FormLabel>Delayed SL and TP</FormLabel>
-                  <Checkbox isChecked={isDelayEnabled} onChange={(e) => setIsDelayEnabled(e.target.checked)}>Enable</Checkbox>
-                </Flex>
-                {isDelayEnabled && (
-                  <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
-                    <p>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</p>
-                    <FormLabel>Offset %</FormLabel>
-                      <NumberInput value={offset || ""} onChange={(valueString) => setOffset(isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                  </Box>
-                )}
-              </FormControl>
-
-              <FormControl mb="4">
-                <FormLabel>Max Tradable Amount</FormLabel>
-                <NumberInput value={maxTradableAmount || ""} onChange={(valueString) => setMaxTradableAmount(isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl mb="4">
-                <FormLabel>Leverage</FormLabel>
-                <NumberInput min={1} max={100} value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl mt="4">
-                <FormLabel>Cross/Isolated Mode</FormLabel>
-                <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
-                  <Stack direction="row">
-                    <Radio value="cross">Cross</Radio>
-                    <Radio value="isolated">Isolated</Radio>
-                  </Stack>
-                </RadioGroup>
-              </FormControl>
-
-          </ModalBody>
+            
+            </ModalBody>
           <ModalFooter>
             <Button colorScheme="teal" onClick={handleSubmit}>   
               {isEdit ? 'Update Strategy' : 'Create Strategy'}
