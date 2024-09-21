@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CheckboxGroup,
   Flex,
   FormControl,
   FormLabel,
@@ -31,7 +32,7 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
-  Switch
+  Switch,
 } from "@chakra-ui/react";
 // Custom components
 import MiniStatistics from "components/card/MiniStatistics";
@@ -46,6 +47,7 @@ import {
   MdPerson,
   MdAddAlert,
   MdMoreVert,
+  MdSearch,
 } from "react-icons/md";
 import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
@@ -53,7 +55,10 @@ import TransferModal from './components/Transfer';
 
 export default function UserReports() {
 
-  const selectedTradingPairs = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT']
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [selectedPairs, setSelectedPairs] = useState([]);
+  const [selectedTradingPairs, setSelectedTradingPairs] = useState([]);
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
@@ -108,6 +113,40 @@ export default function UserReports() {
   const [accountinfo, setAccountinfo] = useState();
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
+
+  const fetchPairs = async () => {
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/saved-trading-pairs`); // Adjust the URL based on your backend setup
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();  // Parse the JSON response
+      setSelectedTradingPairs(data.data);
+      console.log(data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const filteredPairs = selectedTradingPairs.filter(pair =>
+    pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+   // Handle search query change
+   const handleSearch = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    // Save query to history if it's not already there
+    if (query && !searchHistory.includes(query)) {
+      setSearchHistory([query, ...searchHistory].slice(0, 5)); // Limit history to last 5 queries
+    }
+  };
+
+  // Handle pair selection
+  const handleSelectPairs = (selectedValues) => {
+    setSelectedPairs(selectedValues);
+  };
 
   const handleCallFundsChange = (index, value) => {
     const newCallFunds = [...callFunds];
@@ -216,6 +255,7 @@ export default function UserReports() {
    useEffect(() => {
     fetchUsers();
     fetchStrategies();
+    fetchPairs();
   }, []);
 
  const tradinghook = async() => {
@@ -567,6 +607,53 @@ export default function UserReports() {
         />
       </SimpleGrid>
 
+       {/* Dropdown Button */}
+       <Menu>
+        <MenuButton as={Button} leftIcon={<Icon as={MdPerson} />} colorScheme="teal">
+          Add Trading Pairs
+        </MenuButton>
+
+        <MenuList p={4} width="300px">
+          {/* Search Bar */}
+          <Input
+            placeholder="Search trading pairs"
+            value={searchQuery}
+            onChange={handleSearch}
+            mb={4}
+            leftIcon={<Icon as={MdSearch} />}
+          />
+
+          {/* Search History */}
+          {searchHistory.length > 0 && (
+            <Box mb={4}>
+              <strong>Recent Searches:</strong>
+              <Stack>
+                {searchHistory.map((query, index) => (
+                  <Button
+                    key={index}
+                    variant="link"
+                    onClick={() => setSearchQuery(query)}
+                  >
+                    {query}
+                  </Button>
+                ))}
+              </Stack>
+            </Box>
+          )}
+
+          {/* Checkbox List for Trading Pairs */}
+          <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
+            <Stack spacing={3}>
+              {filteredPairs.map((pair, index) => (
+                <Checkbox key={index} value={pair}>
+                  {pair}
+                </Checkbox>
+              ))}
+            </Stack>
+          </CheckboxGroup>
+        </MenuList>
+      </Menu>
+
       <Flex justify="space-between" mt="40px">
         <Button
           leftIcon={<Icon as={MdPerson} />}
@@ -813,11 +900,8 @@ export default function UserReports() {
                   {/* Loop through each call and display grouped inputs */}
                   {isNegativeCandleEnabled && (
                     Array.from({ length: negativeCandleTrigger }, (_, index) => (
-                    <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
-                      
+                    <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">                 
                       <Text fontSize="lg" fontWeight="bold">Call {index + 2}</Text>   
-
-
                           <Box  mb="4" key={index}>
                             <FormControl mb="4">
                               <FormLabel>Call {index + 2} Funds %</FormLabel>
