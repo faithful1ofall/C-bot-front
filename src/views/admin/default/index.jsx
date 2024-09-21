@@ -109,8 +109,8 @@ export default function UserReports() {
 
 
   const handleSyncCallValues = () => {
-    setCallFunds(Array(negativeCandleTrigger).fill(callFunds[0]));
-    setCallTPs(Array(negativeCandleTrigger).fill(callTPs[0]));
+    setCallFunds(Array(negativeCandleTrigger + 1).fill(callFunds[0]));
+    setCallTPs(Array(negativeCandleTrigger + 1).fill(callTPs[0]));
   };
 
 
@@ -784,14 +784,14 @@ export default function UserReports() {
 
               <FormControl mb="4">
                 <FormLabel>Call 1 Funds %</FormLabel>
-                <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, parseFloat(valueString) || 0)}>
+                <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
 
               <FormControl mb="4">
                 <FormLabel>Call 1 TP%</FormLabel>
-                <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, parseFloat(valueString) || 0)}>
+                <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}>
                   <NumberInputField />
                 </NumberInput>
               </FormControl>
