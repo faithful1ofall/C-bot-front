@@ -108,8 +108,8 @@ export default function UserReports() {
 
 
   const handleSyncCallValues = () => {
-    setCallFunds(Array(gridCalls).fill(callFunds[0]));
-    setCallTPs(Array(gridCalls).fill(callTPs[0]));
+    setCallFunds(Array(negativeCandleTrigger).fill(callFunds[0]));
+    setCallTPs(Array(negativeCandleTrigger).fill(callTPs[0]));
   };
 
 
@@ -766,76 +766,71 @@ export default function UserReports() {
                 <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
               </Flex>
               {isNegativeCandleEnabled && (
-                <NumberInput value={negativeCandleTrigger || 0} onChange={(valueString) => setNegativeCandleTrigger(parseFloat(valueString))}>
+                <NumberInput value={negativeCandleTrigger || ""} onChange={(valueString) => setNegativeCandleTrigger(parseInt(valueString))}>
                   <NumberInputField />
                 </NumberInput>
               )}
             </FormControl>
 
             <FormControl mb="4">
-              <FormLabel>Grid Calls</FormLabel>
-              <NumberInput value={gridCalls || ""} onChange={(valueString) => setGridCalls(parseInt(valueString))}>
-                <NumberInputField />
-              </NumberInput>
-            </FormControl>    
+              <FormLabel>Initial Call</FormLabel>
+            </FormControl>
+
+            <Box mt="4" p="4" bg="gray.100" borderRadius="md">
+              <Text fontSize="lg" fontWeight="bold">Call 1</Text>
+
+              <FormControl mb="4">
+                <FormLabel>Call 1 Funds %</FormLabel>
+                <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, parseFloat(valueString) || 0)}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              <FormControl mb="4">
+                <FormLabel>Call 1 TP%</FormLabel>
+                <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, parseFloat(valueString) || 0)}>
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              {/* Sync Call 1 Values */}
+              <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
+                Sync Call 1 Values to All
+              </Button>
+            </Box>   
 
             {/* Loop through each call and display grouped inputs */}
-            {Array.from({ length: gridCalls + negativeCandleTrigger || 0 }, (_, index) => (
+            {isNegativeCandleEnabled && (
+              Array.from({ length: negativeCandleTrigger }, (_, index) => (
               <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">
-                <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>
-
-                {index === 0  && (
-                  <Box mb="4" key={index}>
-                    <FormControl mb="4">
-                      <FormLabel>Call {index + 1} Funds %</FormLabel>
-                      <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-
-                    <FormControl mb="4">
-                      <FormLabel>Call {index + 1} TP%</FormLabel>
-                      <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-                  </Box>
-                 )}                
+                
+                <Text fontSize="lg" fontWeight="bold">Call {index + 2}</Text>   
 
 
-                  {index > 0 && negativeCandleTrigger > 0 && (
-                    <Box mb="4" key={index}>
+                    <Box  mb="4" key={index}>
                       <FormControl mb="4">
-                        <FormLabel>Call {index + 1} Funds %</FormLabel>
+                        <FormLabel>Call {index + 2} Funds %</FormLabel>
                         <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
                           <NumberInputField />
                         </NumberInput>
                       </FormControl>
 
                       <FormControl mb="4">
-                        <FormLabel>Call {index + 1} TP%</FormLabel>
+                        <FormLabel>Call {index + 2} TP%</FormLabel>
                         <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
                           <NumberInputField />
                         </NumberInput>
                       </FormControl>
 
                       <FormControl mb="4">
-                        <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
+                        <FormLabel>Call {index + 2} Negative Trigger %</FormLabel>
                         <NumberInput min={-100} max={0} value={callNegTriggers[index] || ""} onChange={(valueString) => handleCallNegTriggerChange(index, isNaN(valueString) ? 0 : valueString)}>
                           <NumberInputField />
                         </NumberInput>
                       </FormControl>
-                    </Box>
-                  )}
-
-                {index === 0 && (
-                  <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
-                    Sync Call 1 Values to All
-                  </Button>
-                )}
-                 
+                    </Box>                 
               </Box>
-            ))}
+            )))}
               <FormControl mb="4">
                 <FormLabel>Profit Lock %</FormLabel>
                 <NumberInput value={profitLock || ""} onChange={(valueString) => setProfitLock(isNaN(valueString) ? 0 : valueString)}>
