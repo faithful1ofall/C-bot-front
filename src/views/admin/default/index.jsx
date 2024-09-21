@@ -648,7 +648,7 @@ export default function UserReports() {
           <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
             <Stack spacing={3}>
               {filteredPairs.map((pair) => (
-                <Checkbox key={pair_id} value={pair.symbol}>
+                <Checkbox key={pair._id} value={pair.symbol}>
                   {pair.symbol}
                 </Checkbox>
               ))}
