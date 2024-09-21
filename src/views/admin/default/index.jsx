@@ -117,7 +117,7 @@ export default function UserReports() {
 
   const fetchPairs = async () => {
     try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs`); // Adjust the URL based on your backend setup
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/saved-trading-pairs`); // Adjust the URL based on your backend setup
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -647,9 +647,9 @@ export default function UserReports() {
           {/* Checkbox List for Trading Pairs */}
           <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
             <Stack spacing={3}>
-              {filteredPairs.map((pair, index) => (
-                <Checkbox key={index} value={pair}>
-                  {pair}
+              {filteredPairs.map((pair) => (
+                <Checkbox key={pair_id} value={pair.symbol}>
+                  {pair.symbol}
                 </Checkbox>
               ))}
             </Stack>
