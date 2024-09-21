@@ -58,7 +58,7 @@ export default function UserReports() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
   const [selectedPairs, setSelectedPairs] = useState([]);
-  const [selectedTradingPairs, setSelectedTradingPairs] = useState([]);
+  const [selectedTradingPairs1, setSelectedTradingPairs1] = useState([]);
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
@@ -121,16 +121,14 @@ export default function UserReports() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();  // Parse the JSON response
-      setSelectedTradingPairs(data.data);
-      console.log(data);
+      setSelectedTradingPairs1(data.data);
+      console.log(data.data);
     } catch (err) {
       console.error(err.message);
     }
   };
 
-  const filteredPairs = selectedTradingPairs.filter(pair =>
-    pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  
 
    // Handle search query change
    const handleSearch = (event) => {
@@ -188,7 +186,9 @@ export default function UserReports() {
     }
   };
 
-
+  const filteredPairs = selectedTradingPairs1.filter(pair =>
+    pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const fetchUsers = async () => {
     try {        
@@ -676,7 +676,6 @@ export default function UserReports() {
         onClose={() => {setIsGeneralSettingsOpen(false); setTransferUserId("");}}
         userid={transferuserid}
         balance={accountinfo}
-        tradingPairs={selectedTradingPairs}
       />
 
      {/* Add User Modal */}
@@ -817,7 +816,7 @@ export default function UserReports() {
                       value={tradingPairs || ''}
                       onChange={(e) => setTradingPairs(e.target.value)}
                     >
-                      {selectedTradingPairs.map((pair) => (
+                      {selectedPairs.map((pair) => (
                         <option key={pair} value={pair}>
                           {pair}
                         </option>
