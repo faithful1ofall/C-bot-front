@@ -603,7 +603,7 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => { setTransferUserId(user.id); setIsGeneralSettingsOpen(true);}}>User/Exchange Settings</MenuItem>
+                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen(true);}}>User/Exchange Settings</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen(); }}>Transfer Funds</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                   
