@@ -3,11 +3,6 @@ import {
   Box,
   FormControl,
   FormLabel,
-  Slider,
-  SliderMark,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   Button,
   Checkbox,
   Text,
@@ -22,7 +17,7 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
   
   const [originalsettings, setOriginalSettings] = useState(null);
 
-  const {  leverage, stickSettings, hedgeMode, assetMode } = settings;
+  const {  stickSettings, hedgeMode, assetMode } = settings;
 
   const fetchSettings = async (useridset) => {
     if(useridset){
@@ -90,39 +85,6 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
             <FormLabel>User Account Balance</FormLabel>
             <Text>Available balance in Futures Account (USDT): {balance?.balance.availableBalance || 0} USDT</Text>
           </FormControl>
-
-          {/* Leverage Settings */}
-          <FormControl mt="4">
-            <FormLabel>Leverage Settings</FormLabel>
-            <Text>Current Leverage: {leverage}x</Text>
-            
-            {/* Leverage Slider */}
-            <Slider 
-                value={leverage} 
-                onChange={(val) => setSettings({ ...settings, leverage: val })} 
-                min={1} 
-                max={50} 
-                step={1}
-            >
-                {/* Checkpoints at 10x, 25x, 30x */}
-                <SliderMark value={10} mt="1" ml="-2.5" fontSize="sm">
-                10x
-                </SliderMark>
-                <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
-                25x
-                </SliderMark>
-                <SliderMark value={30} mt="1" ml="-2.5" fontSize="sm">
-                30x
-                </SliderMark>
-
-                <SliderTrack>
-                <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb boxSize={6} />
-            </Slider>
-            
-            <Text mt="2">Default leverage is {leverage}x.</Text>
-            </FormControl>
 
 
           {/* Hedge Mode / One Way Mode */}

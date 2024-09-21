@@ -62,6 +62,7 @@ export default function UserReports() {
   
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
+  const [isLinkStrategyOpen, setLinkStrategyOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
 
 
@@ -69,7 +70,6 @@ export default function UserReports() {
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
   const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
-  const { isOpen: isLinkStrategyOpen, onOpen: onLinkStrategyOpen } = useDisclosure();
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
@@ -708,7 +708,7 @@ export default function UserReports() {
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen((prev) => (prev === user.id ? null : user.id)); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); setLinkStrategyOpen((prev) => (prev === user.id ? null : user.id)); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen((prev) => (prev === user.id ? null : user.id));}}>User/Exchange Settings</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Transfer Funds</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
