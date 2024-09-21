@@ -67,6 +67,7 @@ export default function UserReports() {
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
+  const [offset, setOffset] = useState();
   
 
 
@@ -251,6 +252,7 @@ export default function UserReports() {
       isDelayEnabled,
       maxTradableAmount,
       leverage,
+      offset,
     };
 
     if (!isEdit || isEdit === 0){
@@ -339,6 +341,7 @@ export default function UserReports() {
     setIsDelayEnabled(false); // Reset delay enabled flag to false
     setMaxTradableAmount(''); // Clear max tradable amount
     setLeverage(''); // Clear leverage
+    setOffset('');
   };
   
 
@@ -810,21 +813,21 @@ export default function UserReports() {
                     <Box  mb="4" key={index}>
                       <FormControl mb="4">
                         <FormLabel>Call {index + 2} Funds %</FormLabel>
-                        <NumberInput  min={0} max={100} value={callFunds[index] || ""} onChange={(valueString) => handleCallFundsChange(index, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInput  min={0} max={100} value={callFunds[index + 1] || ""} onChange={(valueString) => handleCallFundsChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
                           <NumberInputField />
                         </NumberInput>
                       </FormControl>
 
                       <FormControl mb="4">
                         <FormLabel>Call {index + 2} TP%</FormLabel>
-                        <NumberInput min={0} max={100} value={callTPs[index] || ""} onChange={(valueString) => handleCallTPChange(index, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInput min={0} max={100} value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
                           <NumberInputField />
                         </NumberInput>
                       </FormControl>
 
                       <FormControl mb="4">
                         <FormLabel>Call {index + 2} Negative Trigger %</FormLabel>
-                        <NumberInput min={-100} max={0} value={callNegTriggers[index] || ""} onChange={(valueString) => handleCallNegTriggerChange(index, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInput value={callNegTriggers[index + 1] || ""} onChange={(valueString) => handleCallNegTriggerChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
                           <NumberInputField />
                         </NumberInput>
                       </FormControl>
@@ -868,6 +871,10 @@ export default function UserReports() {
                 {isDelayEnabled && (
                   <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
                     <p>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</p>
+                    <FormLabel>Offset %</FormLabel>
+                      <NumberInput value={offset || ""} onChange={(valueString) => setOffset(isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
                   </Box>
                 )}
               </FormControl>
