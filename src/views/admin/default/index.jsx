@@ -59,6 +59,7 @@ export default function UserReports() {
   const [searchHistory, setSearchHistory] = useState([]);
   const [selectedPairs, setSelectedPairs] = useState([]);
   const [selectedTradingPairs1, setSelectedTradingPairs1] = useState([]);
+  
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
@@ -189,6 +190,8 @@ export default function UserReports() {
   const filteredPairs = selectedTradingPairs1.filter(pair =>
     pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  console.log("filteredPairs", filteredPairs);
 
   const fetchUsers = async () => {
     try {        
