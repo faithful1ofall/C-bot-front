@@ -672,13 +672,6 @@ export default function UserReports() {
         </Button>
       </Flex>
 
-      <GeneralExchangeSettingsModal
-        isOpen={isGeneralSettingsOpen}
-        onClose={() => {setIsGeneralSettingsOpen(false); setTransferUserId("");}}
-        userid={transferuserid}
-        balance={accountinfo}
-      />
-
      {/* Add User Modal */}
      <Modal isOpen={isUserOpen} onClose={onUserClose}>
         <ModalOverlay />
@@ -715,9 +708,9 @@ export default function UserReports() {
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen(); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen(true);}}>User/Exchange Settings</MenuItem>
-                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen(); }}>Transfer Funds</MenuItem>
+                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); onLinkStrategyOpen((prev) => (prev === user.id ? null : user.id)); }}>Link Strategies</MenuItem>
+                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen((prev) => (prev === user.id ? null : user.id));}}>User/Exchange Settings</MenuItem>
+                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Transfer Funds</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                   
                 </MenuList>
@@ -733,8 +726,6 @@ export default function UserReports() {
             {isGeneralSettingsOpen && (
               <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                 <GeneralExchangeSettingsModal
-                  isOpen={isGeneralSettingsOpen}
-                  onClose={() => {setIsGeneralSettingsOpen(false); setTransferUserId("");}}
                   userid={transferuserid}
                   balance={accountinfo}
                 />

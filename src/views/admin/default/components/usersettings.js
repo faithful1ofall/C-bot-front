@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Box,
   FormControl,
   FormLabel,
   Slider,
@@ -22,7 +16,7 @@ import {
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
-const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid }) => {
+const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
   
   const [settings, setSettings] = useState({});
   
@@ -76,7 +70,6 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid }) => {
       const data = await response.json();
       console.log('Settings save successful:', data);
       // Reset modal state after success
-      onClose();
     } catch (error) {
       console.error('Settings error:', error);
     }
@@ -84,12 +77,8 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid }) => {
 
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>General Exchange Settings</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+    <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+        <Text>General Exchange Settings</Text>
           {/* Futures Account Type */}
           <FormControl mt="4">
             <FormLabel>Futures Account Type</FormLabel>
@@ -148,17 +137,6 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid }) => {
             <Text mt="2">Default mode is {hedgeMode === 'false' ? 'One Way' : 'Hedge Mode'}.</Text>
           </FormControl>
 
-          {/* Cross/Isolated Mode */}
-          {/* <FormControl mt="4">
-            <FormLabel>Cross/Isolated Mode</FormLabel>
-            <RadioGroup onChange={(value) => setSettings({ ...settings, marginMode: value })} value={marginMode}>
-              <Stack direction="row">
-                <Radio value="cross">Cross</Radio>
-                <Radio value="isolated">Isolated</Radio>
-              </Stack>
-            </RadioGroup>
-          </FormControl> */}
-
           {/* Single Asset / Multi Asset Mode */}
           <FormControl mt="4">
             <FormLabel>Single Asset / Multi Asset Mode</FormLabel>
@@ -183,14 +161,11 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid }) => {
             </Text>
             </FormControl>
 
-        </ModalBody>
-        <ModalFooter>
+       
             <Button colorScheme="teal" onClick={handleSave}>   
               Save Settings
             </Button>
-          </ModalFooter>
-      </ModalContent>
-    </Modal>
+          </Box>
   );
 };
 
