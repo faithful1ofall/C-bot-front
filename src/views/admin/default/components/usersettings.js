@@ -9,7 +9,6 @@ import {
   ModalFooter,
   FormControl,
   FormLabel,
-  Select,
   Slider,
   SliderMark,
   SliderTrack,
@@ -17,20 +16,19 @@ import {
   SliderThumb,
   Button,
   Checkbox,
-  CheckboxGroup,
   Text,
   RadioGroup,
   Radio,
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
-const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid, tradingPairs }) => {
+const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid }) => {
   
   const [settings, setSettings] = useState({});
   
   const [originalsettings, setOriginalSettings] = useState(null);
 
-  const { selectedTradingPair, leverage, stickSettings, hedgeMode, assetMode, selectedTradingPairs } = settings;
+  const {  leverage, stickSettings, hedgeMode, assetMode } = settings;
 
   const fetchSettings = async (useridset) => {
     if(useridset){
@@ -97,34 +95,6 @@ const GeneralExchangeSettingsModal = ({ isOpen, onClose, balance, userid, tradin
             <FormLabel>Futures Account Type</FormLabel>
             <Text>Default: USD-M futures</Text>
           </FormControl>
-
-          {/* Trading Pair Selection */}
-          <FormControl mt="4">
-            <FormLabel>Select Trading Pairs to be Used</FormLabel>
-            {/* Multiple selection of trading pairs using checkboxes */}
-            <CheckboxGroup 
-                value={selectedTradingPairs} 
-                onChange={(selectedPairs) => setSettings({ ...settings, selectedTradingPairs: selectedPairs })}>
-                {tradingPairs?.map((pair) => (
-                <Checkbox key={pair} value={pair}>
-                    {pair}
-                </Checkbox>
-                ))}
-            </CheckboxGroup>
-           </FormControl>
-           
-           <FormControl mt="4">
-            <FormLabel>Select Default Trading Pair</FormLabel>
-            <Select value={selectedTradingPair} onChange={(e) => setSettings({ ...settings, selectedTradingPair: e.target.value })}>
-              {selectedTradingPairs?.map((pair) => (
-                <option key={pair} value={pair}>
-                  {pair}
-                </option>
-              ))}
-            </Select>
-            <Text mt="2">Default trading pair is {selectedTradingPair}.</Text>
-          </FormControl>
-
 
           {/* User Account Balance */}
           <FormControl mt="4">

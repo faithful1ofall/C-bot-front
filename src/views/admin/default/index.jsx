@@ -69,7 +69,7 @@ export default function UserReports() {
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
   const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
-  const { isOpen: isLinkStrategyOpen, onOpen: onLinkStrategyOpen, onClose: onLinkStrategyClose } = useDisclosure();
+  const { isOpen: isLinkStrategyOpen, onOpen: onLinkStrategyOpen } = useDisclosure();
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
@@ -190,8 +190,6 @@ export default function UserReports() {
   const filteredPairs = selectedTradingPairs1.filter(pair =>
     pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  console.log("filteredPairs", filteredPairs);
 
   const fetchUsers = async () => {
     try {        
@@ -725,10 +723,43 @@ export default function UserReports() {
                 </MenuList>
               </Menu>
             </Flex>
+
             <Box mt="4">
               <Text>User Name: {user?.name}</Text>
               <Text>Strategies: {user.strategyIds.map(id => strategies.find(s => s.id === id)?.name || 'None').join(', ')}</Text>
             </Box>
+
+
+            {isGeneralSettingsOpen && (
+              <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+                <GeneralExchangeSettingsModal
+                  isOpen={isGeneralSettingsOpen}
+                  onClose={() => {setIsGeneralSettingsOpen(false); setTransferUserId("");}}
+                  userid={transferuserid}
+                  balance={accountinfo}
+                />
+              </Box>
+            )}
+            {isLinkStrategyOpen && (
+                <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+                  {/* Form Content Goes Here */}
+                  <FormControl>
+                    <FormLabel>Select Strategies to Link</FormLabel>
+                    <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
+                      {strategies.map((strategy) => (
+                        <Box key={`${strategy.id}-${strategy.id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+                          <Flex align="center" justify="space-between">
+                            <Text fontWeight="bold">{strategy.name}</Text>
+                            <Button colorScheme="teal" onClick={() => handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))}>
+                              {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
+                            </Button>
+                          </Flex>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  </FormControl>
+                  </Box>
+            )}
           </Box>
         ))}
       </SimpleGrid>
@@ -984,7 +1015,7 @@ export default function UserReports() {
       </SimpleGrid>
 
        {/* Link Strategy Modal */}
-       <Modal isOpen={isLinkStrategyOpen} onClose={onLinkStrategyClose}>
+      {/*  <Modal isOpen={isLinkStrategyOpen} onClose={onLinkStrategyClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Link Strategies to User</ModalHeader>
@@ -1008,7 +1039,7 @@ export default function UserReports() {
           </ModalBody>
         </ModalContent>
       </Modal>
-
+ */}
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
         <ModalOverlay />
