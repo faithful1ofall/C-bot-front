@@ -661,7 +661,7 @@ export default function UserReports() {
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-      <SimpleGrid
+     /* <SimpleGrid
         columns={{ base: 2, lg: 2 }}
         gap="20px"
         mb="20px">
@@ -737,7 +737,86 @@ export default function UserReports() {
           name="No of Failed Trades"
           value="200"
         />
-      </SimpleGrid>
+      </SimpleGrid> */
+
+      <SimpleGrid
+  columns={{ base: 2, lg: 2 }} // Ensures 2 columns even on small screens
+  gap="20px"
+  mb="20px"
+>
+  <MiniStatistics
+    startContent={
+      <IconBox
+        w={{ base: "48px", md: "56px" }} // Responsive width
+        h={{ base: "48px", md: "56px" }} // Responsive height
+        bg="linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)"
+        icon={<Icon w={{ base: "24px", md: "28px" }} h={{ base: "24px", md: "28px" }} as={MdPerson} color="white" />}
+      />
+    }
+    name="No of Users"
+    value="500"
+  />
+  <MiniStatistics
+    startContent={
+      <IconBox
+        w={{ base: "48px", md: "56px" }}
+        h={{ base: "48px", md: "56px" }}
+        bg={boxBg}
+        icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAttachMoney} color={brandColor} />}
+      />
+    }
+    name="No of Trades"
+    value="2500"
+  />
+  <MiniStatistics
+    startContent={
+      <IconBox
+        w={{ base: "48px", md: "56px" }}
+        h={{ base: "48px", md: "56px" }}
+        bg={boxBg}
+        icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAutorenew} color={brandColor} />}
+      />
+    }
+    name="No of Active Trades"
+    value="120"
+  />
+  <MiniStatistics
+    startContent={
+      <IconBox
+        w={{ base: "48px", md: "56px" }}
+        h={{ base: "48px", md: "56px" }}
+        bg={boxBg}
+        icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdShowChart} color={brandColor} />}
+      />
+    }
+    name="No of Strategies"
+    value="35"
+  />
+  <MiniStatistics
+    startContent={
+      <IconBox
+        w={{ base: "48px", md: "56px" }}
+        h={{ base: "48px", md: "56px" }}
+        bg={boxBg}
+        icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdCheckCircle} color={brandColor} />}
+      />
+    }
+    name="No of Successful Trades"
+    value="2300"
+  />
+  <MiniStatistics
+    startContent={
+      <IconBox
+        w={{ base: "48px", md: "56px" }}
+        h={{ base: "48px", md: "56px" }}
+        bg={boxBg}
+        icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdCancel} color={brandColor} />}
+      />
+    }
+    name="No of Failed Trades"
+    value="200"
+  />
+</SimpleGrid>
 
        {/* Dropdown Button */}
        <Menu>
