@@ -8,6 +8,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  FormHelperText,
   Input,
   Icon,
   IconButton,
@@ -55,6 +56,10 @@ import TransferModal from './components/Transfer';
 
 export default function UserReports() {
 
+  const [nameError, setNameError] = useState('');
+  const [apiKeyError, setApiKeyError] = useState('');
+  const [apiSecretError, setApiSecretError] = useState('');
+
   const [searchQuery, setSearchQuery] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
   const [selectedPairs, setSelectedPairs] = useState([]);
@@ -101,7 +106,8 @@ export default function UserReports() {
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
-  const [isEdit, SetEdit] = useState(false);  
+  const [isEdit, SetEdit] = useState(false);
+  const [useredit, SetUserEdit] = useState(false);   
   const [maxTradableAmount, setMaxTradableAmount] = useState(0);
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
@@ -135,17 +141,35 @@ export default function UserReports() {
    const handleSearch = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
+  };
 
-    // Save query to history if it's not already there
-    if (query && !searchHistory.includes(query)) {
-      setSearchHistory([query, ...searchHistory].slice(0, 5)); // Limit history to last 5 queries
+
+
+  const handleSelectPair = async (selectedValues) => {
+
+    console.log("id", selectedValues );
+  
+    try {
+      // Send a PUT request to update the selected trading pairs on the server
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs/${selectedValues}/select`, {
+        method: 'PUT',
+      });
+  
+      if (!response.ok) {
+        console.log(response);
+        throw new Error('Error selecting trading pairs');
+        
+      }
+  
+      const data = await response.json();
+      
+      console.log('Selected trading pairs updated successfully:', data);
+      await fetchPairs();
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
-
-  // Handle pair selection
-  const handleSelectPairs = (selectedValues) => {
-    setSelectedPairs(selectedValues);
-  };
+  
 
   const handleCallFundsChange = (index, value) => {
     const newCallFunds = [...callFunds];
@@ -190,6 +214,17 @@ export default function UserReports() {
   const filteredPairs = selectedTradingPairs1.filter(pair =>
     pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const filteredSelectedPairs = selectedTradingPairs1
+  .filter(pair => pair.isSelected === "true") // Filter pairs where isSelected is "true"
+  .map(pair => pair.symbol); // Map to get only the symbols
+
+
+    // Handle pair selection
+    const handleSelectPairs = () => {
+      setSelectedPairs(filteredSelectedPairs);
+    };
+  
 
   const fetchUsers = async () => {
     try {        
@@ -256,8 +291,12 @@ export default function UserReports() {
    useEffect(() => {
     fetchUsers();
     fetchStrategies();
-    fetchPairs();
+    fetchPairs();   
   }, []);
+
+  useEffect(() => {
+    setSelectedPairs(filteredSelectedPairs);
+  }, [filteredSelectedPairs])
 
  const tradinghook = async() => {
     const hooking = { 
@@ -446,16 +485,67 @@ export default function UserReports() {
 
   }
 
+  const handleEditUser = async(editid) => {
+    console.log(editid);
+    try {
+      
+      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`);
+
+      if (!response1.ok) {
+        throw new Error(`HTTP error! status: ${response1.status}`);
+      }
+      const data1 = await response1.json(); 
+
+      setName(data1.name);
+      setApiKey(data1.apiKey);
+      setApiSecret(data1.apiSecret)
+
+    }  catch (error) {
+      console.error('Request failed', error);
+    }
+
+  }
+
+
+  // Function to validate input
+  const validateInputs = () => {
+    let isValid = true;
+
+    // Reset errors
+    setNameError('');
+    setApiKeyError('');
+    setApiSecretError('');
+
+    // Validate User Name
+    if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+      setNameError('User Name can only contain letters, numbers, and underscores.');
+      isValid = false;
+    }
+
+    // Validate API Key (example: 32 alphanumeric characters)
+    if (apiKey.length < 64) {
+      setApiKeyError('API Key must be 64 alphanumeric characters.');
+      isValid = false;
+    }
+
+    // Validate API Secret (example: at least 8 characters)
+    if (apiSecret.length < 64) {
+      setApiSecretError('API Secret must be at least 64 characters long.');
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
 
   const handleAddUser = async() => {
-    if (apiKey && apiSecret && name) {
-      const newUser = {
-        name,
-        apiKey,
-        apiSecret,
-        strategyIds: [],
-      };
+    const newUser = {
+      name,
+      apiKey,
+      apiSecret
+    } 
 
+    if (validateInputs() && !useredit) {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`, {
           method: 'POST',
@@ -471,6 +561,7 @@ export default function UserReports() {
           setUsers([...users, data.user]); // Add the new user to the list
           setApiKey("");
           setApiSecret("");
+          
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
         } else {
@@ -479,6 +570,33 @@ export default function UserReports() {
       } catch (error) {
         console.error('Error:', error);
       }
+    } else {
+
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useredit}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newUser),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          setUsers([...users, data.user]); // Add the new user to the list
+          setApiKey("");
+          setApiSecret("");
+          SetUserEdit(false);
+          onUserClose(); // Close modal or form
+          console.log('User added successfully:', data);
+        } else {
+          console.error('Error adding user:', data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      
     }
   };
 
@@ -525,6 +643,19 @@ export default function UserReports() {
       } catch (error) {
         console.error('Error:', error);
       }
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+
+      // Add the current query to the search history if it's not empty
+      if (searchQuery.trim()) {
+        setSearchHistory((prevHistory) => [searchQuery, ...prevHistory.slice(0, 3)]); // Add new search and limit to 4
+      }
+
+      // Reset search query after showing the results
+      setSearchQuery('');
     }
   };
 
@@ -620,33 +751,33 @@ export default function UserReports() {
             placeholder="Search trading pairs"
             value={searchQuery}
             onChange={handleSearch}
+            onKeyDown={handleKeyPress}
             mb={4}
             leftIcon={<Icon as={MdSearch} />}
           />
 
-          {/* Search History */}
-          {searchHistory.length > 0 && (
-            <Box mb={4}>
-              <strong>Recent Searches:</strong>
-              <Stack>
-                {searchHistory.map((query, index) => (
-                  <Button
-                    key={index}
-                    variant="link"
-                    onClick={() => setSearchQuery(query)}
-                  >
-                    {query}
-                  </Button>
-                ))}
-              </Stack>
-            </Box>
-          )}
+        {searchHistory.length > 0 && (
+        <Box mb={4}>
+          <strong>Recent Searches:</strong>
+          <SimpleGrid columns={2} spacing={2}>
+            {searchHistory.slice(0, 4).map((query, index) => (
+              <Button
+                key={index}
+                variant="link"
+                onClick={() => setSearchQuery(query)}
+              >
+                {query}
+              </Button>
+            ))}
+          </SimpleGrid>
+        </Box>
+      )}
 
           {/* Checkbox List for Trading Pairs */}
           <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
             <Stack spacing={3}>
               {filteredPairs.map((pair) => (
-                <Checkbox key={pair._id} value={pair.symbol}>
+                <Checkbox key={pair._id} value={pair.symbol}  isChecked={pair.isSelected} onChange={() => { handleSelectPair(pair._id);}}>
                   {pair.symbol}
                 </Checkbox>
               ))}
@@ -655,11 +786,44 @@ export default function UserReports() {
         </MenuList>
       </Menu>
 
+      
+     {/* Add User Modal */}
+     <Modal isOpen={isUserOpen} onClose={onUserClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader> {useredit ? 'Edit User' : 'Add User'}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl isInvalid={!!nameError}>
+              <FormLabel>User Name</FormLabel>
+              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              {nameError && <FormHelperText color="red.500">{nameError}</FormHelperText>}
+            </FormControl>
+            <FormControl isInvalid={!!apiKeyError}>
+              <FormLabel>API Key</FormLabel>
+              <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+              {apiKeyError && <FormHelperText color="red.500">{apiKeyError}</FormHelperText>}
+            </FormControl>
+            <FormControl mt="4" isInvalid={!!apiSecretError} >
+              <FormLabel>API Secret</FormLabel>
+              <Input value={apiSecret} onChange={(e) => setApiSecret(e.target.value)} />
+              {apiSecretError && <FormHelperText color="red.500">{apiSecretError}</FormHelperText>}
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" onClick={handleAddUser}>
+              {useredit ? 'Edit User' : 'Add User'}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
       <Flex justify="space-between" mt="40px">
         <Button
           leftIcon={<Icon as={MdPerson} />}
           colorScheme="teal"
-          onClick={onUserOpen}
+          onClick={()=> {SetUserEdit(""); onUserOpen();}}
         >
           Add User
         </Button>
@@ -671,36 +835,6 @@ export default function UserReports() {
           Test Webhook
         </Button>
       </Flex>
-
-     {/* Add User Modal */}
-     <Modal isOpen={isUserOpen} onClose={onUserClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add User</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>User Name</FormLabel>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
-            </FormControl>
-            <FormControl>
-              <FormLabel>API Key</FormLabel>
-              <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
-            </FormControl>
-            <FormControl mt="4">
-              <FormLabel>API Secret</FormLabel>
-              <Input value={apiSecret} onChange={(e) => setApiSecret(e.target.value)} />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="teal" onClick={handleAddUser}>
-              Add User
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
         {users.map((user, index) => (
           <Box key={`${index}-${index}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
             <Flex align="center" justify="space-between">
@@ -711,6 +845,7 @@ export default function UserReports() {
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); setLinkStrategyOpen((prev) => (prev === user.id ? null : user.id)); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen((prev) => (prev === user.id ? null : user.id));}}>User/Exchange Settings</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Transfer Funds</MenuItem>
+                  <MenuItem onClick={() => { SetUserEdit(user.id); handleEditUser(user.id); onUserOpen()}}>Edit User</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                   
                 </MenuList>
@@ -1005,32 +1140,6 @@ export default function UserReports() {
         ))}
       </SimpleGrid>
 
-       {/* Link Strategy Modal */}
-      {/*  <Modal isOpen={isLinkStrategyOpen} onClose={onLinkStrategyClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Link Strategies to User</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Select Strategies to Link</FormLabel>
-              <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
-                {strategies.map((strategy) => (
-                  <Box key={`${strategy.id}-${strategy.id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
-                    <Flex align="center" justify="space-between">
-                      <Text fontWeight="bold">{strategy.name}</Text>
-                      <Button colorScheme="teal" onClick={() => handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))}>
-                        {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
-                      </Button>
-                    </Flex>
-                  </Box>
-                ))}
-              </SimpleGrid>
-            </FormControl>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
- */}
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
         <ModalOverlay />
