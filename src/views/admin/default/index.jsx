@@ -62,6 +62,7 @@ export default function UserReports() {
   const [apiSecretError, setApiSecretError] = useState('');
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchQueryvalue, setSearchQueryvalue] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
   const [selectedPairs, setSelectedPairs] = useState([]);
   const [selectedTradingPairs1, setSelectedTradingPairs1] = useState([]);
@@ -142,7 +143,7 @@ export default function UserReports() {
    // Handle search query change
    const handleSearch = (event) => {
     const query = event.target.value;
-    setSearchQuery(query);
+    setSearchQueryvalue(query);
   };
 
 
@@ -649,15 +650,14 @@ export default function UserReports() {
   };
 
   const handleKeyPress = (e) => {
+    
     if (e.key === 'Enter') {
+      setSearchQuery(e.target.value);
 
       // Add the current query to the search history if it's not empty
       if (searchQuery.trim()) {
         setSearchHistory((prevHistory) => [searchQuery, ...prevHistory.slice(0, 3)]); // Add new search and limit to 4
       }
-
-      // Reset search query after showing the results
-      setSearchQuery('');
     }
   };
 
@@ -758,7 +758,7 @@ export default function UserReports() {
           {/* Search Bar */}
           <Input
             placeholder="Search trading pairs"
-            value={searchQuery}
+            value={searchQueryvalue}
             onChange={handleSearch}
             onKeyDown={handleKeyPress}
             mb={4}
