@@ -102,8 +102,9 @@ export default function UserReports() {
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState(0);
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
   const [gridCalls, setGridCalls] = useState(1);
-  const [profitLock, setProfitLock] = useState(0);
-  const [stopLoss, setStopLoss] = useState(0);
+  const [profitLock, setProfitLock] = useState();
+  const [stopLoss, setStopLoss] = useState();
+  const [trailingStop, setTrailingStop] = useState();
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
@@ -1102,15 +1103,72 @@ export default function UserReports() {
                     </Box>
                   )))}
                     <FormControl mb="4">
-                      <FormLabel>Profit Lock %</FormLabel>
-                      <NumberInput value={profitLock || ""} onChange={(valueString) => setProfitLock(isNaN(valueString) ? 0 : valueString)}>
+                      <FormLabel>Profit Lock Settings</FormLabel>
+                      <FormLabel>Lock % Trigger</FormLabel>
+                      <NumberInput value={profitLock?.trigger || ""} onChange={(valueString) => setProfitLock((prev) => ({ ...prev, trigger: isNaN(valueString) ? 0 : valueString, }))}>
+                        <NumberInputField />
+                      </NumberInput>
+                       <FormLabel>Lock %</FormLabel>
+                      <NumberInput value={profitLock?.lockPercent || ""} onChange={(valueString) => setProfitLock((prev) => ({ ...prev, lockPercent: isNaN(valueString) ? 0 : valueString, }))}>
                         <NumberInputField />
                       </NumberInput>
                     </FormControl>
 
                     <FormControl mb="4">
-                      <FormLabel>Stop Loss % (SL%)</FormLabel>
-                      <NumberInput value={stopLoss || ""} onChange={(valueString) => setStopLoss(isNaN(valueString) ? 0 : valueString)}>
+                  <FormLabel>Trailing Stop Settings</FormLabel>
+
+                  {/* Callback Rate */}
+                  <FormLabel>Callback Rate (%)</FormLabel>
+                  <NumberInput
+                    value={trailingStop?.callbackRate || ""}
+                    onChange={(valueString) =>
+                      setTrailingStop((prev) => ({
+                        ...prev,
+                        callbackRate: isNaN(valueString) ? 0 : valueString,
+                      }))
+                    }
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+
+                  {/* Price */}
+                  <FormLabel>Price (in USD)</FormLabel>
+                  <NumberInput
+                    value={trailingStop?.price || ""}
+                    onChange={(valueString) =>
+                      setTrailingStop((prev) => ({
+                        ...prev,
+                        price: isNaN(valueString) ? 0 : valueString,
+                      }))
+                    }
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+
+                  {/* Amount */}
+                  <FormLabel>Amount (in units)</FormLabel>
+                  <NumberInput
+                    value={trailingStop?.amount || ""}
+                    onChange={(valueString) =>
+                      setTrailingStop((prev) => ({
+                        ...prev,
+                        amount: isNaN(valueString) ? 0 : valueString,
+                      }))
+                    }
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                </FormControl>
+
+
+                    <FormControl mb="4">
+                    <FormLabel>Stop Loss Settings</FormLabel>
+                      <FormLabel>Stop Loss % (Current Trade)</FormLabel>
+                      <NumberInput value={stopLoss?.currentTrade || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, currentTrade: isNaN(valueString) ? 0 : valueString, }))}>
+                        <NumberInputField />
+                      </NumberInput>
+                      <FormLabel>Stop Loss % (Tradable Amount)</FormLabel>
+                      <NumberInput value={stopLoss?.tradableAmount || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, tradableAmount: isNaN(valueString) ? 0 : valueString, }))}>
                         <NumberInputField />
                       </NumberInput>
                     </FormControl>
