@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   CheckboxGroup,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
@@ -660,11 +661,12 @@ export default function UserReports() {
   };
 
   return (
-    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+    <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
+      <Divider my="6" borderColor="black.400" borderWidth="1px" />
       <SimpleGrid
         columns={{ base: 2, lg: 2 }}
         gap="20px"
-        mb="20px">
+        mb="20px" mt="0.5">
         <MiniStatistics
           startContent={
             <IconBox
@@ -737,13 +739,19 @@ export default function UserReports() {
           name="No of Failed Trades"
           value="200"
         />
+        
       </SimpleGrid>
+
+      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+
 
        {/* Dropdown Button */}
        <Menu>
         <MenuButton as={Button} leftIcon={<Icon as={MdPerson} />} colorScheme="teal">
           Add Trading Pairs
         </MenuButton>
+
+
 
         <MenuList p={4} width="300px">
           {/* Search Bar */}
@@ -786,6 +794,25 @@ export default function UserReports() {
         </MenuList>
       </Menu>
 
+      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+
+      <Flex justify="space-between" mt="20px">
+        <Button
+          leftIcon={<Icon as={MdPerson} />}
+          colorScheme="teal"
+          onClick={()=> {SetUserEdit(""); onUserOpen();}}
+        >
+          Add User
+        </Button>
+        <Button
+          leftIcon={<Icon as={MdPerson} />}
+          colorScheme="teal"
+          onClick={tradinghook}
+        >
+          Test Webhook
+        </Button>
+      </Flex>
+
       
      {/* Add User Modal */}
      <Modal isOpen={isUserOpen} onClose={onUserClose}>
@@ -819,22 +846,7 @@ export default function UserReports() {
       </Modal>
 
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
-      <Flex justify="space-between" mt="40px">
-        <Button
-          leftIcon={<Icon as={MdPerson} />}
-          colorScheme="teal"
-          onClick={()=> {SetUserEdit(""); onUserOpen();}}
-        >
-          Add User
-        </Button>
-        <Button
-          leftIcon={<Icon as={MdPerson} />}
-          colorScheme="teal"
-          onClick={tradinghook}
-        >
-          Test Webhook
-        </Button>
-      </Flex>
+      
         {users.map((user, index) => (
           <Box key={`${index}-${index}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
             <Flex align="center" justify="space-between">
@@ -893,6 +905,8 @@ export default function UserReports() {
 
       <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo}/>
 
+      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+
       <Button
           mt="40px"
           leftIcon={<Icon as={MdAddAlert} />}
@@ -901,6 +915,8 @@ export default function UserReports() {
         >
           Create Strategy
         </Button>
+
+
 
       <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
         {strategies.map((strategy) => (
@@ -1139,6 +1155,8 @@ export default function UserReports() {
           </Box>
         ))}
       </SimpleGrid>
+
+      <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
