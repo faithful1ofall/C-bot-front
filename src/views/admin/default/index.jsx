@@ -663,7 +663,7 @@ export default function UserReports() {
   return (
     <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
 
-      <Text mt={20} fontSize="2xl" fontWeight="bold" > INFO </Text>
+      <Text mt={15} fontSize="2xl" fontWeight="bold" > INFO </Text>
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
       <SimpleGrid
           columns={{ base: 2, lg: 2 }} // Ensures 2 columns even on small screens
@@ -799,7 +799,7 @@ export default function UserReports() {
         </MenuList>
       </Menu>
 
-      <Text fontSize="2xl" fontWeight="bold" > USERS </Text>
+      <Text mt="6" fontSize="2xl" fontWeight="bold" > USERS </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
@@ -912,7 +912,7 @@ export default function UserReports() {
 
       <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo}/>
 
-      <Text fontSize="2xl" fontWeight="bold" > STRATEGIES  </Text>
+      <Text mt="6" fontSize="2xl" fontWeight="bold" > STRATEGIES  </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
@@ -1222,7 +1222,7 @@ export default function UserReports() {
         ))}
       </SimpleGrid>
 
-      <Text fontSize="2xl" fontWeight="bold" > STRATEGIES </Text>
+      <Text mt="6" fontSize="2xl" fontWeight="bold" > TRADES </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
