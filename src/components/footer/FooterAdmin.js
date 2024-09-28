@@ -38,7 +38,7 @@ export default function Footer() {
         {" "}
         &copy; {1900 + new Date().getYear()}
         <Text as='span' fontWeight='500' ms='4px'>
-          BOT UI. All Rights Reserved. Made with love by Faithful
+            Strategy BOT UI. All Rights Reserved.
           {/* <Link
             mx='3px'
             color={textColor}

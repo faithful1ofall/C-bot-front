@@ -45,7 +45,6 @@ import {
   MdAutorenew,
   MdShowChart,
   MdCheckCircle,
-  MdCancel,
   MdPerson,
   MdAddAlert,
   MdMoreVert,
@@ -663,6 +662,8 @@ export default function UserReports() {
 
   return (
     <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
+
+      <Text mt={20} fontSize="2xl" fontWeight="bold" > INFO </Text>
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
       <SimpleGrid
           columns={{ base: 2, lg: 2 }} // Ensures 2 columns even on small screens
@@ -678,7 +679,7 @@ export default function UserReports() {
             icon={<Icon w={{ base: "24px", md: "28px" }} h={{ base: "24px", md: "28px" }} as={MdPerson} color="white" />}
           />
         }
-        name="No of Users"
+        name="Total users"
         value="500"
       />
       <MiniStatistics
@@ -690,7 +691,7 @@ export default function UserReports() {
             icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAttachMoney} color={brandColor} />}
           />
         }
-        name="No of Trades"
+        name="Active users"
         value="2500"
       />
       <MiniStatistics
@@ -702,7 +703,7 @@ export default function UserReports() {
             icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAutorenew} color={brandColor} />}
           />
         }
-        name="No of Active Trades"
+        name="Active trade(s)"
         value="120"
       />
       <MiniStatistics
@@ -714,7 +715,7 @@ export default function UserReports() {
             icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdShowChart} color={brandColor} />}
           />
         }
-        name="No of Strategies"
+        name="Total strategies"
         value="35"
       />
       <MiniStatistics
@@ -726,10 +727,10 @@ export default function UserReports() {
             icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdCheckCircle} color={brandColor} />}
           />
         }
-        name="No of Successful Trades"
+        name="Active strategies"
         value="2300"
       />
-      <MiniStatistics
+     {/*  <MiniStatistics
         startContent={
           <IconBox
             w={{ base: "48px", md: "56px" }}
@@ -740,8 +741,11 @@ export default function UserReports() {
         }
         name="No of Failed Trades"
         value="200"
-      />
+      /> */}
     </SimpleGrid>
+
+
+    <Text fontSize="2xl" fontWeight="bold" > PAIRS </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
@@ -794,6 +798,8 @@ export default function UserReports() {
           </CheckboxGroup>
         </MenuList>
       </Menu>
+
+      <Text fontSize="2xl" fontWeight="bold" > USERS </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
@@ -905,6 +911,8 @@ export default function UserReports() {
 
 
       <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo}/>
+
+      <Text fontSize="2xl" fontWeight="bold" > STRATEGIES  </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 
@@ -1213,6 +1221,8 @@ export default function UserReports() {
           </Box>
         ))}
       </SimpleGrid>
+
+      <Text fontSize="2xl" fontWeight="bold" > STRATEGIES </Text>
 
       <Divider my="6" borderColor="black.400" borderWidth="1px" />
 

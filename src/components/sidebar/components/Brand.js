@@ -29,7 +29,7 @@ export function SidebarBrand() {
 						_focus={{
 							boxShadow: 'none'
 						}}>
-						BOT FREE
+						Bot interface Sections
 					</Text>
       <HSeparator mb='20px' />
     </Flex>
