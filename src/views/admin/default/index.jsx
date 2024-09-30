@@ -942,12 +942,12 @@ export default function UserReports() {
                   </FormControl>
                   </Box>
             )}
-          </Box>
-          {transferuserid === user.id && (
-            <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-              <TransferModal userid={transferuserid} balance={accountinfo} />
-            </Box>
-          )}
+             {transferuserid === user.id && (
+                <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+                  <TransferModal userid={transferuserid} balance={accountinfo} />
+                </Box>
+              )}
+          </Box>         
         ))}
       </SimpleGrid>
 
