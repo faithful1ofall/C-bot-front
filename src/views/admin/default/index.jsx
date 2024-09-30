@@ -696,7 +696,7 @@ export default function UserReports() {
           />
         }
         name="Total users"
-        value="500"
+        value=users.length
       />
       <MiniStatistics
         startContent={
@@ -708,7 +708,7 @@ export default function UserReports() {
           />
         }
         name="Active users"
-        value="2500"
+        value="null"
       />
       <MiniStatistics
         startContent={
@@ -720,7 +720,7 @@ export default function UserReports() {
           />
         }
         name="Active trade(s)"
-        value="120"
+        value="null"
       />
       <MiniStatistics
         startContent={
@@ -732,7 +732,7 @@ export default function UserReports() {
           />
         }
         name="Total strategies"
-        value="35"
+        value=strategies.length
       />
       <MiniStatistics
         startContent={
@@ -744,9 +744,9 @@ export default function UserReports() {
           />
         }
         name="Active strategies"
-        value="2300"
+        value="null"
       />
-     {/*  <MiniStatistics
+      <MiniStatistics
         startContent={
           <IconBox
             w={{ base: "48px", md: "56px" }}
@@ -755,9 +755,9 @@ export default function UserReports() {
             icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdCancel} color={brandColor} />}
           />
         }
-        name="No of Failed Trades"
-        value="200"
-      /> */}
+        name="Total ROI"
+        value="null"
+      />
     </SimpleGrid>
 
 
