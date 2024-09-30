@@ -147,14 +147,16 @@ export default function UserReports() {
 
 
 
-  const handleSelectPair = async (selectedValues) => {
+  const handleSelectPair = async (selectedValues, selectedbool) => {
 
     console.log("id", selectedValues );
+
+    const method = selectedbool ? 'PUT' : 'DELETE';
   
     try {
       // Send a PUT request to update the selected trading pairs on the server
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs/${selectedValues}/select`, {
-        method: 'PUT',
+        method: method,
       });
   
       if (!response.ok) {
@@ -815,7 +817,7 @@ export default function UserReports() {
           <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
             <Stack spacing={3}>
               {filteredPairs.map((pair) => (
-                <Checkbox key={pair._id} value={pair.symbol}  isChecked={pair.isSelected} onChange={() => { handleSelectPair(pair._id);}}>
+                <Checkbox key={pair._id} value={pair.symbol}  isChecked={pair.isSelected} onChange={() => { handleSelectPair(pair._id, pair.isSelected);}}>
                   {pair.symbol}
                 </Checkbox>
               ))}
