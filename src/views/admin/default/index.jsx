@@ -101,6 +101,7 @@ export default function UserReports() {
   const [timeFrame, setTimeFrame] = useState('1 Minute');
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState(0);
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
+  const [isTrailingStop, setTrailingStop] = useState(false);
   const [gridCalls, setGridCalls] = useState(1);
   const [profitLock, setProfitLock] = useState();
   const [stopLoss, setStopLoss] = useState();
@@ -1105,7 +1106,6 @@ export default function UserReports() {
                   </FormControl>
 
                   <Box mt="4" p="4" bg="gray.100" borderRadius="md">
-                    <Text fontSize="lg" fontWeight="bold">Call 1</Text>
 
                     <FormControl mb="4">
                       <FormLabel>Initail Call Funds %</FormLabel>
@@ -1143,7 +1143,7 @@ export default function UserReports() {
                   {isNegativeCandleEnabled && (
                     Array.from({ length: negativeCandleTrigger }, (_, index) => (
                     <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">                 
-                      <Text fontSize="lg" fontWeight="bold">Call {index + 2}</Text>   
+                      <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>   
                           <Box  mb="4" key={index}>
 
                             <FormControl mb="4">
@@ -1199,6 +1199,7 @@ export default function UserReports() {
                       Enable Trailing Stop
                     </Checkbox>
                   {/* Callback Rate */}
+                      {isTrailingStop && (
                   <FormLabel>Callback Rate (%)</FormLabel>
                   <NumberInput
                     value={trailingStop?.callbackRate || ""}
@@ -1213,7 +1214,7 @@ export default function UserReports() {
                   </NumberInput>
 
                   {/* Price */}
-                  <FormLabel>Price (in %)</FormLabel>
+                  <FormLabel>Price (offset %)</FormLabel>
                   <NumberInput
                     value={trailingStop?.price || ""}
                     onChange={(valueString) =>
@@ -1227,7 +1228,7 @@ export default function UserReports() {
                   </NumberInput>
 
                   {/* Amount */}
-                  <FormLabel>Amount (in %)</FormLabel>
+                  <FormLabel>Amount of funds to be used (in %)</FormLabel>
                   <NumberInput
                     value={trailingStop?.amount || ""}
                     onChange={(valueString) =>
@@ -1239,6 +1240,7 @@ export default function UserReports() {
                   >
                     <NumberInputField />
                   </NumberInput>
+                  )}
                 </FormControl>
 
 
