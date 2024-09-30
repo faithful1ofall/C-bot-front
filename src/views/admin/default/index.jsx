@@ -944,7 +944,7 @@ export default function UserReports() {
             )}
              {transferuserid === user.id && (
                 <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-                  <TransferModal userid={transferuserid} balance={accountinfo} />
+                  <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} userid={transferuserid} balance={accountinfo} fetchAccountinfo={fetchAccountinfo(transferuserid)}/>
                 </Box>
               )}
           </Box>         
