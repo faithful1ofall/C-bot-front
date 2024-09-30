@@ -48,6 +48,7 @@ import {
   MdPerson,
   MdAddAlert,
   MdMoreVert,
+  MdAttachMoney,
   MdSearch,
 } from "react-icons/md";
 import GeneralExchangeSettingsModal from './components/usersettings';
@@ -752,7 +753,7 @@ export default function UserReports() {
             w={{ base: "48px", md: "56px" }}
             h={{ base: "48px", md: "56px" }}
             bg={boxBg}
-            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdCancel} color={brandColor} />}
+            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAttachMoney} color={brandColor} />}
           />
         }
         name="Total ROI"
