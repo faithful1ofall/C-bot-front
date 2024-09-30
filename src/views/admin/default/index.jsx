@@ -100,7 +100,7 @@ export default function UserReports() {
   const [tradeDirection, setTradeDirection] = useState('Both');
   const [timeFrame, setTimeFrame] = useState('1 Minute');
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState(0);
-  const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false)
+  const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
   const [gridCalls, setGridCalls] = useState(1);
   const [profitLock, setProfitLock] = useState();
   const [stopLoss, setStopLoss] = useState();
@@ -1199,6 +1199,7 @@ export default function UserReports() {
                     </Checkbox>
                   {/* Callback Rate */}
                   {trailingStop?.enabled && (
+                  <Box>
                   <FormLabel>Callback Rate (%)</FormLabel>
                   <NumberInput
                     value={trailingStop?.callbackRate || ""}
@@ -1239,6 +1240,7 @@ export default function UserReports() {
                   >
                     <NumberInputField />
                   </NumberInput>
+                    </Box>
                   )}
                 </FormControl>
 
