@@ -823,6 +823,21 @@ export default function UserReports() {
           </CheckboxGroup>
         </MenuList>
       </Menu>
+      {/* Section to show added trading pairs */}
+      <Box mt={4}>
+        <Text fontWeight="bold" mb={2}>Added Trading Pairs:</Text>
+        {selectedPairs.length > 0 ? (
+          <Stack spacing={2}>
+            {selectedPairs.map((pair) => (
+              <Text key={pair} p={2} borderWidth="1px" borderRadius="md" borderColor="gray.200">
+                {pair}
+              </Text>
+            ))}
+          </Stack>
+        ) : (
+          <Text color="gray.500">No trading pairs added.</Text>
+        )}
+      </Box>
 
       <Box mt={5} position="relative" textAlign="left">
         <Text
@@ -907,6 +922,11 @@ export default function UserReports() {
                 </MenuList>
               </Menu>
             </Flex>
+            <Switch
+                isChecked={strategy.active}
+                onChange={() => { handleactive(strategy.id, strategy.active);}}
+                colorScheme="teal"
+              />
 
             <Box mt="4">
               <Text>User Name: {user?.name}</Text>
