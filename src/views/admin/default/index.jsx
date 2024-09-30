@@ -923,8 +923,8 @@ export default function UserReports() {
               </Menu>
             </Flex>
             <Switch
-                isChecked={strategy.active}
-                onChange={() => { handleactive(strategy.id, strategy.active);}}
+                isChecked={user.active}
+                onChange={() => { handleactive(user.id, user.active);}}
                 colorScheme="teal"
               />
 
