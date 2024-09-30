@@ -745,7 +745,7 @@ export default function UserReports() {
           />
         }
         name="Active strategies"
-        value={filteredSelectedPairs.length}
+        value={strategies.filter(strategy => strategy.active).length}
       />
       <MiniStatistics
         startContent={
