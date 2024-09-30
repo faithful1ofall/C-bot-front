@@ -696,7 +696,7 @@ export default function UserReports() {
           />
         }
         name="Total users"
-        value=users.length
+        value=`${users.length}`
       />
       <MiniStatistics
         startContent={
@@ -708,7 +708,7 @@ export default function UserReports() {
           />
         }
         name="Active users"
-        value="null"
+        value="0"
       />
       <MiniStatistics
         startContent={
@@ -720,7 +720,7 @@ export default function UserReports() {
           />
         }
         name="Active trade(s)"
-        value="null"
+        value="0"
       />
       <MiniStatistics
         startContent={
@@ -732,7 +732,7 @@ export default function UserReports() {
           />
         }
         name="Total strategies"
-        value=strategies.length
+        value=`${strategies.length}`
       />
       <MiniStatistics
         startContent={
@@ -744,7 +744,7 @@ export default function UserReports() {
           />
         }
         name="Active strategies"
-        value="null"
+        value="0"
       />
       <MiniStatistics
         startContent={
@@ -756,7 +756,7 @@ export default function UserReports() {
           />
         }
         name="Total ROI"
-        value="null"
+        value="0"
       />
     </SimpleGrid>
 
