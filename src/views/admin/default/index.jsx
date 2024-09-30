@@ -663,12 +663,26 @@ export default function UserReports() {
   return (
     <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
 
-      <Text mt={15} fontSize="2xl" fontWeight="bold" > INFO </Text>
-      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+      <Box mt={15} position="relative" textAlign="left">
+        <Text
+          as="span"
+          zIndex={1}
+          fontSize="2xl"
+          fontWeight="bold"
+        >
+          INFO
+        </Text>
+        <Divider
+          mt={-1} // Move the divider up to align with the text
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+      </Box>
       <SimpleGrid
           columns={{ base: 2, lg: 2 }} // Ensures 2 columns even on small screens
       gap="20px"
-      mb="20px"
+      mb="10px"
+      mt={5}
     >
       <MiniStatistics
         startContent={
@@ -745,14 +759,25 @@ export default function UserReports() {
     </SimpleGrid>
 
 
-    <Text fontSize="2xl" fontWeight="bold" > PAIRS </Text>
-
-      <Divider my="6" borderColor="black.400" borderWidth="1px" />
-
+    <Box mt={5} position="relative" textAlign="left">
+        <Text
+          as="span"
+          zIndex={1}
+          fontSize="2xl"
+          fontWeight="bold"
+        >
+          PAIRS
+        </Text>
+        <Divider
+          mt={-1} // Move the divider up to align with the text
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+      </Box>
 
        {/* Dropdown Button */}
        <Menu>
-        <MenuButton as={Button} leftIcon={<Icon as={MdPerson} />} colorScheme="teal">
+        <MenuButton mt={5} as={Button} leftIcon={<Icon as={MdPerson} />} colorScheme="teal">
           Add Trading Pairs
         </MenuButton>
 
@@ -799,9 +824,21 @@ export default function UserReports() {
         </MenuList>
       </Menu>
 
-      <Text mt="6" fontSize="2xl" fontWeight="bold" > USERS </Text>
-
-      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+      <Box mt={5} position="relative" textAlign="left">
+        <Text
+          as="span"
+          zIndex={1}
+          fontSize="2xl"
+          fontWeight="bold"
+        >
+          USERS
+        </Text>
+        <Divider
+          mt={-1} // Move the divider up to align with the text
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+      </Box>
 
       <Flex justify="space-between" mt="20px">
         <Button
@@ -877,7 +914,7 @@ export default function UserReports() {
             </Box>
 
 
-            {isGeneralSettingsOpen && (
+            {isGeneralSettingsOpen === user.id && (
               <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                 <GeneralExchangeSettingsModal
                   userid={transferuserid}
@@ -885,7 +922,7 @@ export default function UserReports() {
                 />
               </Box>
             )}
-            {isLinkStrategyOpen && (
+            {isLinkStrategyOpen === user.id && (
                 <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                   {/* Form Content Goes Here */}
                   <FormControl>
@@ -906,18 +943,37 @@ export default function UserReports() {
                   </Box>
             )}
           </Box>
+          {transferuserid === user.id && (
+            <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+              <TransferModal userid={transferuserid} balance={accountinfo} />
+            </Box>
+          )}
         ))}
       </SimpleGrid>
 
 
-      <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo}/>
 
-      <Text mt="6" fontSize="2xl" fontWeight="bold" > STRATEGIES  </Text>
-
-      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+      
+{/*       <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo(transferuserid)}/>
+ */}
+      <Box mt={5} position="relative" textAlign="left">
+        <Text
+          as="span"
+          zIndex={1}
+          fontSize="2xl"
+          fontWeight="bold"
+        >
+          STRATEGIES
+        </Text>
+        <Divider
+          mt={-1} // Move the divider up to align with the text
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+      </Box>
 
       <Button
-          mt="40px"
+          mt="20px"
           leftIcon={<Icon as={MdAddAlert} />}
           colorScheme="blue"
           onClick={() => {SetEdit(""); handleCreate(); onCreateStrategyOpen();}}
@@ -1042,6 +1098,35 @@ export default function UserReports() {
                     </Select>
                   </FormControl>
 
+                  
+
+                  <FormControl mb="4">
+                    <FormLabel>Initial Call</FormLabel>
+                  </FormControl>
+
+                  <Box mt="4" p="4" bg="gray.100" borderRadius="md">
+                    <Text fontSize="lg" fontWeight="bold">Call 1</Text>
+
+                    <FormControl mb="4">
+                      <FormLabel>Initail Call Funds %</FormLabel>
+                      <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    <FormControl mb="4">
+                      <FormLabel>Initial Call TP%</FormLabel>
+                      <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}>
+                        <NumberInputField />
+                      </NumberInput>
+                    </FormControl>
+
+                    {/* Sync Call 1 Values */}
+                    <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
+                      Sync Initial Call Values to All
+                    </Button>
+                  </Box> 
+
                   <FormControl mb="4">
                     <Flex alignItems="center">
                       <FormLabel>Negative Value Trigger (%)</FormLabel>
@@ -1052,34 +1137,7 @@ export default function UserReports() {
                         <NumberInputField />
                       </NumberInput>
                     )}
-                  </FormControl>
-
-                  <FormControl mb="4">
-                    <FormLabel>Initial Call</FormLabel>
-                  </FormControl>
-
-                  <Box mt="4" p="4" bg="gray.100" borderRadius="md">
-                    <Text fontSize="lg" fontWeight="bold">Call 1</Text>
-
-                    <FormControl mb="4">
-                      <FormLabel>Call 1 Funds %</FormLabel>
-                      <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-
-                    <FormControl mb="4">
-                      <FormLabel>Call 1 TP%</FormLabel>
-                      <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-
-                    {/* Sync Call 1 Values */}
-                    <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
-                      Sync Call 1 Values to All
-                    </Button>
-                  </Box>   
+                  </FormControl>  
 
                   {/* Loop through each call and display grouped inputs */}
                   {isNegativeCandleEnabled && (
@@ -1087,26 +1145,29 @@ export default function UserReports() {
                     <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">                 
                       <Text fontSize="lg" fontWeight="bold">Call {index + 2}</Text>   
                           <Box  mb="4" key={index}>
+
                             <FormControl mb="4">
-                              <FormLabel>Call {index + 2} Funds %</FormLabel>
+                              <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
+                              <NumberInput value={callNegTriggers[index + 1] || ""} onChange={(valueString) => handleCallNegTriggerChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
+                                <NumberInputField />
+                              </NumberInput>
+                            </FormControl>
+
+                            <FormControl mb="4">
+                              <FormLabel>Call {index + 1} Funds %</FormLabel>
                               <NumberInput  min={0} max={100} value={callFunds[index + 1] || ""} onChange={(valueString) => handleCallFundsChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
                                 <NumberInputField />
                               </NumberInput>
                             </FormControl>
 
                             <FormControl mb="4">
-                              <FormLabel>Call {index + 2} TP%</FormLabel>
+                              <FormLabel>Call {index + 1} TP%</FormLabel>
                               <NumberInput min={0} max={100} value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
                                 <NumberInputField />
                               </NumberInput>
                             </FormControl>
 
-                            <FormControl mb="4">
-                              <FormLabel>Call {index + 2} Negative Trigger %</FormLabel>
-                              <NumberInput value={callNegTriggers[index + 1] || ""} onChange={(valueString) => handleCallNegTriggerChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                                <NumberInputField />
-                              </NumberInput>
-                            </FormControl>
+                            
                           </Box>                 
                     </Box>
                   )))}
@@ -1125,6 +1186,18 @@ export default function UserReports() {
                     <FormControl mb="4">
                   <FormLabel>Trailing Stop Settings</FormLabel>
 
+                   {/* Enable Trailing Stop */}
+                    <Checkbox
+                      isChecked={trailingStop?.enabled || false}
+                      onChange={(e) =>
+                        setTrailingStop((prev) => ({
+                          ...prev,
+                          enabled: e.target.checked,
+                        }))
+                      }
+                    >
+                      Enable Trailing Stop
+                    </Checkbox>
                   {/* Callback Rate */}
                   <FormLabel>Callback Rate (%)</FormLabel>
                   <NumberInput
@@ -1140,7 +1213,7 @@ export default function UserReports() {
                   </NumberInput>
 
                   {/* Price */}
-                  <FormLabel>Price (in USD)</FormLabel>
+                  <FormLabel>Price (in %)</FormLabel>
                   <NumberInput
                     value={trailingStop?.price || ""}
                     onChange={(valueString) =>
@@ -1154,7 +1227,7 @@ export default function UserReports() {
                   </NumberInput>
 
                   {/* Amount */}
-                  <FormLabel>Amount (in units)</FormLabel>
+                  <FormLabel>Amount (in %)</FormLabel>
                   <NumberInput
                     value={trailingStop?.amount || ""}
                     onChange={(valueString) =>
@@ -1222,9 +1295,21 @@ export default function UserReports() {
         ))}
       </SimpleGrid>
 
-      <Text mt="6" fontSize="2xl" fontWeight="bold" > TRADES </Text>
-
-      <Divider my="6" borderColor="black.400" borderWidth="1px" />
+      <Box mt={5} position="relative" textAlign="left">
+        <Text
+          as="span"
+          zIndex={1}
+          fontSize="2xl"
+          fontWeight="bold"
+        >
+          TRADES
+        </Text>
+        <Divider
+          mt={-1} // Move the divider up to align with the text
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+      </Box>
 
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
@@ -1236,7 +1321,7 @@ export default function UserReports() {
 
           <FormControl>
               <FormLabel>Strategy Name</FormLabel>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
             </FormControl>
             <FormControl>
               <FormLabel>Webhook Key</FormLabel>
