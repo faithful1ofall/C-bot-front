@@ -696,7 +696,7 @@ export default function UserReports() {
           />
         }
         name="Total users"
-        value=`${users.length}`
+        value={users.length}
       />
       <MiniStatistics
         startContent={
@@ -732,7 +732,7 @@ export default function UserReports() {
           />
         }
         name="Total strategies"
-        value=`${strategies.length}`
+        value={strategies.length}
       />
       <MiniStatistics
         startContent={
