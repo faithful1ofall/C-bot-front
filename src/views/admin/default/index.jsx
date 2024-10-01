@@ -376,9 +376,40 @@ export default function UserReports() {
 
       onCreateStrategyClose();
 
-    } else {
+    }
+    );
 
+    
 
+      
+
+const handleSubmitedit = async() => {
+  
+  const newStrategy = {
+      name: newStrategyName,
+      hookkey: hookkey,
+      tradingPair: tradingPairs,
+      tradeDirection,
+      timeFrame,
+      negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
+      gridCalls,
+      
+      calls: callFunds.map((funds, index) => ({
+        funds,
+        tp: callTPs[index],
+        negTrigger: callNegTriggers[index],
+      })),
+      profitLock,
+      stopLoss,
+      takeProfit,
+      orderType,
+      isDelayEnabled,
+      maxTradableAmount,
+      leverage,
+      offset,
+      marginMode,
+    };
+  
       console.log("isEdit", isEdit);
 
       // Create an object with only the changed fields
@@ -1312,8 +1343,8 @@ export default function UserReports() {
                     </FormControl>
 
                     
-                  <Button mt="4" colorScheme="teal" onClick={handleSubmit}>
-                    {isEdit ? 'Update Strategy' : 'Create Strategy'}
+                  <Button mt="4" colorScheme="teal" onClick={handleSubmitedit}>
+                    Update Strategy
                   </Button>
                 </Box>
               )}
@@ -1341,7 +1372,7 @@ export default function UserReports() {
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{isEdit ? 'Update Strategy' : 'Create Strategy'}</ModalHeader>
+          <ModalHeader>Create Strategy</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
 
@@ -1363,7 +1394,7 @@ export default function UserReports() {
             </ModalBody>
           <ModalFooter>
             <Button colorScheme="teal" onClick={handleSubmit}>   
-              {isEdit ? 'Update Strategy' : 'Create Strategy'}
+              Create Strategy
             </Button>
           </ModalFooter>
         </ModalContent>
