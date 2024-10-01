@@ -377,7 +377,7 @@ export default function UserReports() {
       onCreateStrategyClose();
 
     }
-    );
+  };
 
     
 
