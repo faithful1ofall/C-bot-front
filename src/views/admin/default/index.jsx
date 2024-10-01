@@ -443,8 +443,6 @@ const handleSubmitedit = async() => {
       onCreateStrategyClose();
       
       SetEdit(null);
-
-    }
   };
 
   const handleCreate = () => {
