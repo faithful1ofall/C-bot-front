@@ -212,9 +212,12 @@ export default function UserReports() {
     setCallNegTriggers(newCallNegTriggers);
   };
 
-  const fetchAccountinfo = async (accuserid) => {
+  const fetchAccountinfo = async (accuserid, assetpass) => {
+    
+    const assetfind = "USDT" || assetpass;
+
     try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}`); // Adjust the URL based on your backend setup
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`); // Adjust the URL based on your backend setup
       if (!response.ok) {
         const error = await response.json(); 
         return error.message.msg;
@@ -998,7 +1001,7 @@ const handleSubmitedit = async() => {
                 <MenuList>
                   <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); setLinkStrategyOpen((prev) => (prev === user.id ? null : user.id)); }}>Link Strategies</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen((prev) => (prev === user.id ? null : user.id));}}>User/Exchange Settings</MenuItem>
-                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Transfer Funds</MenuItem>
+                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Internal Transfer</MenuItem>
                   <MenuItem onClick={() => { SetUserEdit(user.id); handleEditUser(user.id); onUserOpen()}}>Edit User</MenuItem>
                   <MenuItem onClick={() => fetchtradeinfo(user.id) }>Validate API connection</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
