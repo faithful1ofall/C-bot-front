@@ -1282,9 +1282,6 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                       <FormLabel>Profit Lock Settings</FormLabel>
                       <FormLabel>Lock % Trigger</FormLabel>
-                      <NumberInput value={profitLock?.trigger || ""} onChange={(valueString) => setProfitLock((prev) => ({ ...prev, trigger: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
                       <InputGroup>
     <NumberInput 
       value={profitLock?.trigger || ""} 
@@ -1297,7 +1294,7 @@ const handleSubmitedit = async() => {
       <NumberInputField />
     </NumberInput>
     <InputRightElement width="4.5rem">
-      <Text>{profitLock?.trigger || 0}%</Text>
+      <Text>{profitLock?.trigger * leverage || 0}%</Text>
     </InputRightElement>
   </InputGroup>
                        <FormLabel>Lock %</FormLabel>
