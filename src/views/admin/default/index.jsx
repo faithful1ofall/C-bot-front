@@ -150,14 +150,21 @@ export default function UserReports() {
 
   const handleSelectPair = async (selectedValues, selectedbool) => {
 
-    console.log("id", selectedValues );
+    const boolSelected = selectedbool === 'true';
 
-    const method = selectedbool ? 'PUT' : 'DELETE';
-  
+    console.log("id", selectedValues, !boolSelected );
+
+    const selbool = {
+      isSelected: !boolSelected
+    }
     try {
       // Send a PUT request to update the selected trading pairs on the server
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs/${selectedValues}/select`, {
-        method: method,
+        method: 'PUT',
+         headers: {
+            'Content-Type': 'application/json',
+          },
+          body:  JSON.stringify(selbool),
       });
   
       if (!response.ok) {
@@ -370,7 +377,8 @@ export default function UserReports() {
         console.error('Request failed', error);
       }
 
-      setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
+     // setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
+     fetchStrategies();
 
       console.log("newStrategy", newStrategy);
 
