@@ -42,7 +42,7 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
       const data = await response.json();
       // Show success toast popup
       toast({
-        title: 'Transfer Successful',
+        title: 'Internal Transfer Successful',
         description: `You have successfully transferred ${transferAmount} ${asset}.`,
         status: 'success',
         duration: 5000,
@@ -62,11 +62,11 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Transfer Between Spot and Futures</ModalHeader>
+        <ModalHeader>Internal Transfer Between Spot and Futures</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
-            <FormLabel>Transfer Direction</FormLabel>
+            <FormLabel>Internal Transfer Direction</FormLabel>
             <Select
               value={transferDirection}
               onChange={(e) => setTransferDirection(e.target.value)}
