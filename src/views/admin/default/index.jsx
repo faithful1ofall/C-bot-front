@@ -1298,9 +1298,21 @@ const handleSubmitedit = async() => {
     </InputRightElement>
   </InputGroup>
                        <FormLabel>Lock %</FormLabel>
-                      <NumberInput value={profitLock?.lockPercent || ""} onChange={(valueString) => setProfitLock((prev) => ({ ...prev, lockPercent: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
+                      <InputGroup>
+    <NumberInput 
+      value={profitLock?.lockPercent || ""} 
+      onChange={(valueString) => setProfitLock((prev) => ({ 
+        ...prev, 
+        lockPercent: isNaN(valueString) ? 0 : valueString 
+      }))}
+      width="100%"
+    >
+      <NumberInputField />
+    </NumberInput>
+    <InputRightElement width="4.5rem">
+      <Text>{profitLock?.lockPercent * leverage || 0}%</Text>
+    </InputRightElement>
+  </InputGroup>
                     </FormControl>
 
                     <FormControl mb="4">
