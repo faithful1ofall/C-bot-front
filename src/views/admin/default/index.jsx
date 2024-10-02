@@ -32,6 +32,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  useToast,
   useColorModeValue,
   useDisclosure,
   Switch,
@@ -56,6 +57,7 @@ import TransferModal from './components/Transfer';
 
 
 export default function UserReports() {
+  const toast = useToast();
 
   const [nameError, setNameError] = useState('');
   const [apiKeyError, setApiKeyError] = useState('');
@@ -214,15 +216,56 @@ export default function UserReports() {
     try {        
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}`); // Adjust the URL based on your backend setup
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const error = await response.json(); 
+        return error.message.msg;
       }
       const data = await response.json();  // Parse the JSON response
       setAccountinfo(data);
+      return data;
     } catch (err) {
       console.error(err.message);
+      return err.message;
     }
   };
 
+  const fetchtradeinfo = async (usid) => {
+    try {
+      // Fetch account info first
+      const accdata = await fetchAccountinfo(usid);
+
+
+      console.log("accdata", accdata);
+  
+      // Check if the user can trade based on the returned account data
+      if (accdata.accountcantrade) {
+        toast({
+          title: 'Validation Successful',
+          description: 'You have successfully allowed futures trading',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: 'Validation Failed',
+          description: `You have not allowed futures trading ${accdata}`,
+          status: 'error', // changed from 'failed' to 'error'
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching trade info:', error);
+      toast({
+        title: 'Error',
+        description: `There was an issue fetching trade info. ${error}`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+  
   const filteredPairs = selectedTradingPairs1.filter(pair =>
     pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -957,6 +1000,7 @@ const handleSubmitedit = async() => {
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen((prev) => (prev === user.id ? null : user.id));}}>User/Exchange Settings</MenuItem>
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Transfer Funds</MenuItem>
                   <MenuItem onClick={() => { SetUserEdit(user.id); handleEditUser(user.id); onUserOpen()}}>Edit User</MenuItem>
+                  <MenuItem onClick={() => fetchtradeinfo(user.id) }>Validate API connection</MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                   
                 </MenuList>
