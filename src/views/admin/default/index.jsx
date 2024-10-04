@@ -429,11 +429,9 @@ export default function UserReports() {
       console.log("newStrategy", newStrategy);
 
       onCreateStrategyClose();
-
     }
   };
 
-    
 
       
 
@@ -505,6 +503,29 @@ const handleSubmitedit = async() => {
     setNewStrategyName(''); // Clear strategy name
     setHookKey('');
   };
+
+  const handleuseractive = async (userIdd, currentstatus) => {
+
+    const activate = {
+      active: !currentstatus,
+    };
+
+    try {      
+      await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userIdd}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:  JSON.stringify(activate),
+      });
+    } catch (error) {
+      console.error('Request failed', error);
+    }
+
+    console.log("User activate Update", activate);
+  }
+
+
 
   const handleactive = async (strategyIdd, currentstatus) => {
 
@@ -1010,8 +1031,8 @@ const handleSubmitedit = async() => {
               </Menu>
             </Flex>
             <Switch
-                isChecked={user.active}
-                onChange={() => { handleactive(user.id, user.active);}}
+                isChecked={user?.active}
+                onChange={() =>  handleuseractive(user.id, user.active)}
                 colorScheme="teal"
               />
 

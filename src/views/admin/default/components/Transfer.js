@@ -49,7 +49,7 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
         isClosable: true,
       });
       console.log('Transfer successful:', data);
-      await fetchAccountinfo(userid);
+    //  await fetchAccountinfo(userid);
       // Reset modal state after success
       setTransferAmount(0);
       setTransferDirection('');
@@ -102,13 +102,13 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
           </FormControl>
 
           <Text mt={4}>
-            Futures Available Balance (USDT): {balance?.balance.availableBalance || 0}
+            Futures Available Balance (USD): {balance?.balance.availableBalance || 0}
           </Text>
           <Text mt={4}>
-            Spot Available Balance (USDT): {balance?.balance.spotavailableBalance || 0}
+            Spot Available Balance (USD): {balance?.balance.spotavailableBalance || 0}
           </Text>
           <Text mt={4}>
-            Funding Available Balance (USDT): {balance?.balance.fundingBalance || 0}
+            Funding Available Balance (USD): {balance?.balance.fundingBalance || 0}
           </Text>
         </ModalBody>
 
