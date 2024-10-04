@@ -13,6 +13,8 @@ import {
   Input,
   Icon,
   IconButton,
+  InputRightElement,
+  InputGroup,
   Menu,
   MenuButton,
   MenuItem,
@@ -1301,13 +1303,37 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                       <FormLabel>Profit Lock Settings</FormLabel>
                       <FormLabel>Lock % Trigger</FormLabel>
-                      <NumberInput value={profitLock?.trigger || ""} onChange={(valueString) => setProfitLock((prev) => ({ ...prev, trigger: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
+                      <InputGroup>
+    <NumberInput 
+      value={profitLock?.trigger || ""} 
+      onChange={(valueString) => setProfitLock((prev) => ({ 
+        ...prev, 
+        trigger: isNaN(valueString) ? 0 : valueString 
+      }))}
+      width="100%"
+    >
+      <NumberInputField />
+    </NumberInput>
+    <InputRightElement width="4.5rem">
+      <Text>{profitLock?.trigger * leverage || 0}%</Text>
+    </InputRightElement>
+  </InputGroup>
                        <FormLabel>Lock %</FormLabel>
-                      <NumberInput value={profitLock?.lockPercent || ""} onChange={(valueString) => setProfitLock((prev) => ({ ...prev, lockPercent: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
+                      <InputGroup>
+    <NumberInput 
+      value={profitLock?.lockPercent || ""} 
+      onChange={(valueString) => setProfitLock((prev) => ({ 
+        ...prev, 
+        lockPercent: isNaN(valueString) ? 0 : valueString 
+      }))}
+      width="100%"
+    >
+      <NumberInputField />
+    </NumberInput>
+    <InputRightElement width="4.5rem">
+      <Text>{profitLock?.lockPercent * leverage || 0}%</Text>
+    </InputRightElement>
+  </InputGroup>
                     </FormControl>
 
                     <FormControl mb="4">
