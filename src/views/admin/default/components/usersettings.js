@@ -18,11 +18,17 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
   const [originalsettings, setOriginalSettings] = useState(null);
 
   const {  stickSettings, hedgeMode, assetMode } = settings;
+  const jwttoken = localStorage.getItem("jwtToken");
 
   const fetchSettings = async (useridset) => {
     if(useridset){
       try {        
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useridset}/settings`);
+        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useridset}/settings`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${jwttoken}`,
+          }
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -54,7 +60,10 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userid}/settings`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwttoken}`,
+        },
         body: JSON.stringify(updatedFields),
       });
 

@@ -22,12 +22,16 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
   const [transferAmount, setTransferAmount] = useState();
   const [asset, setAsset] = useState('USDT');
   const toast = useToast();
+  const jwttoken = localStorage.getItem("jwtToken");
 
   const handleTransfer = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${userid}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwttoken}`,
+        },
         body: JSON.stringify({
             transfertype: transferDirection,
             asset: asset,

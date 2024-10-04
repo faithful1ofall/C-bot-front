@@ -23,9 +23,17 @@ export function SidebarLinks(props) {
     return location.pathname.includes(routeName);
   };
 
+  const handleLogout = () => {
+    // Perform logout logic here
+    // Example: Clear tokens, redirect to login, etc.
+    localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
+    window.location.href = '/auth/sign-in'; // Redirect to login page
+  };
+
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
   const createLinks = (routes) => {
     return routes.map((route, index) => {
+      if (route.name === 'Sign In') return null;
       if (route.category) {
         return (
           <>
@@ -128,7 +136,21 @@ export function SidebarLinks(props) {
     });
   };
   //  BRAND
-  return createLinks(routes);
+  return (
+    <>
+      {createLinks(routes)}
+      {/* Logout link */}
+      <NavLink onClick={handleLogout} to="#" style={{ textDecoration: 'none' }}>
+        <Box>
+          <HStack spacing="22px" py='5px' ps='10px'>
+            <Text color={textColor} fontWeight="normal">
+              Logout
+            </Text>
+          </HStack>
+        </Box>
+      </NavLink>
+    </>
+  );
 }
 
 export default SidebarLinks;

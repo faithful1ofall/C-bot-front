@@ -42,7 +42,8 @@ import {
 // Custom components
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MdAttachMoney,
   MdAutorenew,
@@ -58,8 +59,13 @@ import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 
 
+
 export default function UserReports() {
   const toast = useToast();
+  const navigate = useNavigate();
+
+  const jwttoken = localStorage.getItem("jwtToken");
+
 
   const [nameError, setNameError] = useState('');
   const [apiKeyError, setApiKeyError] = useState('');
@@ -128,7 +134,7 @@ export default function UserReports() {
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
 
-  const fetchPairs = async () => {
+  const fetchPairs = useCallback(async () => {
     try {        
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/saved-trading-pairs`); // Adjust the URL based on your backend setup
       if (!response.ok) {
@@ -140,7 +146,9 @@ export default function UserReports() {
     } catch (err) {
       console.error(err.message);
     }
-  };
+  }, []);
+
+
 
   
 
@@ -219,7 +227,12 @@ export default function UserReports() {
     const assetfind = "USDT" || assetpass;
 
     try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`); // Adjust the URL based on your backend setup
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        },
+      })
       if (!response.ok) {
         const error = await response.json(); 
         return error.message.msg;
@@ -284,21 +297,31 @@ export default function UserReports() {
     const handleSelectPairs = () => {
       setSelectedPairs(filteredSelectedPairs);
     };
-  
 
-  const fetchUsers = async () => {
+
+  const fetchUsers = useCallback(async () => {
     try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`); // Adjust the URL based on your backend setup
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+        },
+      })
+
       const data = await response.json();  // Parse the JSON response
+
+      if (!response.ok) {
+        console.log(data, jwttoken);
+        throw new Error(`HTTP error! status: ${response.status}`);
+        
+      }
+      
       setUsers(data);
       console.log(data);
     } catch (err) {
       console.error(err.message);
     }
-  };
+  }, [jwttoken]);
 
   const deleteuser = async (id) => {
 
@@ -306,6 +329,9 @@ export default function UserReports() {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+        },
       });
   
       if (response.ok) {
@@ -318,9 +344,14 @@ export default function UserReports() {
     }
   };
 
-  const fetchStrategies = async () => {
+  const fetchStrategies = useCallback(async () => {
     try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies`); // Adjust the URL based on your backend setup
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -329,14 +360,16 @@ export default function UserReports() {
     } catch (err) {
       console.error(err.message);
     }
-  };
+  }, [jwttoken]);
 
   const deleteStrategy = async (id) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        },
       });
-  
       if (response.ok) {
         fetchStrategies();
         fetchUsers();
@@ -347,12 +380,19 @@ export default function UserReports() {
       console.error('Error deleting strategy:', error);
     }
   };
+
+  useEffect(() => {
+    if (!jwttoken) {
+      navigate("/auth/sign-in"); 
+      console.error("No JWT token found");
+    }
+  },[jwttoken, navigate]);
   
    useEffect(() => {
     fetchUsers();
     fetchStrategies();
     fetchPairs();   
-  }, []);
+  }, [fetchUsers, fetchStrategies, fetchPairs]);
 
   useEffect(() => {
     setSelectedPairs(filteredSelectedPairs);
@@ -412,6 +452,7 @@ export default function UserReports() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwttoken}`,
           },
           body:  JSON.stringify(newStrategy),
         });
@@ -481,6 +522,7 @@ const handleSubmitedit = async() => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwttoken}`,
           },
           body:  JSON.stringify(updatedFields),
         });
@@ -517,6 +559,7 @@ const handleSubmitedit = async() => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwttoken}`,
         },
         body:  JSON.stringify(activate),
       });
@@ -541,6 +584,7 @@ const handleSubmitedit = async() => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwttoken}`,
         },
         body:  JSON.stringify(activate),
       });
@@ -559,7 +603,12 @@ const handleSubmitedit = async() => {
   const handleEdit = async(editid) => {
     try {
       
-      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`);
+      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        }
+      });
 
       if (!response1.ok) {
         throw new Error(`HTTP error! status: ${response1.status}`);
@@ -600,7 +649,12 @@ const handleSubmitedit = async() => {
     console.log(editid);
     try {
       
-      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`);
+      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        }
+      });
 
       if (!response1.ok) {
         throw new Error(`HTTP error! status: ${response1.status}`);
@@ -662,6 +716,7 @@ const handleSubmitedit = async() => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwttoken}`,
           },
           body: JSON.stringify(newUser),
         });
@@ -688,6 +743,7 @@ const handleSubmitedit = async() => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwttoken}`,
           },
           body: JSON.stringify(newUser),
         });
@@ -717,6 +773,9 @@ const handleSubmitedit = async() => {
       try {
         await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
           method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${jwttoken}`,
+          }
         });
       } catch (error) {
         console.error('Error:', error);
@@ -735,6 +794,7 @@ const handleSubmitedit = async() => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwttoken}`,
           },
         });
         
