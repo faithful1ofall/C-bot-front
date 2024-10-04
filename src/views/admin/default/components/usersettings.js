@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   FormControl,
@@ -20,7 +20,7 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
   const {  stickSettings, hedgeMode, assetMode } = settings;
   const jwttoken = localStorage.getItem("jwtToken");
 
-  const fetchSettings = async (useridset) => {
+  const fetchSettings = useCallback(async (useridset) => {
     if(useridset){
       try {        
         const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useridset}/settings`, {
@@ -39,11 +39,11 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
         console.error(err.message);
       }
     }    
-  };
+  }, [jwttoken]);
 
   useEffect(() => {
     fetchSettings(userid);
-  }, [userid]);
+  }, [fetchSettings, userid]);
 
   const handleSave = async () => {
 
