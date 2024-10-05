@@ -14,6 +14,7 @@ import {
   Icon,
   IconButton,
   InputRightElement,
+  InputLeftElement,
   InputGroup,
   Menu,
   MenuButton,
@@ -1010,14 +1011,18 @@ const handleSubmitedit = async() => {
 
         <MenuList p={4} width="300px">
           {/* Search Bar */}
-          <Input
-            placeholder="Search trading pairs"
-            value={searchQueryvalue}
-            onChange={handleSearch}
-            onKeyDown={handleKeyPress}
-            mb={4}
-            leftIcon={<Icon as={MdSearch} />}
-          />
+          <InputGroup mb={4}>
+            <InputLeftElement
+              pointerEvents="none"
+              children={<Icon as={MdSearch} color="gray.300" />}
+            />
+            <Input
+              placeholder="Search trading pairs"
+              value={searchQueryvalue}
+              onChange={handleSearch}
+              onKeyDown={handleKeyPress}
+            />
+          </InputGroup>
 
         {searchHistory.length > 0 && (
         <Box mb={4}>
@@ -1570,7 +1575,7 @@ const handleSubmitedit = async() => {
                       </Flex>
                       {isDelayEnabled && (
                         <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
-                          <p>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</p>
+                          <FormLabel>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</FormLabel>
                           <FormLabel>Offset %</FormLabel>
                             <NumberInput value={offset || ""} onChange={(valueString) => setOffset(isNaN(valueString) ? 0 : valueString)}>
                               <NumberInputField />
