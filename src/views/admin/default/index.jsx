@@ -57,6 +57,7 @@ import {
 } from "react-icons/md";
 import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
+import TradePositionTable from './components/PositionsTable';
 
 
 
@@ -133,6 +134,38 @@ export default function UserReports() {
   const [accountinfo, setAccountinfo] = useState();
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
+  const [positions, setPositions] = React.useState([]); // Your trade positions data
+
+  const fetchPosition = useCallback(async () => {
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-open-positions`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+        },
+      })
+
+      const data = await response.json();  // Parse the JSON response
+
+      if (!response.ok) {
+        console.log("positions error data",data);
+        throw new Error(`HTTP error! status: ${response.status}`);
+        
+      }
+      
+      setPositions(data);
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [jwttoken]);
+
+
+  const handleClosePosition = (position) => {
+    // Logic to close the position using the Binance API
+    console.log('Closing position:', position);
+    // Call the API to close the position here
+  };
 
   const fetchPairs = useCallback(async () => {
     try {        
@@ -391,8 +424,9 @@ export default function UserReports() {
    useEffect(() => {
     fetchUsers();
     fetchStrategies();
-    fetchPairs();   
-  }, [fetchUsers, fetchStrategies, fetchPairs]);
+    fetchPairs();
+    fetchPosition();
+  }, [fetchPosition, fetchUsers, fetchStrategies, fetchPairs]);
 
   useEffect(() => {
     setSelectedPairs(filteredSelectedPairs);
@@ -1512,22 +1546,7 @@ const handleSubmitedit = async() => {
         ))}
       </SimpleGrid>
 
-      <Box mt={5} position="relative" textAlign="left">
-        <Text
-          as="span"
-          zIndex={1}
-          fontSize="2xl"
-          fontWeight="bold"
-        >
-          TRADES
-        </Text>
-        <Divider
-          mt={-1} // Move the divider up to align with the text
-          borderColor="black.400"
-          borderWidth="1px"
-        />
-      </Box>
-
+      
        {/* Create Strategy Modal */}
        <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
         <ModalOverlay />
@@ -1559,6 +1578,24 @@ const handleSubmitedit = async() => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Box mt={5} position="relative" textAlign="left">
+        <Text
+          as="span"
+          zIndex={1}
+          fontSize="2xl"
+          fontWeight="bold"
+        >
+          TRADES
+        </Text>
+        <Divider
+          mt={-1} // Move the divider up to align with the text
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+        <TradePositionTable positions={positions} onClosePosition={handleClosePosition} />
+
+      </Box>
+
     </Box>
   );
 }
