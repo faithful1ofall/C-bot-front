@@ -307,12 +307,12 @@ export default function UserReports() {
 
 
       console.log("accdata", accdata);
-  
+       
       // Check if the user can trade based on the returned account data
       if (accdata.accountcantrade) {
         toast({
-          title: 'Validation Successful',
-          description: 'You have successfully allowed futures trading',
+          title: 'API Successfully Validated!',
+          description: 'Reading and Futures trade enabled',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -703,7 +703,7 @@ const handleSubmitedit = async() => {
   }
 
   const handleEditUser = async(editid) => {
-    console.log(editid);
+
     try {
       
       const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`, {
