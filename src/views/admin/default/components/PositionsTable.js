@@ -43,7 +43,7 @@ import {
           </Text>
         ),
         cell: (info) => (
-          <Text color={textColor} fontSize="sm" fontWeight="700">
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
             {info.getValue()}
           </Text>
         ),
@@ -56,7 +56,7 @@ import {
           </Text>
         ),
         cell: (info) => (
-          <Text color={textColor} fontSize="sm" fontWeight="700">
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
             {info.getValue()}
           </Text>
         ),
@@ -69,7 +69,7 @@ import {
           </Text>
         ),
         cell: (info) => (
-          <Text color={textColor} fontSize="sm" fontWeight="700">
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
             {info.getValue()}
           </Text>
         ),
@@ -82,7 +82,7 @@ import {
           </Text>
         ),
         cell: (info) => (
-          <Text color={textColor} fontSize="sm" fontWeight="700">
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
             {info.getValue()}
           </Text>
         ),
@@ -98,7 +98,8 @@ import {
           <Button
             colorScheme="red"
             size="sm"
-            onClick={() => onClosePosition(info.row.original)}
+            align="center"
+            onClick={() => {console.log(info.row.original);onClosePosition(info.row.original);}}
           >
             Close Position
           </Button>
@@ -107,7 +108,7 @@ import {
     ];
   
     const table = useReactTable({
-      data: positions,
+      data: positions || [],
       columns,
       state: {
         sorting,
@@ -135,7 +136,6 @@ import {
           >
             Open Trade Positions
           </Text>
-          <Menu />
         </Flex>
         <Box>
           <Table variant="simple" color="gray.500" mb="24px" mt="12px">
@@ -166,10 +166,10 @@ import {
             </Thead>
             <Tbody>
               {table.getRowModel().rows.map((row) => (
-                <Tr key={row.id}>
+                <Tr key={row.userId}>
                   {row.getVisibleCells().map((cell) => (
                     <Td
-                      key={cell.id}
+                      key={cell.userId}
                       fontSize={{ sm: '14px' }}
                       minW={{ sm: '150px', md: '200px', lg: 'auto' }}
                       borderColor="transparent"

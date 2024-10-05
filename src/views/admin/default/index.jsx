@@ -82,12 +82,14 @@ export default function UserReports() {
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [isLinkStrategyOpen, setLinkStrategyOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
+  const [selectedStrategy, setSelectedStrategy] = useState();
 
 
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
   const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
+  const { isOpen: isTradingHookTriggerOpen, onOpen: onTradingHookTriggerOpen, onClose: onTradingHookTriggerClose } = useDisclosure();
 
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
@@ -161,10 +163,28 @@ export default function UserReports() {
   }, [jwttoken]);
 
 
-  const handleClosePosition = (position) => {
-    // Logic to close the position using the Binance API
-    console.log('Closing position:', position);
-    // Call the API to close the position here
+  const handleClosePosition = async(position) => {
+
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/close-position/${position.userId}/${position.symbol}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+        },
+      })
+
+      const data = await response.json();  // Parse the JSON response
+
+      if (!response.ok) {
+        console.log("Closed positions error data",data);
+        throw new Error(`HTTP error! status: ${response.status}`);
+        
+      }
+      console.log(data, "closed position success");
+      fetchPosition();
+    } catch (err) {
+      console.error(err, "close posiotn error");
+    }
   };
 
   const fetchPairs = useCallback(async () => {
@@ -434,7 +454,7 @@ export default function UserReports() {
 
  const tradinghook = async() => {
     const hooking = { 
-      strategy: "test",
+      strategy: selectedStrategy,
     };
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`, {
@@ -448,6 +468,8 @@ export default function UserReports() {
         const data = await response.json();
 
         console.log("hooking", data);
+
+        await fetchPosition();
       }  catch (error) {
         console.error('Request failed', error);
       }
@@ -909,7 +931,7 @@ const handleSubmitedit = async() => {
           />
         }
         name="Active users"
-        value="0"
+        value={users.filter(user => user.active).length}
       />
       <MiniStatistics
         startContent={
@@ -921,7 +943,7 @@ const handleSubmitedit = async() => {
           />
         }
         name="Active trade(s)"
-        value="0"
+        value={positions.length || 0}
       />
       <MiniStatistics
         startContent={
@@ -1069,11 +1091,39 @@ const handleSubmitedit = async() => {
         <Button
           leftIcon={<Icon as={MdPerson} />}
           colorScheme="teal"
-          onClick={tradinghook}
+          onClick={onTradingHookTriggerOpen}
         >
           Test Webhook
         </Button>
       </Flex>
+
+      <Modal isOpen={isTradingHookTriggerOpen} onClose={onTradingHookTriggerClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Trading Hook Trigger</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+
+          <FormControl>
+            <FormLabel>Select Strategy</FormLabel>
+            <Select placeholder="Select strategy" value={selectedStrategy} onChange={(e) => setSelectedStrategy(e.target.value)}>
+              {strategies.map((strategy) => (
+                <option key={strategy.id} value={strategy.hookkey}>
+                  {strategy.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="teal" onClick={tradinghook}>
+            Trigger Hook
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+
 
       
      {/* Add User Modal */}
@@ -1578,6 +1628,7 @@ const handleSubmitedit = async() => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      
       <Box mt={5} position="relative" textAlign="left">
         <Text
           as="span"
@@ -1592,7 +1643,7 @@ const handleSubmitedit = async() => {
           borderColor="black.400"
           borderWidth="1px"
         />
-        <TradePositionTable positions={positions} onClosePosition={handleClosePosition} />
+        <TradePositionTable positions={positions?.positions} onClosePosition={handleClosePosition} />
 
       </Box>
 

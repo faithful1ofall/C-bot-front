@@ -74,7 +74,7 @@ export default function CheckTable(props) {
         </Text>
       ),
       cell: (info) => (
-        <Text color={textColor} fontSize="sm" fontWeight="700">
+        <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
           {info.getValue()}
         </Text>
       ),
@@ -92,7 +92,7 @@ export default function CheckTable(props) {
         </Text>
       ),
       cell: (info) => (
-        <Text color={textColor} fontSize="sm" fontWeight="700">
+        <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
           {info.getValue()}
         </Text>
       ),
@@ -110,7 +110,7 @@ export default function CheckTable(props) {
         </Text>
       ),
       cell: (info) => (
-        <Text color={textColor} fontSize="sm" fontWeight="700">
+        <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
           {info.getValue()}
         </Text>
       ),
