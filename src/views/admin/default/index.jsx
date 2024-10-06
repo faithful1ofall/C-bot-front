@@ -302,11 +302,18 @@ export default function UserReports() {
 
   const fetchtradeinfo = async (usid) => {
     try {
-      // Fetch account info first
-      const accdata = await fetchAccountinfo(usid);
-
-
-      console.log("accdata", accdata);
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/valid/${usid}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        },
+      })
+      if (!response.ok) {
+        const error = await response.json();
+        console.log(error);
+      }
+      const data = await response.json();  // Parse the JSON response
+      console.log(data);
        
       // Check if the user can trade based on the returned account data
       if (accdata.accountcantrade) {

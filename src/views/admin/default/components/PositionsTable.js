@@ -25,7 +25,6 @@ import {
   
   // Custom components
   import Card from 'components/card/Card';
-  import Menu from 'components/menu/MainMenu';
   
   const columnHelper = createColumnHelper();
   
@@ -48,11 +47,11 @@ import {
           </Text>
         ),
       }),
-      columnHelper.accessor('symbol', {
-        id: 'symbol',
+      columnHelper.accessor('strategy', {
+        id: 'strategy',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
-            SYMBOL
+            STRATEGY
           </Text>
         ),
         cell: (info) => (
@@ -61,11 +60,11 @@ import {
           </Text>
         ),
       }),
-      columnHelper.accessor('positionAmt', {
-        id: 'positionAmt',
+      columnHelper.accessor('tradeDirection', {
+        id: 'tradeDirection',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
-            POSITION AMOUNT
+            TRADE DIRECTION
           </Text>
         ),
         cell: (info) => (
@@ -74,16 +73,68 @@ import {
           </Text>
         ),
       }),
-      columnHelper.accessor('entryPrice', {
-        id: 'entryPrice',
+      columnHelper.accessor('usedAmount', {
+        id: 'usedAmount',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
-            ENTRY PRICE
+            AMOUNT USED
           </Text>
         ),
         cell: (info) => (
           <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
             {info.getValue()}
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('leverage', {
+        id: 'leverage',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            LEVERAGE
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue()}x
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('call', {
+        id: 'call',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            CALL
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue()}
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('tp', {
+        id: 'tp',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            TAKE PROFIT
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue() || 'N/A'}
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('sl', {
+        id: 'sl',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            STOP LOSS
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue() || 'N/A'}
           </Text>
         ),
       }),
@@ -95,18 +146,24 @@ import {
           </Text>
         ),
         cell: (info) => (
-          <Button
-            colorScheme="red"
-            size="sm"
-            align="center"
-            onClick={() => {console.log(info.row.original);onClosePosition(info.row.original);}}
-          >
-            Close Position
-          </Button>
+          <Flex align="center" justify="center">
+            <input
+              type="checkbox"
+              style={{ marginRight: '10px' }}
+              onChange={() => handleSelect(info.row.original)}
+            />
+            <Button
+              colorScheme="red"
+              size="sm"
+              onClick={() => onClosePosition(info.row.original)}
+            >
+              Close Position
+            </Button>
+          </Flex>
         ),
       }),
     ];
-  
+    
     const table = useReactTable({
       data: positions || [],
       columns,
