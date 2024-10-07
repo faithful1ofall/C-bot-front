@@ -1215,7 +1215,7 @@ const handleSubmitedit = async() => {
               <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                 <GeneralExchangeSettingsModal
                   userid={transferuserid}
-                  balance={accountinfo}
+                  balance={fetchAccountinfo}
                 />
               </Box>
             )}
