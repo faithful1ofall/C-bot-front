@@ -308,13 +308,11 @@ export default function UserReports() {
           'Authorization': `Bearer ${jwttoken}`,
         },
       })
+      const { data } = await response.json();  // Parse the JSON response
       if (!response.ok) {
         const error = await response.json();
         console.log(error);
       }
-      const { data } = await response.json();  // Parse the JSON response
-      console.log(data);
-
       // Display enabled permissions
     const permissions = {
       enableReading: data.enableReading,
@@ -345,10 +343,12 @@ export default function UserReports() {
       }
     });
     } catch (error) {
+      const { message } = await error.json();  // Parse the JSON response
+      
       console.error('Error fetching Validation info:', error);
       toast({
         title: 'Error',
-        description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
+        description: `There was an issue fetching Validation info. ${JSON.stringify(message)}`,
         status: 'error',
         duration: 5000,
         isClosable: true,
