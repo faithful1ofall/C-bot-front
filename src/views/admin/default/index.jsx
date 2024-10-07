@@ -308,13 +308,19 @@ export default function UserReports() {
           'Authorization': `Bearer ${jwttoken}`,
         },
       })
-      if (!response.ok) {
+        if (!response.ok) {
         const error = await response.json();
         console.log(error);
+          toast({
+        title: 'Error',
+        description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       }
-      const { data } = await response.json();  // Parse the JSON response
-      console.log(data);
 
+      const { data } = await response.json();  // Parse the JSON response
       // Display enabled permissions
     const permissions = {
       enableReading: data.enableReading,
@@ -345,10 +351,11 @@ export default function UserReports() {
       }
     });
     } catch (error) {
-      console.error('Error fetching trade info:', error);
+      
+      console.error('Error fetching Validation info:', error);
       toast({
         title: 'Error',
-        description: `There was an issue fetching trade info. ${error}`,
+        description: `There was an issue fetching Validation info. ${JSON.stringify(error)}`,
         status: 'error',
         duration: 5000,
         isClosable: true,
