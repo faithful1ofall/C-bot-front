@@ -345,10 +345,10 @@ export default function UserReports() {
       }
     });
     } catch (error) {
-      console.error('Error fetching trade info:', error);
+      console.error('Error fetching Validation info:', error);
       toast({
         title: 'Error',
-        description: `There was an issue fetching trade info. ${JSON.stringify(error.message)}`,
+        description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
         status: 'error',
         duration: 5000,
         isClosable: true,
