@@ -355,7 +355,7 @@ export default function UserReports() {
       console.error('Error fetching Validation info:', error);
       toast({
         title: 'Error',
-        description: `There was an issue fetching Validation info. ${JSON.stringify(message)}`,
+        description: `There was an issue fetching Validation info. ${JSON.stringify(error)}`,
         status: 'error',
         duration: 5000,
         isClosable: true,
