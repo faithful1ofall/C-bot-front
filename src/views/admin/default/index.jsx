@@ -348,7 +348,7 @@ export default function UserReports() {
       console.error('Error fetching trade info:', error);
       toast({
         title: 'Error',
-        description: `There was an issue fetching trade info. ${error}`,
+        description: `There was an issue fetching trade info. ${error.message.msg}`,
         status: 'error',
         duration: 5000,
         isClosable: true,
