@@ -311,6 +311,13 @@ export default function UserReports() {
         if (!response.ok) {
         const error = await response.json();
         console.log(error);
+          toast({
+        title: 'Error',
+        description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       }
 
       const { data } = await response.json();  // Parse the JSON response
