@@ -105,7 +105,6 @@ export default function UserReports() {
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
-  const [offset, setOffset] = useState('');
   const [marginMode, setmarginMode] = useState('');
 
 
@@ -116,7 +115,6 @@ export default function UserReports() {
   const [timeFrame, setTimeFrame] = useState('1 Minute');
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState('');
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
-  const [gridCalls, setGridCalls] = useState('');
   const [profitLock, setProfitLock] = useState('');
   const [stopLoss, setStopLoss] = useState('');
   const [trailingStop, setTrailingStop] = useState('');
@@ -129,9 +127,9 @@ export default function UserReports() {
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
  
-  const [callFunds, setCallFunds] = useState(Array(gridCalls || 0).fill(0)); // Funds percentage for each call
-  const [callTPs, setCallTPs] = useState(Array(gridCalls || 0).fill(0)); // TP percentage for each call
-  const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill()); // Negative trigger percentage for each call
+  const [callFunds, setCallFunds] = useState(Array(0).fill(0)); // Funds percentage for each call
+  const [callTPs, setCallTPs] = useState(Array(0).fill(0)); // TP percentage for each call
+  const [callNegTriggers, setCallNegTriggers] = useState(Array(0).fill()); // Negative trigger percentage for each call
 
 
   const [accountinfo, setAccountinfo] = useState(0);
@@ -351,15 +349,7 @@ export default function UserReports() {
       }
     });
     } catch (error) {
-      
       console.error('Error fetching Validation info:', error);
-      toast({
-        title: 'Error',
-        description: `There was an issue fetching Validation info. ${JSON.stringify(error)}`,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
     }
   };
   
@@ -510,7 +500,6 @@ export default function UserReports() {
       tradeDirection,
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
-      gridCalls,
       
       calls: callFunds.map((funds, index) => ({
         funds,
@@ -524,7 +513,6 @@ export default function UserReports() {
       isDelayEnabled,
       TradableAmount,
       leverage,
-      offset,
       marginMode,
     };
 
@@ -569,13 +557,12 @@ const handleSubmitedit = async() => {
       tradeDirection,
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
-      gridCalls,
-      
       calls: callFunds.map((funds, index) => ({
         funds,
         tp: callTPs[index],
         negTrigger: callNegTriggers[index],
       })),
+      trailingStop,
       profitLock,
       stopLoss,
       takeProfit,
@@ -583,10 +570,10 @@ const handleSubmitedit = async() => {
       isDelayEnabled,
       TradableAmount,
       leverage,
-      offset,
       marginMode,
     };
   
+   
       console.log("isEdit", isEdit);
 
       // Create an object with only the changed fields
@@ -704,8 +691,8 @@ const handleSubmitedit = async() => {
       setTradeDirection(data1.tradeDirection);
       setTimeFrame(data1.timeFrame);
       setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
-      setGridCalls(data1.gridCalls);
       setHookKey(data1.hookkey);
+      setTrailingStop(data1.trailingStop);
 
       setCallFunds(data1.calls.map(call => call.funds));
       setCallTPs(data1.calls.map(call => call.tp));
@@ -716,9 +703,8 @@ const handleSubmitedit = async() => {
       setTakeProfit(data1.takeProfit);
       setOrderType(data1.orderType);
       setIsDelayEnabled(data1.isDelayEnabled);
-      // setTradableAmount(data1.maxTradableAmount);
+      setTradableAmount(data1.TradableAmount);
       setLeverage(data1.leverage);
-      setOffset(data1.offset);
       setmarginMode(data1.marginMode);
 
     }  catch (error) {
@@ -1620,13 +1606,13 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                       <Flex alignItems="center">
                         <FormLabel>Delayed SL and TP</FormLabel>
-                        <Checkbox isChecked={isDelayEnabled} onChange={(e) => setIsDelayEnabled(e.target.checked)}>Enable</Checkbox>
+                        <Checkbox isChecked={isDelayEnabled.active} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
                       </Flex>
                       {isDelayEnabled && (
                         <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
                           <FormLabel>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</FormLabel>
                           <FormLabel>Offset %</FormLabel>
-                            <NumberInput value={offset || ""} onChange={(valueString) => setOffset(isNaN(valueString) ? 0 : valueString)}>
+                            <NumberInput value={isDelayEnabled.offset || ""} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, offset: isNaN(e.target.checked) ? 0 : e.target.checked }))}>
                               <NumberInputField />
                             </NumberInput>
                         </Box>
