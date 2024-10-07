@@ -134,7 +134,7 @@ export default function UserReports() {
   const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill()); // Negative trigger percentage for each call
 
 
-  const [accountinfo, setAccountinfo] = useState('');
+  const [accountinfo, setAccountinfo] = useState(0);
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
   const [positions, setPositions] = React.useState([]); // Your trade positions data

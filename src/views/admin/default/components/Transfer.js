@@ -106,13 +106,13 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
           </FormControl>
 
           <Text mt={4}>
-            Futures Available Balance (USD): {balance?.balance.availableBalance || 0}
+            Futures Available Balance (USD): {balance?.balance?.availableBalance || 0}
           </Text>
           <Text mt={4}>
-            Spot Available Balance (USD): {balance?.balance.spotavailableBalance || 0}
+            Spot Available Balance (USD): {balance?.balance?.spotavailableBalance || 0}
           </Text>
           <Text mt={4}>
-            Funding Available Balance (USD): {balance?.balance.fundingBalance || 0}
+            Funding Available Balance (USD): {balance?.balance?.fundingBalance || 0}
           </Text>
         </ModalBody>
 

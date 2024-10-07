@@ -11,7 +11,7 @@ import {
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
-const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
+const GeneralExchangeSettingsModal = ({ balance, userid }) => {
   
   const [settings, setSettings] = useState({});
   
@@ -92,7 +92,7 @@ const GeneralExchangeSettingsModal = ({onClose, balance, userid }) => {
           {/* User Account Balance */}
           <FormControl mt="4">
             <FormLabel>User Account Balance</FormLabel>
-            <Text>Available balance in Futures Account (USDT): {balance?.balance.availableBalance || 0} USDT</Text>
+            <Text>Available balance in Futures Account (USDT): {balance?.balance?.availableBalance || 0} USDT</Text>
           </FormControl>
 
 
