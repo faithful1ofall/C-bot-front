@@ -1335,8 +1335,8 @@ const handleSubmitedit = async() => {
                       <FormLabel>Cross/Isolated Mode</FormLabel>
                       <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
                         <Stack direction="row">
-                          <Radio value="cross">Cross</Radio>
-                          <Radio value="isolated">Isolated</Radio>
+                          <Radio value="CROSSED">Cross</Radio>
+                          <Radio value="ISOLATED">Isolated</Radio>
                         </Stack>
                       </RadioGroup>
                     </FormControl>
