@@ -308,11 +308,12 @@ export default function UserReports() {
           'Authorization': `Bearer ${jwttoken}`,
         },
       })
-      const { data } = await response.json();  // Parse the JSON response
-      if (!response.ok) {
+        if (!response.ok) {
         const error = await response.json();
         console.log(error);
       }
+
+      const { data } = await response.json();  // Parse the JSON response
       // Display enabled permissions
     const permissions = {
       enableReading: data.enableReading,
@@ -343,7 +344,6 @@ export default function UserReports() {
       }
     });
     } catch (error) {
-      const { message } = await error.json();  // Parse the JSON response
       
       console.error('Error fetching Validation info:', error);
       toast({
