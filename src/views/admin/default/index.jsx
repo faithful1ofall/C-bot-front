@@ -83,7 +83,7 @@ export default function UserReports() {
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [isLinkStrategyOpen, setLinkStrategyOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
-  const [selectedStrategy, setSelectedStrategy] = useState();
+  const [selectedStrategy, setSelectedStrategy] = useState('');
 
 
 
@@ -100,13 +100,13 @@ export default function UserReports() {
   const [hookkey, setHookKey] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [apiSecret, setApiSecret] = useState("");
-  const [newStrategyName, setNewStrategyName] = useState();
+  const [newStrategyName, setNewStrategyName] = useState('');
   const [strategies, setStrategies] = useState([]);
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
-  const [offset, setOffset] = useState();
-  const [marginMode, setmarginMode] = useState();
+  const [offset, setOffset] = useState('');
+  const [marginMode, setmarginMode] = useState('');
 
 
   // new parameters
@@ -114,18 +114,18 @@ export default function UserReports() {
   const [tradingPairs, setTradingPairs] = useState('');
   const [tradeDirection, setTradeDirection] = useState('Both');
   const [timeFrame, setTimeFrame] = useState('1 Minute');
-  const [negativeCandleTrigger, setNegativeCandleTrigger] = useState(0);
+  const [negativeCandleTrigger, setNegativeCandleTrigger] = useState('');
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
-  const [gridCalls, setGridCalls] = useState(1);
-  const [profitLock, setProfitLock] = useState();
-  const [stopLoss, setStopLoss] = useState();
-  const [trailingStop, setTrailingStop] = useState();
+  const [gridCalls, setGridCalls] = useState('');
+  const [profitLock, setProfitLock] = useState('');
+  const [stopLoss, setStopLoss] = useState('');
+  const [trailingStop, setTrailingStop] = useState('');
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
   const [isEdit, SetEdit] = useState(false);
   const [useredit, SetUserEdit] = useState(false);   
-  const [maxTradableAmount, setMaxTradableAmount] = useState(0);
+  const [TradableAmount, setTradableAmount] = useState('');
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
  
@@ -134,7 +134,7 @@ export default function UserReports() {
   const [callNegTriggers, setCallNegTriggers] = useState(Array(gridCalls || 0).fill()); // Negative trigger percentage for each call
 
 
-  const [accountinfo, setAccountinfo] = useState();
+  const [accountinfo, setAccountinfo] = useState('');
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
   const [positions, setPositions] = React.useState([]); // Your trade positions data
@@ -312,27 +312,38 @@ export default function UserReports() {
         const error = await response.json();
         console.log(error);
       }
-      const data = await response.json();  // Parse the JSON response
+      const { data } = await response.json();  // Parse the JSON response
       console.log(data);
-       
-      // Check if the user can trade based on the returned account data
-      if (accdata.accountcantrade) {
+
+      // Display enabled permissions
+    const permissions = {
+      enableReading: data.enableReading,
+      enableFutures: data.enableFutures,
+      permitsUniversalTransfer: data.permitsUniversalTransfer,
+    };
+
+    console.log('User Permissions:', permissions);
+
+    // Display a message for each permission
+    Object.entries(permissions).forEach(([key, value]) => {
+      if (value) {
         toast({
-          title: 'API Successfully Validated!',
-          description: 'Reading and Futures trade enabled',
+          title: `${key} Enabled`,
+          description: `You have access to ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`,
           status: 'success',
           duration: 5000,
           isClosable: true,
         });
       } else {
         toast({
-          title: 'Validation Failed',
-          description: `You have not allowed futures trading ${accdata}`,
-          status: 'error', // changed from 'failed' to 'error'
+          title: `${key} Disabled`,
+          description: `You do not have access to ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`,
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
       }
+    });
     } catch (error) {
       console.error('Error fetching trade info:', error);
       toast({
@@ -504,7 +515,7 @@ export default function UserReports() {
       takeProfit,
       orderType,
       isDelayEnabled,
-      maxTradableAmount,
+      TradableAmount,
       leverage,
       offset,
       marginMode,
@@ -563,7 +574,7 @@ const handleSubmitedit = async() => {
       takeProfit,
       orderType,
       isDelayEnabled,
-      maxTradableAmount,
+      TradableAmount,
       leverage,
       offset,
       marginMode,
@@ -698,7 +709,7 @@ const handleSubmitedit = async() => {
       setTakeProfit(data1.takeProfit);
       setOrderType(data1.orderType);
       setIsDelayEnabled(data1.isDelayEnabled);
-      setMaxTradableAmount(data1.maxTradableAmount);
+      // setTradableAmount(data1.maxTradableAmount);
       setLeverage(data1.leverage);
       setOffset(data1.offset);
       setmarginMode(data1.marginMode);
@@ -1447,9 +1458,17 @@ const handleSubmitedit = async() => {
 
                             <FormControl mb="4">
                               <FormLabel>Call {index + 1} TP%</FormLabel>
-                              <NumberInput min={0} max={100} value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                                <NumberInputField />
-                              </NumberInput>
+                              <InputGroup>
+                                <NumberInput 
+                                  value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}
+                                  width="100%"
+                                >
+                                  <NumberInputField />
+                                </NumberInput>
+                                <InputRightElement width="4.5rem">
+                                  <Text>{callTPs[index + 1] * leverage || 0}%</Text>
+                                </InputRightElement>
+                              </InputGroup>
                             </FormControl>
 
                             
@@ -1460,36 +1479,36 @@ const handleSubmitedit = async() => {
                       <FormLabel>Profit Lock Settings</FormLabel>
                       <FormLabel>Lock % Trigger</FormLabel>
                       <InputGroup>
-    <NumberInput 
-      value={profitLock?.trigger || ""} 
-      onChange={(valueString) => setProfitLock((prev) => ({ 
-        ...prev, 
-        trigger: isNaN(valueString) ? 0 : valueString 
-      }))}
-      width="100%"
-    >
-      <NumberInputField />
-    </NumberInput>
-    <InputRightElement width="4.5rem">
-      <Text>{profitLock?.trigger * leverage || 0}%</Text>
-    </InputRightElement>
-  </InputGroup>
-                       <FormLabel>Lock %</FormLabel>
+                        <NumberInput 
+                          value={profitLock?.trigger || ""} 
+                          onChange={(valueString) => setProfitLock((prev) => ({ 
+                            ...prev, 
+                            trigger: isNaN(valueString) ? 0 : valueString 
+                          }))}
+                          width="100%"
+                        >
+                          <NumberInputField />
+                        </NumberInput>
+                        <InputRightElement width="4.5rem">
+                          <Text>{profitLock?.trigger * leverage || 0}%</Text>
+                        </InputRightElement>
+                      </InputGroup>
+                      <FormLabel>Lock %</FormLabel>
                       <InputGroup>
-    <NumberInput 
-      value={profitLock?.lockPercent || ""} 
-      onChange={(valueString) => setProfitLock((prev) => ({ 
-        ...prev, 
-        lockPercent: isNaN(valueString) ? 0 : valueString 
-      }))}
-      width="100%"
-    >
-      <NumberInputField />
-    </NumberInput>
-    <InputRightElement width="4.5rem">
-      <Text>{profitLock?.lockPercent * leverage || 0}%</Text>
-    </InputRightElement>
-  </InputGroup>
+                        <NumberInput 
+                          value={profitLock?.lockPercent || ""} 
+                          onChange={(valueString) => setProfitLock((prev) => ({ 
+                            ...prev, 
+                            lockPercent: isNaN(valueString) ? 0 : valueString 
+                          }))}
+                          width="100%"
+                        >
+                          <NumberInputField />
+                        </NumberInput>
+                        <InputRightElement width="4.5rem">
+                          <Text>{profitLock?.lockPercent * leverage || 0}%</Text>
+                        </InputRightElement>
+                      </InputGroup>
                     </FormControl>
 
                     <FormControl mb="4">
@@ -1558,13 +1577,29 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                     <FormLabel>Stop Loss Settings</FormLabel>
                       <FormLabel>Stop Loss % (Current Trade)</FormLabel>
-                      <NumberInput value={stopLoss?.currentTrade || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, currentTrade: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
+                      <InputGroup>
+                        <NumberInput 
+                          value={stopLoss?.currentTrade || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, currentTrade: isNaN(valueString) ? 0 : valueString, }))}
+                          width="100%"
+                        >
+                          <NumberInputField />
+                        </NumberInput>
+                        <InputRightElement width="4.5rem">
+                          <Text>{stopLoss?.currentTrade * leverage || 0}%</Text>
+                        </InputRightElement>
+                      </InputGroup>
                       <FormLabel>Stop Loss % (Tradable Amount)</FormLabel>
-                      <NumberInput value={stopLoss?.tradableAmount || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, tradableAmount: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
+                      <InputGroup>
+                        <NumberInput 
+                          value={stopLoss?.tradableAmount || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, tradableAmount: isNaN(valueString) ? 0 : valueString, }))}
+                          width="100%"
+                        >
+                          <NumberInputField />
+                        </NumberInput>
+                        <InputRightElement width="4.5rem">
+                          <Text>{stopLoss?.currentTrade * leverage || 0}%</Text>
+                        </InputRightElement>
+                      </InputGroup>
                     </FormControl>
 
                     <FormControl mb="4">
@@ -1592,8 +1627,15 @@ const handleSubmitedit = async() => {
                     </FormControl>
 
                     <FormControl mb="4">
+                    <FormLabel>Enable Compounding</FormLabel>
+                      <Checkbox isChecked={TradableAmount?.compounding} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
+                    
+                    <FormLabel>Min Tradable Amount</FormLabel>
+                      <NumberInput value={TradableAmount?.min || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, min: isNaN(valueString) ? 0 : valueString, }))}>
+                        <NumberInputField />
+                      </NumberInput>
                       <FormLabel>Max Tradable Amount</FormLabel>
-                      <NumberInput value={maxTradableAmount || ""} onChange={(valueString) => setMaxTradableAmount(isNaN(valueString) ? 0 : valueString)}>
+                      <NumberInput value={TradableAmount?.max || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, max: isNaN(valueString) ? 0 : valueString, }))}>
                         <NumberInputField />
                       </NumberInput>
                     </FormControl>

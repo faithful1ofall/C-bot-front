@@ -60,7 +60,7 @@ import {
           </Text>
         ),
       }),
-      columnHelper.accessor('tradeDirection', {
+      columnHelper.accessor('direction', {
         id: 'tradeDirection',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
@@ -73,7 +73,7 @@ import {
           </Text>
         ),
       }),
-      columnHelper.accessor('usedAmount', {
+      columnHelper.accessor('amount', {
         id: 'usedAmount',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
@@ -173,7 +173,6 @@ import {
       onSortingChange: setSorting,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      debugTable: true,
     });
   
     return (
