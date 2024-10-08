@@ -330,23 +330,22 @@ export default function UserReports() {
 
     // Display a message for each permission
     Object.entries(permissions).forEach(([key, value]) => {
-      if (value) {
-        toast({
-          title: `${key} Enabled`,
-          description: `You have access to ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`,
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: `${key} Disabled`,
-          description: `You do not have access to ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+      // Generate success message based on enabled permissions
+const enabledPermissions = Object.entries(permissions)
+  .filter(([_, value]) => value)
+  .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase())
+  .join(' and ');
+
+// If any permissions are enabled, show the success message
+if (enabledPermissions) {
+  toast({
+    title: 'API Successfully Validated!',
+    description: `${enabledPermissions} enabled.`,
+    status: 'success',
+    duration: 7000,
+    isClosable: true,
+  });
+}
     });
     } catch (error) {
       console.error('Error fetching Validation info:', error);
