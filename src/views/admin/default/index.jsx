@@ -792,7 +792,7 @@ const handleSubmitedit = async() => {
         const data = await response.json();
   
         if (response.ok) {
-          setUsers([...users, data.user]); // Add the new user to the list
+          fetchUsers();
           setApiKey("");
           setApiSecret("");
           
@@ -819,7 +819,7 @@ const handleSubmitedit = async() => {
         const data = await response.json();
   
         if (response.ok) {
-          setUsers([...users, data.user]); // Add the new user to the list
+          fetchUsers();
           setApiKey("");
           setApiSecret("");
           SetUserEdit(false);
