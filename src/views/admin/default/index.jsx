@@ -793,8 +793,6 @@ const handleSubmitedit = async() => {
   
         if (response.ok) {
           fetchUsers();
-          setApiKey("");
-          setApiSecret("");
           
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
@@ -820,8 +818,7 @@ const handleSubmitedit = async() => {
   
         if (response.ok) {
           fetchUsers();
-          setApiKey("");
-          setApiSecret("");
+
           SetUserEdit(false);
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
