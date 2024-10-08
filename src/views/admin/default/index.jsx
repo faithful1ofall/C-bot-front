@@ -321,15 +321,13 @@ export default function UserReports() {
       const { data } = await response.json();  // Parse the JSON response
       // Display enabled permissions
     const permissions = {
-      enableReading: data.enableReading,
-      enableFutures: data.enableFutures,
+      Reading: data.enableReading,
+      Futures: data.enableFutures,
       permitsUniversalTransfer: data.permitsUniversalTransfer,
     };
 
     console.log('User Permissions:', permissions);
 
-    // Display a message for each permission
-    Object.entries(permissions).forEach(([key, value]) => {
       // Generate success message based on enabled permissions
 const enabledPermissions = Object.entries(permissions)
   .filter(([_, value]) => value)
@@ -346,7 +344,6 @@ if (enabledPermissions) {
     isClosable: true,
   });
 }
-    });
     } catch (error) {
       console.error('Error fetching Validation info:', error);
     }
