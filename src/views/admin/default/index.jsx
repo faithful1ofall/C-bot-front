@@ -1601,7 +1601,7 @@ const handleSubmitedit = async() => {
                         <FormLabel>Delayed SL and TP</FormLabel>
                         <Checkbox isChecked={isDelayEnabled.active} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
                       </Flex>
-                      {isDelayEnabled && (
+                      {isDelayEnabled.active && (
                         <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
                           <FormLabel>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</FormLabel>
                           <FormLabel>Offset %</FormLabel>
