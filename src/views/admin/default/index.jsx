@@ -336,7 +336,7 @@ const enabledPermissions = Object.entries(permissions)
 // If any permissions are enabled, show the success message
 if (enabledPermissions.length > 0) {
   const formattedPermissions = enabledPermissions.length > 2
-    ? `${enabledPermissions.slice(0, -1).join(', ')}, and ${enabledPermissions.slice(-1)}`
+    ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
     : enabledPermissions.join(' and ');
 
   toast({
