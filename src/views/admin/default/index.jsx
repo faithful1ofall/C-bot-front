@@ -323,7 +323,7 @@ export default function UserReports() {
     const permissions = {
       Reading: data.enableReading,
       Futures: data.enableFutures,
-      permitsUniversalTransfer: data.permitsUniversalTransfer,
+      UniversalTransfer: data.permitsUniversalTransfer,
     };
 
     console.log('User Permissions:', permissions);
