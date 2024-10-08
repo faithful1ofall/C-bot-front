@@ -331,14 +331,17 @@ export default function UserReports() {
       // Generate success message based on enabled permissions
 const enabledPermissions = Object.entries(permissions)
   .filter(([_, value]) => value)
-  .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase())
-  .join(' and ');
+  .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
 
 // If any permissions are enabled, show the success message
-if (enabledPermissions) {
+if (enabledPermissions.length > 0) {
+  const formattedPermissions = enabledPermissions.length > 2
+    ? `${enabledPermissions.slice(0, -1).join(', ')}, and ${enabledPermissions.slice(-1)}`
+    : enabledPermissions.join(' and ');
+
   toast({
     title: 'API Successfully Validated!',
-    description: `${enabledPermissions} enabled.`,
+    description: `${formattedPermissions} enabled.`,
     status: 'success',
     duration: 7000,
     isClosable: true,
