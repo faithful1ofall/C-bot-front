@@ -176,12 +176,32 @@ export default function UserReports() {
 
       if (!response.ok) {
         console.log("Closed positions error data",data);
+        toast({
+  title: "Error closing trade.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         throw new Error(`HTTP error! status: ${response.status}`);
         
       }
       console.log(data, "closed position success");
+      toast({
+  title: "Trade closed successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
       fetchPosition();
     } catch (err) {
+      toast({
+  title: "Error closing trade.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
       console.error(err, "close posiotn error");
     }
   };
@@ -403,11 +423,31 @@ if (enabledPermissions.length > 0) {
       });
   
       if (response.ok) {
+        toast({
+  title: "User deleted successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
         fetchUsers();
       } else {
+        toast({
+  title: "Error deleting user.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Failed to delete User');
       }
     } catch (error) {
+      toast({
+  title: "Error deleting user.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
       console.error('Error deleting User:', error);
     }
   };
@@ -439,12 +479,32 @@ if (enabledPermissions.length > 0) {
         },
       });
       if (response.ok) {
+        toast({
+  title: "Strategy deleted successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
         fetchStrategies();
         fetchUsers();
       } else {
+        toast({
+  title: "Error deleting strategy.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Failed to delete strategy');
       }
     } catch (error) {
+      toast({
+  title: "Error deleting strategy.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
       console.error('Error deleting strategy:', error);
     }
   };
@@ -485,7 +545,20 @@ if (enabledPermissions.length > 0) {
         console.log("hooking", data);
 
         await fetchPosition();
+        toast({
+  title: "Trade hook successful.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
       }  catch (error) {
+        toast({
+  title: "Error initiating trade hook.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Request failed', error);
       }
 
@@ -527,11 +600,31 @@ if (enabledPermissions.length > 0) {
         });
     
         if (response.ok) {
+          toast({
+  title: "Strategy created successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
           console.log('Strategy added successfully');
         } else {
+          toast({
+  title: "Error creating strategy.",
+  description: "Please verify the inputs and try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
           console.error('Error adding strategy');
         }
       } catch (error) {
+        toast({
+  title: "Error creating strategy.",
+  description: "Please verify the inputs and try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Request failed', error);
       }
 
@@ -594,8 +687,21 @@ const handleSubmitedit = async() => {
           },
           body:  JSON.stringify(updatedFields),
         });
+        toast({
+  title: "Strategy updated successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
 
       } catch (error) {
+        toast({
+  title: "Failed to update strategy.",
+  description: "Please check the inputs and try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Request failed', error);
       }
 
@@ -631,7 +737,20 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
+      toast({
+  title: "User activated successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
     } catch (error) {
+      toast({
+  title: "Error activating user.",
+  description: "Please try again later.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
       console.error('Request failed', error);
     }
 
@@ -656,8 +775,21 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
+      toast({
+  title: "Strategy actived successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
 
     } catch (error) {
+      toast({
+  title: "Failed to activate strategy.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
       console.error('Request failed', error);
     }
 
@@ -724,15 +856,35 @@ const handleSubmitedit = async() => {
       });
 
       if (!response1.ok) {
+        toast({
+  title: "Error updating user details.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         throw new Error(`HTTP error! status: ${response1.status}`);
       }
       const data1 = await response1.json(); 
 
       setName(data1.name);
       setApiKey(data1.apiKey);
-      setApiSecret(data1.apiSecret)
+      setApiSecret(data1.apiSecret);
+      toast({
+  title: "User details updated successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
 
     }  catch (error) {
+      toast({
+  title: "Error updating user details.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
       console.error('Request failed', error);
     }
 
@@ -791,14 +943,34 @@ const handleSubmitedit = async() => {
         const data = await response.json();
   
         if (response.ok) {
+          toast({
+  title: "User created successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
           fetchUsers();
           
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
         } else {
+          toast({
+  title: "Failed to create user.",
+  description: "Please check the input and try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
           console.error('Error adding user:', data.error);
         }
       } catch (error) {
+        toast({
+  title: "Failed to create user.",
+  description: "Please check the input and try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Error:', error);
       }
     } else {
@@ -816,15 +988,35 @@ const handleSubmitedit = async() => {
         const data = await response.json();
   
         if (response.ok) {
+          toast({
+  title: "User details updated successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
           fetchUsers();
 
           SetUserEdit(false);
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
         } else {
+          toast({
+  title: "Error updating user details.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
           console.error('Error adding user:', data.error);
         }
       } catch (error) {
+        toast({
+  title: "Error updating user details.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Error:', error);
       }
       
@@ -841,7 +1033,20 @@ const handleSubmitedit = async() => {
             'Authorization': `Bearer ${jwttoken}`,
           }
         });
+        toast({
+  title: "Strategy unlinked from user successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
       } catch (error) {
+        toast({
+  title: "Error unlinking strategy from user.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Error:', error);
       }
       fetchUsers();
@@ -866,6 +1071,12 @@ const handleSubmitedit = async() => {
         console.log("linking", data);
 
         if (response.ok) {
+          toast({
+  title: "Strategy linked to user successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
           fetchUsers();
 
           const updatedStrategyIds = [...selectedStrategyIds, strategyid];
@@ -873,9 +1084,23 @@ const handleSubmitedit = async() => {
           // Set the new array as the state
           setSelectedStrategyIds(updatedStrategyIds);
          } else {
+          toast({
+  title: "Error linking strategy to user.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
           console.error('Error adding user:', data.error);
         }
       } catch (error) {
+        toast({
+  title: "Error linking strategy to user.",
+  description: "Please try again.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         console.error('Error:', error);
       }
     }
