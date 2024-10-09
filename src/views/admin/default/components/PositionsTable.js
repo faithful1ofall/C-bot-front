@@ -34,6 +34,32 @@ import {
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
   
     const columns = [
+        columnHelper.accessor('openTime', {
+        id: 'time',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            ENTRY TIME
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue()}
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('entryPrice', {
+        id: 'price',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            ENTRY PRICE
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue()}
+          </Text>
+        ),
+      }),
       columnHelper.accessor('userName', {
         id: 'userName',
         header: () => (
