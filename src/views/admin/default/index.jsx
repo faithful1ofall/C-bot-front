@@ -1218,7 +1218,7 @@ const handleSubmitedit = async() => {
                         <Box key={`${strategy.id}-${strategy.id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
                           <Flex align="center" justify="space-between">
                             <Text fontWeight="bold">{strategy.name}</Text>
-                            <Button colorScheme="teal" onClick={() => handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))}>
+                            <Button colorScheme="teal" size={{ base: 'sm', md: 'md', lg: 'lg' }} onClick={() => handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))}>
                               {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
                             </Button>
                           </Flex>
