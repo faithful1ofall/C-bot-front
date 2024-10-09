@@ -1567,7 +1567,7 @@ const handleSubmitedit = async() => {
 
                     <FormControl mt="4">
                       <FormLabel>Cross/Isolated Mode</FormLabel>
-                      <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
+                      <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode || ''}>
                         <Stack direction="row">
                           <Radio value="CROSSED">Cross</Radio>
                           <Radio value="ISOLATED">Isolated</Radio>
@@ -1582,7 +1582,7 @@ const handleSubmitedit = async() => {
                       onChange={(e) => setTradingPairs(e.target.value)}
                     >
                       {selectedPairs.map((pair) => (
-                        <option key={pair} value={pair}>
+                        <option key={pair} value={pair || ''}>
                           {pair}
                         </option>
                       ))}
@@ -1591,16 +1591,16 @@ const handleSubmitedit = async() => {
 
                   <FormControl mb="4">
                     <FormLabel>Trade Direction</FormLabel>
-                    <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
+                    <Select value={tradeDirection || ''} onChange={(e) => setTradeDirection(e.target.value)}>
                       <option value="Buy">Long/Buy</option>
                       <option value="Sell">Short/Sell</option>
-                      <option value="Sell">Both</option>
+                      <option value="Both">Both</option>
                     </Select>
                   </FormControl>
 
                   <FormControl mb="4">
                     <FormLabel>Time Frame</FormLabel>
-                    <Select value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>
+                    <Select value={timeFrame || ''} onChange={(e) => setTimeFrame(e.target.value)}>
                     <option value="15s">15 Seconds</option>
                       <option value="30s">30 Seconds</option>
                       <option value="45s">45 Seconds</option>
@@ -1653,7 +1653,7 @@ const handleSubmitedit = async() => {
                   <FormControl mb="4">
                     <Flex alignItems="center">
                       <FormLabel>Negative Value Trigger (%)</FormLabel>
-                      <Checkbox isChecked={isNegativeCandleEnabled} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
+                      <Checkbox isChecked={isNegativeCandleEnabled || false} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
                     </Flex>
                     {isNegativeCandleEnabled && (
                       <NumberInput value={negativeCandleTrigger || ""} onChange={(valueString) => setNegativeCandleTrigger(parseInt(valueString))}>
@@ -1840,7 +1840,7 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                       <Flex alignItems="center">
                         <FormLabel>Delayed SL and TP</FormLabel>
-                        <Checkbox isChecked={isDelayEnabled.active} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
+                        <Checkbox isChecked={isDelayEnabled.active || false} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
                       </Flex>
                       {isDelayEnabled.active && (
                         <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
@@ -1855,7 +1855,7 @@ const handleSubmitedit = async() => {
 
                     <FormControl mb="4">
                     <FormLabel>Enable Compounding</FormLabel>
-                      <Checkbox isChecked={TradableAmount?.compounding} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
+                      <Checkbox isChecked={TradableAmount?.compounding || false} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
                     
                     <FormLabel>Min Tradable Amount</FormLabel>
                       <NumberInput value={TradableAmount?.min || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, min: isNaN(valueString) ? 0 : valueString, }))}>
