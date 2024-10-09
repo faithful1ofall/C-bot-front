@@ -1438,7 +1438,7 @@ const handleSubmitedit = async() => {
         <Box mt="4" bg="gray.50" p="4" borderRadius="md">
           <FormControl>
             <FormLabel>Select Strategies to Link</FormLabel>
-            <SimpleGrid mt="20px" columns={{ base: 1, sm: 2, md: 2, lg: 3 }} gap="20px">
+            <SimpleGrid mt="20px" columns={{ base: 1 }} gap="20px">
               {strategies.map((strategy) => (
                 <Box
                   key={strategy.id}
