@@ -1544,18 +1544,18 @@ const handleSubmitedit = async() => {
                   {/* Form Content Goes Here */}
                   <FormControl mb="4">
                     <FormLabel>Strategy Name</FormLabel>
-                    <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
+                    <Input value={newStrategyName || ""} onChange={(e) => setNewStrategyName(e.target.value)} />
                   </FormControl>
 
                   <FormControl mb="4">
                     <FormLabel>Hook Key</FormLabel>
-                    <Input value={hookkey} onChange={(e) => setHookKey(e.target.value)} />
+                    <Input value={hookkey || ""} onChange={(e) => setHookKey(e.target.value)} />
                   </FormControl>
 
 
                   <FormControl mb="4">
                     <FormLabel>TradingView Link</FormLabel>
-                    <Input value={tradingViewLink} isReadOnly />
+                    <Input value={tradingViewLink || ""} isReadOnly />
                   </FormControl>
 
                   <FormControl mb="4">
@@ -1831,7 +1831,7 @@ const handleSubmitedit = async() => {
 
                     <FormControl mb="4">
                       <FormLabel>Order Type (for SL/TP)</FormLabel>
-                      <Select value={orderType} onChange={(e) => setOrderType(e.target.value)}>
+                      <Select value={orderType || ""} onChange={(e) => setOrderType(e.target.value)}>
                         <option value="Limit">Limit Order</option>
                         <option value="Market">Market Order</option>
                       </Select>
