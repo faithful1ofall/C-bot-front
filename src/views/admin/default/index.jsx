@@ -1433,26 +1433,39 @@ const handleSubmitedit = async() => {
                 />
               </Box>
             )}
+            
             {isLinkStrategyOpen === user.id && (
-                <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-                  {/* Form Content Goes Here */}
-                  <FormControl>
-                    <FormLabel>Select Strategies to Link</FormLabel>
-                    <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
-                      {strategies.map((strategy) => (
-                        <Box key={`${strategy.id}-${strategy.id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
-                          <Flex align="center" justify="space-between">
-                            <Text fontWeight="bold">{strategy.name}</Text>
-                            <Button colorScheme="teal" size={{ base: 'sm', md: 'md', lg: 'lg' }} onClick={() => handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))}>
-                              {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
-                            </Button>
-                          </Flex>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                  </FormControl>
-                  </Box>
-            )}
+        <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+          <FormControl>
+            <FormLabel>Select Strategies to Link</FormLabel>
+            <SimpleGrid mt="20px" columns={{ base: 1, sm: 2, md: 2, lg: 3 }} gap="20px">
+              {strategies.map((strategy) => (
+                <Box
+                  key={strategy.id}
+                  p="5"
+                  shadow="md"
+                  borderWidth="1px"
+                  borderRadius="md"
+                  minWidth={{ base: "100%", md: "250px" }} // Ensure boxes have a minimum width
+                >
+                  <Flex align="center" justify="space-between">
+                    <Text fontWeight="bold">{strategy.name}</Text>
+                    <Button
+                      colorScheme={selectedStrategyIds.includes(strategy.id) ? "red" : "teal"} // Change color for linked strategies
+                      size="sm"
+                      onClick={() =>
+                        handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))
+                      }
+                    >
+                      {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
+                    </Button>
+                  </Flex>
+                </Box>
+              ))}
+              </SimpleGrid>
+          </FormControl>
+        </Box>
+      )}
              {transferuserid === user.id && (
                 <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                   <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} userid={transferuserid} balance={accountinfo} fetchAccountinfo={fetchAccountinfo(transferuserid)}/>
