@@ -1650,16 +1650,24 @@ const handleSubmitedit = async() => {
 
                     <FormControl mb="4">
                       <FormLabel>Initail Call Funds %</FormLabel>
-                      <NumberInput min={0} max={100} value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
+                      <NumberInput value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
                         <NumberInputField />
                       </NumberInput>
                     </FormControl>
 
                     <FormControl mb="4">
                       <FormLabel>Initial Call TP%</FormLabel>
-                      <NumberInput min={0} max={100} value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
+                      <InputGroup>
+                                <NumberInput 
+                                  value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}
+                                  width="100%"
+                                >
+                                  <NumberInputField />
+                                </NumberInput>
+                                <InputRightElement width="4.5rem">
+                                  <Text>{callTPs[0] * leverage || 0}%</Text>
+                                </InputRightElement>
+                              </InputGroup>
                     </FormControl>
 
                     {/* Sync Call 1 Values */}
