@@ -136,8 +136,12 @@ export default function UserReports() {
     offset: 0,
   });
   const [isEdit, SetEdit] = useState(false);
-  const [useredit, SetUserEdit] = useState(false);   
-  const [TradableAmount, setTradableAmount] = useState('');
+  const [useredit, SetUserEdit] = useState(false);
+  const [TradableAmount, setTradableAmount] = useState({
+  min: 0, 
+  max: 0, 
+  compounding: false, 
+});
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
  
