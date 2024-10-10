@@ -119,7 +119,10 @@ export default function UserReports() {
   trigger: 0,
   lockPercent: 0
 });
-  const [stopLoss, setStopLoss] = useState('');
+  const [stopLoss, setStopLoss] = useState({
+  currentTrade: 0,
+  tradableAmount: 0,
+});
   const [trailingStop, setTrailingStop] = useState({
   enabled: false,
   callbackRate: 0,
@@ -127,7 +130,7 @@ export default function UserReports() {
   amount: 0,
 });
   const [takeProfit, setTakeProfit] = useState(0);
-  const [orderType, setOrderType] = useState('Limit');
+  const [orderType, setOrderType] = useState("Limit");
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
   const [isEdit, SetEdit] = useState(false);
   const [useredit, SetUserEdit] = useState(false);   
