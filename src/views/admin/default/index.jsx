@@ -105,7 +105,7 @@ export default function UserReports() {
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
-  const [marginMode, setmarginMode] = useState('');
+  const [marginMode, setmarginMode] = useState('CROSSED');
 
 
   // new parameters
