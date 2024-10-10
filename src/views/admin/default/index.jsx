@@ -112,7 +112,7 @@ export default function UserReports() {
   
   const [tradingPairs, setTradingPairs] = useState('');
   const [tradeDirection, setTradeDirection] = useState('Both');
-  const [timeFrame, setTimeFrame] = useState('1 Minute');
+  const [timeFrame, setTimeFrame] = useState('1m');
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState('');
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
   const [profitLock, setProfitLock] = useState({
@@ -839,7 +839,7 @@ const handleSubmitedit = async() => {
     setNewStrategyName(data1.name || "");
     setTradingPairs(data1.tradingPair || []);
     setTradeDirection(data1.tradeDirection || ""); // Assuming empty string as a default
-    setTimeFrame(data1.timeFrame || ""); // Assuming empty string as a default
+    setTimeFrame(data1.timeFrame || "1m"); // Assuming empty string as a default
     setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
     setHookKey(data1.hookkey || "");
     setTrailingStop(data1.trailingStop || { enabled: false }); // Assuming trailing stop has a default object
