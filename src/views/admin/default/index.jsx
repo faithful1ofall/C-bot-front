@@ -127,15 +127,15 @@ export default function UserReports() {
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
  
-  const [callFunds, setCallFunds] = useState(Array(0).fill(0)); // Funds percentage for each call
-  const [callTPs, setCallTPs] = useState(Array(0).fill(0)); // TP percentage for each call
-  const [callNegTriggers, setCallNegTriggers] = useState(Array(0).fill()); // Negative trigger percentage for each call
+  const [callFunds, setCallFunds] = useState([0]); // Funds percentage for each call
+  const [callTPs, setCallTPs] = useState([0]); // TP percentage for each call
+  const [callNegTriggers, setCallNegTriggers] = useState([0]); // Negative trigger percentage for each call
 
 
   const [accountinfo, setAccountinfo] = useState(0);
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
-  const [positions, setPositions] = React.useState([]); // Your trade positions data
+  const [positions, setPositions] = useState([]); // Your trade positions data
 
   const fetchPosition = useCallback(async () => {
     try {        
