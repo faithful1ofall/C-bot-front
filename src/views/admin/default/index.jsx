@@ -818,48 +818,48 @@ const handleSubmitedit = async() => {
   
 
 
-  const handleEdit = async(editid) => {
-    try {
-      
-      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
-        }
-      });
-
-      if (!response1.ok) {
-        throw new Error(`HTTP error! status: ${response1.status}`);
+  const handleEdit = async (editid) => {
+  try {
+    const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${jwttoken}`,
       }
-      const data1 = await response1.json(); 
+    });
 
-      setOriginalStrategy(data1);
-
-      setNewStrategyName(data1.name);
-      setTradingPairs(data1.tradingPair);
-      setTradeDirection(data1.tradeDirection);
-      setTimeFrame(data1.timeFrame);
-      setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
-      setHookKey(data1.hookkey);
-      setTrailingStop(data1.trailingStop);
-
-      setCallFunds(data1.calls.map(call => call.funds));
-      setCallTPs(data1.calls.map(call => call.tp));
-      setCallNegTriggers(data1.calls.map(call => call.negTrigger));
-
-      setProfitLock(data1.profitLock);
-      setStopLoss(data1.stopLoss);
-      setTakeProfit(data1.takeProfit);
-      setOrderType(data1.orderType);
-      setIsDelayEnabled(data1.isDelayEnabled);
-      setTradableAmount(data1.TradableAmount);
-      setLeverage(data1.leverage);
-      setmarginMode(data1.marginMode);
-
-    }  catch (error) {
-      console.error('Request failed', error);
+    if (!response1.ok) {
+      throw new Error(`HTTP error! status: ${response1.status}`);
     }
+    
+    const data1 = await response1.json();
 
+    setOriginalStrategy(data1);
+
+    // Use default values if the API response is missing certain fields
+    setNewStrategyName(data1.name || "");
+    setTradingPairs(data1.tradingPair || []);
+    setTradeDirection(data1.tradeDirection || ""); // Assuming empty string as a default
+    setTimeFrame(data1.timeFrame || ""); // Assuming empty string as a default
+    setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
+    setHookKey(data1.hookkey || "");
+    setTrailingStop(data1.trailingStop || { enabled: false }); // Assuming trailing stop has a default object
+
+    setCallFunds(data1.calls ? data1.calls.map(call => call.funds || 0) : []); // Default to 0 if funds are missing
+    setCallTPs(data1.calls ? data1.calls.map(call => call.tp || 0) : []); // Default to 0 if tp is missing
+    setCallNegTriggers(data1.calls ? data1.calls.map(call => call.negTrigger || 0) : []); // Default to 0 if negTrigger is missing
+
+    setProfitLock(data1.profitLock || 0); // Default to 0 if profitLock is missing
+    setStopLoss(data1.stopLoss || 0); // Default to 0 if stopLoss is missing
+    setTakeProfit(data1.takeProfit || 0); // Default to 0 if takeProfit is missing
+    setOrderType(data1.orderType || "Market"); // Assuming 'Market' as a default order type
+    setIsDelayEnabled(data1.isDelayEnabled || { active: false, offset: 0 }); // Default to inactive delay with no offset
+    setTradableAmount(data1.TradableAmount || { min: 0, max: 0 }); // Default to min 0 and max 100
+    setLeverage(data1.leverage || 1); // Default to 1 if leverage is missing
+    setmarginMode(data1.marginMode || ""); // Assuming empty string as a default
+
+  } catch (error) {
+    console.error('Request failed', error);
+  }
   }
 
   const handleEditUser = async(editid) => {
