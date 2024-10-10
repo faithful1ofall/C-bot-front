@@ -120,7 +120,12 @@ export default function UserReports() {
   lockPercent: 0
 });
   const [stopLoss, setStopLoss] = useState('');
-  const [trailingStop, setTrailingStop] = useState('');
+  const [trailingStop, setTrailingStop] = useState({
+  enabled: false,
+  callbackRate: 0,
+  price: 0,
+  amount: 0,
+});
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState('Limit');
   const [isDelayEnabled, setIsDelayEnabled] = useState(false);
