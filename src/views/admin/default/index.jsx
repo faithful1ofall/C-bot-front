@@ -1578,14 +1578,14 @@ const handleSubmitedit = async() => {
 
                   <FormControl mb="4">
                       <FormLabel>Leverage</FormLabel>
-                      <NumberInput min={1} max={100} value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
+                      <NumberInput value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
                         <NumberInputField />
                       </NumberInput>
                     </FormControl>
 
                     <FormControl mt="4">
                       <FormLabel>Cross/Isolated Mode</FormLabel>
-                      <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode || ''}>
+                      <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
                         <Stack direction="row">
                           <Radio value="CROSSED">Cross</Radio>
                           <Radio value="ISOLATED">Isolated</Radio>
@@ -1596,11 +1596,11 @@ const handleSubmitedit = async() => {
                   <FormControl mb="4">
                     <FormLabel>Trading Pair</FormLabel>
                     <Select
-                      value={tradingPairs || ''}
+                      value={tradingPairs}
                       onChange={(e) => setTradingPairs(e.target.value)}
                     >
                       {selectedPairs.map((pair) => (
-                        <option key={pair} value={pair || ''}>
+                        <option key={pair} value={pair}>
                           {pair}
                         </option>
                       ))}
@@ -1609,7 +1609,7 @@ const handleSubmitedit = async() => {
 
                   <FormControl mb="4">
                     <FormLabel>Trade Direction</FormLabel>
-                    <Select value={tradeDirection || ''} onChange={(e) => setTradeDirection(e.target.value)}>
+                    <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
                       <option value="Buy">Long/Buy</option>
                       <option value="Sell">Short/Sell</option>
                       <option value="Both">Both</option>
