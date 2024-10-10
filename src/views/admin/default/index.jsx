@@ -854,7 +854,7 @@ const handleSubmitedit = async() => {
     setOrderType(data1.orderType || "Market"); // Assuming 'Market' as a default order type
     setIsDelayEnabled(data1.isDelayEnabled || { active: false, offset: 0 }); // Default to inactive delay with no offset
     setTradableAmount(data1.TradableAmount || { min: 0, max: 0 }); // Default to min 0 and max 100
-    setLeverage(data1.leverage || 1); // Default to 1 if leverage is missing
+    setLeverage(data1.leverage || 10); // Default to 1 if leverage is missing
     setmarginMode(data1.marginMode || ""); // Assuming empty string as a default
 
   } catch (error) {
