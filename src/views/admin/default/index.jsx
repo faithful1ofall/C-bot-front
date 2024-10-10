@@ -1827,34 +1827,59 @@ const handleSubmitedit = async() => {
                 </FormControl>
 
 
-                    <FormControl mb="4">
-                    <FormLabel>Stop Loss Settings</FormLabel>
-                      <FormLabel>Stop Loss % (Current Trade)</FormLabel>
-                      <InputGroup>
-                        <NumberInput 
-                          value={stopLoss?.currentTrade || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, currentTrade: isNaN(valueString) ? 0 : valueString, }))}
-                          width="100%"
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightElement width="4.5rem">
-                          <Text>{stopLoss?.currentTrade * leverage || 0}%</Text>
-                        </InputRightElement>
-                      </InputGroup>
-                      <FormLabel>Stop Loss % (Tradable Amount)</FormLabel>
-                      <InputGroup>
-                        <NumberInput 
-                          value={stopLoss?.tradableAmount || ""} onChange={(valueString) => setStopLoss((prev) => ({ ...prev, tradableAmount: isNaN(valueString) ? 0 : valueString, }))}
-                          width="100%"
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightElement width="4.5rem">
-                          <Text>{stopLoss?.currentTrade * leverage || 0}%</Text>
-                        </InputRightElement>
-                      </InputGroup>
-                    </FormControl>
+                    <FormControl>
+  <FormLabel>Stop Loss Settings</FormLabel>
 
+  {/* Stop Loss % (Current Trade) */}
+  {!stopLoss?.tradableAmount && (
+    <>
+      <FormLabel>Stop Loss % (Current Trade)</FormLabel>
+      <InputGroup>
+        <NumberInput
+          value={stopLoss?.currentTrade || ""}
+          onChange={(valueString) =>
+            setStopLoss((prev) => ({
+              ...prev,
+              currentTrade: isNaN(valueString) ? 0 : valueString,
+              tradableAmount: "", // Clear other field
+            }))
+          }
+          width="100%"
+        >
+          <NumberInputField />
+        </NumberInput>
+        <InputRightElement width="4.5rem">
+          <Text>{stopLoss?.currentTrade * leverage || 0}%</Text>
+        </InputRightElement>
+      </InputGroup>
+    </>
+  )}
+
+  {/* Stop Loss % (Tradable Amount) */}
+  {!stopLoss?.currentTrade && (
+    <>
+      <FormLabel>Stop Loss % (Tradable Amount)</FormLabel>
+      <InputGroup>
+        <NumberInput
+          value={stopLoss?.tradableAmount || ""}
+          onChange={(valueString) =>
+            setStopLoss((prev) => ({
+              ...prev,
+              tradableAmount: isNaN(valueString) ? 0 : valueString,
+              currentTrade: "", // Clear other field
+            }))
+          }
+          width="100%"
+        >
+          <NumberInputField />
+        </NumberInput>
+        <InputRightElement width="4.5rem">
+          <Text>{stopLoss?.tradableAmount * leverage || 0}%</Text>
+        </InputRightElement>
+      </InputGroup>
+    </>
+  )}
+</FormControl>
                     <FormControl mb="4">
                       <FormLabel>Order Type (for SL/TP)</FormLabel>
                       <Select value={orderType || ""} onChange={(e) => setOrderType(e.target.value)}>
