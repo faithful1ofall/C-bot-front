@@ -131,7 +131,10 @@ export default function UserReports() {
 });
   const [takeProfit, setTakeProfit] = useState(0);
   const [orderType, setOrderType] = useState("Limit");
-  const [isDelayEnabled, setIsDelayEnabled] = useState(false);
+  const [isDelayEnabled, setIsDelayEnabled] = useState({
+    active: false,
+    offset: 0,
+  });
   const [isEdit, SetEdit] = useState(false);
   const [useredit, SetUserEdit] = useState(false);   
   const [TradableAmount, setTradableAmount] = useState('');
@@ -1851,13 +1854,13 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                       <Flex alignItems="center">
                         <FormLabel>Delayed SL and TP</FormLabel>
-                        <Checkbox isChecked={isDelayEnabled.active || false} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
+                        <Checkbox isChecked={isDelayEnabled.active || false} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: e.target.checked }))}>Enable</Checkbox>
                       </Flex>
                       {isDelayEnabled.active && (
                         <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
                           <FormLabel>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</FormLabel>
                           <FormLabel>Offset %</FormLabel>
-                            <NumberInput value={isDelayEnabled.offset || ""} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, offset: isNaN(e.target.checked) ? 0 : e.target.checked }))}>
+                            <NumberInput value={isDelayEnabled.offset || ""} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, offset: isNaN(e) ? 0 : e, }))}>
                               <NumberInputField />
                             </NumberInput>
                         </Box>
@@ -1866,7 +1869,7 @@ const handleSubmitedit = async() => {
 
                     <FormControl mb="4">
                     <FormLabel>Enable Compounding</FormLabel>
-                      <Checkbox isChecked={TradableAmount?.compounding || false} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: isNaN(e.target.checked) ? 0 : e.target.checked, }))}>Enable</Checkbox>
+                      <Checkbox isChecked={TradableAmount?.compounding || false} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: e.target.checked }))}>Enable</Checkbox>
                     
                     <FormLabel>Min Tradable Amount</FormLabel>
                       <NumberInput value={TradableAmount?.min || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, min: isNaN(valueString) ? 0 : valueString, }))}>
