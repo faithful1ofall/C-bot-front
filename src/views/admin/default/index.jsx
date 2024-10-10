@@ -115,7 +115,10 @@ export default function UserReports() {
   const [timeFrame, setTimeFrame] = useState('1 Minute');
   const [negativeCandleTrigger, setNegativeCandleTrigger] = useState('');
   const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
-  const [profitLock, setProfitLock] = useState('');
+  const [profitLock, setProfitLock] = useState({
+  trigger: 0,
+  lockPercent: 0
+});
   const [stopLoss, setStopLoss] = useState('');
   const [trailingStop, setTrailingStop] = useState('');
   const [takeProfit, setTakeProfit] = useState(0);
