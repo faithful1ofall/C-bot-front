@@ -127,9 +127,9 @@ export default function UserReports() {
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
  
-  const [callFunds, setCallFunds] = useState([0]); // Funds percentage for each call
-  const [callTPs, setCallTPs] = useState([0]); // TP percentage for each call
-  const [callNegTriggers, setCallNegTriggers] = useState([0]); // Negative trigger percentage for each call
+  const [callFunds, setCallFunds] = useState([]); // Funds percentage for each call
+  const [callTPs, setCallTPs] = useState([]); // TP percentage for each call
+  const [callNegTriggers, setCallNegTriggers] = useState([]); // Negative trigger percentage for each call
 
 
   const [accountinfo, setAccountinfo] = useState(0);
