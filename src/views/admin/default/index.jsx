@@ -545,42 +545,56 @@ if (enabledPermissions.length > 0) {
     setSelectedPairs(filteredSelectedPairs);
   }, [filteredSelectedPairs])
 
- const tradinghook = async() => {
-    const hooking = { 
-      strategy: selectedStrategy,
-    };
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body:  JSON.stringify(hooking),
-        });
+ const tradinghook = async () => {
+  const hooking = { 
+    strategy: selectedStrategy,
+  };
 
-        const data = await response.json();
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(hooking),
+    });
 
-        console.log("hooking", data);
+    if (!response.ok) {
+      const errorData = await response.json();
+      toast({
+      title: "Error initiating trade hook.",
+      description: `Trade not executed, info: ${errorData.error}`,
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
+      throw new Error(errorData.error || 'Error initiating trade hook.');
+    }
 
-        await fetchPosition();
-        toast({
-  title: "Trade hook successful.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
-      }  catch (error) {
-        toast({
-  title: "Error initiating trade hook.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-        console.error('Request failed', error);
-      }
+    const data = await response.json();
+    console.log("hooking", data);
 
+    // Fetch updated position data
+    await fetchPosition();
+
+    toast({
+      title: "Trade hook successful.",
+      description: `Trade executed successfully.`,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+  } catch (error) {
+    toast({
+      title: "Error initiating trade hook.",
+      description: error.error || "Please try again later.",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
+    console.error('Request failed', error);
   }
+};
 
   const handleSubmit = async() => {
     const newStrategy = {
