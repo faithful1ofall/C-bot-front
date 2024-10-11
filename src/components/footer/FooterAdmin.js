@@ -26,6 +26,7 @@ export default function Footer() {
         xl: "start",
       }}
       justifyContent='space-between'
+      position="relative"
       px={{ base: "30px", md: "50px" }}
       pb='30px'>
       <Text
