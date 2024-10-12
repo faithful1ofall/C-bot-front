@@ -118,10 +118,10 @@ export default function Dashboard(props) {
           <Box
             float="right"
             minHeight="100vh"
-            height="100%"
-            overflow="auto"
+            height="80%"
+            overflow="hidden"
             position="relative"
-            maxHeight="100%"
+            maxHeight="80%"
             w={{ base: '100%', xl: 'calc( 100% - 290px )' }}
             maxWidth={{ base: '100%', xl: 'calc( 100% - 290px )' }}
             transition="all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)"
