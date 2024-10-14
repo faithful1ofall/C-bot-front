@@ -34,19 +34,35 @@ import {
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
   
     const columns = [
-        columnHelper.accessor('openTime', {
+      columnHelper.accessor('openTime', {
         id: 'time',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
             ENTRY TIME
           </Text>
         ),
-        cell: (info) => (
-          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
-            {info.getValue()}
-          </Text>
-        ),
-      }),
+        cell: (info) => {
+          const timestamp = info.getValue(); // Get the timestamp
+          const date = new Date(timestamp); // Convert to Date object
+
+          // Convert to GMT+1 by specifying 'Europe/Amsterdam'
+          const formattedDate = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true, // Use 24-hour format
+          }).format(date);
+      
+          return (
+            <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+              {formattedDate}
+            </Text>
+          );
+        },
+      }),      
       columnHelper.accessor('entryPrice', {
         id: 'price',
         header: () => (

@@ -1897,8 +1897,8 @@ const handleSubmitedit = async() => {
                     <FormControl mb="4">
                       <FormLabel>Order Type (for SL/TP)</FormLabel>
                       <Select value={orderType || ""} onChange={(e) => setOrderType(e.target.value)}>
-                        <option value="Limit">Limit Order</option>
-                        <option value="Market">Market Order</option>
+                        <option value="limit">Limit Order</option>
+                        <option value="market">Market Order</option>
                       </Select>
                     </FormControl>
 
@@ -1919,9 +1919,10 @@ const handleSubmitedit = async() => {
                     </FormControl>
 
                     <FormControl mb="4">
+                    <Flex alignItems="center">
                     <FormLabel>Enable Compounding</FormLabel>
                       <Checkbox isChecked={TradableAmount?.compounding || false} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: e.target.checked }))}>Enable</Checkbox>
-                    
+                    </Flex>
                     <FormLabel>Min Tradable Amount</FormLabel>
                       <NumberInput value={TradableAmount?.min || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, min: isNaN(valueString) ? 0 : valueString, }))}>
                         <NumberInputField />
