@@ -1,9 +1,8 @@
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
-import rtl from 'stylis-plugin-rtl';
 // NB: A unique `key` is important for it to work!
 const options = {
-  rtl: { key: 'css-ar', stylisPlugins: [rtl] },
+  rtl: { key: 'css-ar' },
   ltr: { key: 'css-en' },
 };
 export function RtlProvider({ children }) {
