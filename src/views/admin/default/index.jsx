@@ -604,6 +604,7 @@ if (enabledPermissions.length > 0) {
       tradeDirection,
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
+      isNegativeCandleEnabled: isNegativeCandleEnabled,
       
       calls: callFunds.map((funds, index) => ({
         funds,
@@ -681,6 +682,7 @@ const handleSubmitedit = async() => {
       tradeDirection,
       timeFrame,
       negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
+    isNegativeCandleEnabled: isNegativeCandleEnabled,
       calls: callFunds.map((funds, index) => ({
         funds,
         tp: callTPs[index],
@@ -855,6 +857,7 @@ const handleSubmitedit = async() => {
     setTradeDirection(data1.tradeDirection || ""); // Assuming empty string as a default
     setTimeFrame(data1.timeFrame || "1m"); // Assuming empty string as a default
     setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
+    setIsNegativeCandleEnabled(data1.isNegativeCandleEnabled || false);
     setHookKey(data1.hookkey || "");
     setTrailingStop(data1.trailingStop || { enabled: false }); // Assuming trailing stop has a default object
 
