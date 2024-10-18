@@ -144,6 +144,7 @@ export default function UserReports() {
 });
   const [leverage, setLeverage] = useState(10); // Leverage state
   const [originalStrategy, setOriginalStrategy] = useState(null);
+ const [olduser, setOldUser] = useState(null);
  
   const [callFunds, setCallFunds] = useState([]); // Funds percentage for each call
   const [callTPs, setCallTPs] = useState([]); // TP percentage for each call
@@ -925,6 +926,7 @@ const handleSubmitedit = async() => {
         throw new Error(`HTTP error! status: ${response1.status}`);
       }
       const data1 = await response1.json(); 
+      setOldUser(data1);
 
       setName(data1.name);
       setApiKey(data1.apiKey);
@@ -1034,6 +1036,14 @@ const handleSubmitedit = async() => {
       }
     } else {
 
+      const updatedFields = {};
+
+      Object.keys(newUser).forEach((key) => {
+        if (newUser[key] !== olduser[key]) {
+          updatedFields[key] = newUser[key];
+        }
+      });
+
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useredit}`, {
           method: 'PUT',
@@ -1041,7 +1051,7 @@ const handleSubmitedit = async() => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwttoken}`,
           },
-          body: JSON.stringify(newUser),
+          body: JSON.stringify(updatedFields),
         });
   
         const data = await response.json();
