@@ -771,13 +771,15 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
-      if (activate){
+      
+      if (!currentstatus){
         toast({
           title: "User activated successfully.",
           status: "success",
           duration: 5000,
           isClosable: true,
         });
+        
 
       } else {
         toast({
@@ -787,6 +789,7 @@ const handleSubmitedit = async() => {
           isClosable: true,
         });
       }
+      await fetchUsers();
       
     } catch (error) {
       toast({
@@ -820,7 +823,7 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
-      if(activate) {
+      if(activate === true) {
         toast({
           title: "Strategy actived successfully.",
           status: "success",
