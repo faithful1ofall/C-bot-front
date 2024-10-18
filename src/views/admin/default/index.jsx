@@ -85,7 +85,9 @@ export default function UserReports() {
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
   const [selectedStrategy, setSelectedStrategy] = useState('');
 
+  const [todelete, setToDelete] = useState("");
 
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
@@ -552,31 +554,32 @@ export default function UserReports() {
       });
       if (response.ok) {
         toast({
-  title: "Strategy deleted successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+          title: "Strategy deleted successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onDeleteClose();
         fetchStrategies();
         fetchUsers();
       } else {
         toast({
-  title: "Error deleting strategy.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: "Error deleting strategy.",
+          description: "Please try again later.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Failed to delete strategy');
       }
     } catch (error) {
       toast({
-  title: "Error deleting strategy.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+        title: "Error deleting strategy.",
+        description: "Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
       console.error('Error deleting strategy:', error);
     }
   };
@@ -1461,6 +1464,26 @@ const handleSubmitedit = async() => {
     </Modal>
 
 
+      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Are you sure you want to delete? This action cannot be undone.
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onDeleteClose}>
+              Cancel
+            </Button>
+            <Button colorScheme="red" onClick={() => deleteStrategy(todelete)} ml={3}>
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       
      {/* Add User Modal */}
      <Modal isOpen={isUserOpen} onClose={onUserClose}>
@@ -1600,6 +1623,9 @@ const handleSubmitedit = async() => {
           Create Strategy
         </Button>
 
+      
+
+      
 
 
       <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
@@ -1624,7 +1650,7 @@ const handleSubmitedit = async() => {
                   >
                     {expandedStrategyId === strategy.id ? 'Close Form' : 'Edit Strategy'}
                   </MenuItem>
-                  <MenuItem onClick={() => deleteStrategy(strategy.id) }>Delete Strategy</MenuItem>
+                  <MenuItem onClick={() => { setToDelete(strategy.id); onDeleteOpen(); }}>Delete Strategy</MenuItem>
                 </MenuList>
               </Menu>
               <Switch
@@ -1632,6 +1658,7 @@ const handleSubmitedit = async() => {
                 onChange={() => { handleactive(strategy.id, strategy.active);}}
                 colorScheme="teal"
               />
+              
             </Flex>
              {/* Collapsible Form */}
               {expandedStrategyId === strategy.id && (
