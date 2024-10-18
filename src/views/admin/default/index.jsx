@@ -1527,7 +1527,7 @@ const handleSubmitedit = async() => {
       )}
              {transferuserid === user.id && (
                 <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-                  <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} userid={transferuserid} balance={accountinfo} fetchAccountinfo={fetchAccountinfo(transferuserid)}/>
+                  <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} userid={transferuserid} balance={accountinfo} />
                 </Box>
               )}
           </Box>         
