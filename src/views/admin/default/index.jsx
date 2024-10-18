@@ -413,11 +413,14 @@ export default function UserReports() {
       });
       }
 
-      const { data } = await response.json();  // Parse the JSON response
+      const { exchangeInfo } = await response.json();  // Parse the JSON response
+
+      console.log('User api info data:', exchangeInfo);
+
       // Display enabled permissions
       const permissions = {
-        limit: data.exchangeInfo,
-        usedlimit: data.headersInfo.usedIPWeight1M
+        limit: exchangeInfo[0].exchangeInfo[0].limit,
+        usedlimit: exchangeInfo[0].headersInfo.usedIPWeight1M
       };
 
       console.log('User Permissions:', permissions);
@@ -429,13 +432,10 @@ export default function UserReports() {
 
       // If any permissions are enabled, show the success message
       if (enabledPermissions.length > 0) {
-        const formattedPermissions = enabledPermissions.length > 2
-          ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
-          : enabledPermissions.join(' out of ');
 
         toast({
-          title: 'IP Limit Used, Total Per minute(1 minute)',
-          description: `${formattedPermissions} per-minute.`,
+          title: 'IP Limit Used and Total Per minute(1 minute)',
+          description: `${permissions.usedlimit}/${permissions.limit} per-minute.`,
           status: 'success',
           duration: 7000,
           isClosable: true,
