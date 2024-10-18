@@ -782,7 +782,7 @@ const handleSubmitedit = async() => {
       } else {
         toast({
           title: "User deactivated successfully.",
-          status: "success",
+          status: "error",
           duration: 5000,
           isClosable: true,
         });
@@ -820,12 +820,22 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
-      toast({
-  title: "Strategy actived successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+      if(activate) {
+        toast({
+          title: "Strategy actived successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Strategy deactived successfully.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      
 
     } catch (error) {
       toast({
