@@ -824,7 +824,7 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
-      if(activate === true) {
+      if(currentstatus === true) {
         toast({
           title: "Strategy actived successfully.",
           status: "success",
