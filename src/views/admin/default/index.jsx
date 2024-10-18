@@ -1278,7 +1278,7 @@ const handleSubmitedit = async() => {
           />
         }
         name="Active trade(s)"
-        value={positions.length || 0}
+        value={positions?.positions.length || 0}
       />
       <MiniStatistics
         startContent={
