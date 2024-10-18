@@ -1003,7 +1003,7 @@ const handleSubmitedit = async() => {
   
         const data = await response.json();
   
-        if (response.ok) {
+        
           toast({
   title: "User created successfully.",
   status: "success",
@@ -1014,16 +1014,7 @@ const handleSubmitedit = async() => {
           
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
-        } else {
-          toast({
-  title: "Failed to create user.",
-  description: "Please check the input and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-          console.error('Error adding user:', data.error);
-        }
+        
       } catch (error) {
         toast({
   title: "Failed to create user.",
@@ -1056,7 +1047,7 @@ const handleSubmitedit = async() => {
   
         const data = await response.json();
   
-        if (response.ok) {
+        
           toast({
   title: "User details updated successfully.",
   status: "success",
@@ -1068,16 +1059,7 @@ const handleSubmitedit = async() => {
           SetUserEdit(false);
           onUserClose(); // Close modal or form
           console.log('User added successfully:', data);
-        } else {
-          toast({
-  title: "Error updating user details.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-          console.error('Error adding user:', data.error);
-        }
+        
       } catch (error) {
         toast({
   title: "Error updating user details.",
