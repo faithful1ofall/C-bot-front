@@ -1693,7 +1693,7 @@ const handleSubmitedit = async() => {
                                   <NumberInputField />
                                 </NumberInput>
                                 <InputRightElement width="4.5rem">
-                                  <Text>{callTPs[0] * leverage || 0}%</Text>
+                                  <Text>{(callTPs[0] * leverage).toFixed(2) || 0}%</Text>
                                 </InputRightElement>
                               </InputGroup>
                     </FormControl>
@@ -1747,7 +1747,7 @@ const handleSubmitedit = async() => {
                                   <NumberInputField />
                                 </NumberInput>
                                 <InputRightElement width="4.5rem">
-                                  <Text>{callTPs[index + 1] * leverage || 0}%</Text>
+                                  <Text>{(callTPs[index + 1] * leverage).toFixed(2) || 0}%</Text>
                                 </InputRightElement>
                               </InputGroup>
                             </FormControl>
@@ -1771,7 +1771,7 @@ const handleSubmitedit = async() => {
                           <NumberInputField />
                         </NumberInput>
                         <InputRightElement width="4.5rem">
-                          <Text>{profitLock?.trigger * leverage || 0}%</Text>
+                          <Text>{(profitLock?.trigger * leverage).toFixed(2) || 0}%</Text>
                         </InputRightElement>
                       </InputGroup>
                       <FormLabel>Lock %</FormLabel>
@@ -1787,7 +1787,7 @@ const handleSubmitedit = async() => {
                           <NumberInputField />
                         </NumberInput>
                         <InputRightElement width="4.5rem">
-                          <Text>{profitLock?.lockPercent * leverage || 0}%</Text>
+                          <Text>{(profitLock?.lockPercent * leverage).toFixed(2) || 0}%</Text>
                         </InputRightElement>
                       </InputGroup>
                     </FormControl>
@@ -1877,7 +1877,7 @@ const handleSubmitedit = async() => {
           <NumberInputField />
         </NumberInput>
         <InputRightElement width="4.5rem">
-          <Text>{stopLoss?.currentTrade * leverage || 0}%</Text>
+          <Text>{(stopLoss?.currentTrade * leverage).toFixed(2) || 0}%</Text>
         </InputRightElement>
       </InputGroup>
     </>
@@ -1902,7 +1902,7 @@ const handleSubmitedit = async() => {
           <NumberInputField />
         </NumberInput>
         <InputRightElement width="4.5rem">
-          <Text>{stopLoss?.tradableAmount * leverage || 0}%</Text>
+          <Text>{(stopLoss?.tradableAmount * leverage).toFixed(2) || 0}%</Text>
         </InputRightElement>
       </InputGroup>
     </>
