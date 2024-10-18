@@ -769,20 +769,31 @@ const handleSubmitedit = async() => {
         },
         body:  JSON.stringify(activate),
       });
-      toast({
-  title: "User activated successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+      if (activate){
+        toast({
+          title: "User activated successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+
+      } else {
+        toast({
+          title: "User deactivated successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      
     } catch (error) {
       toast({
-  title: "Error activating user.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+        title: "Error activating user.",
+        description: "Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
       console.error('Request failed', error);
     }
 
