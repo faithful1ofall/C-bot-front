@@ -49,14 +49,21 @@ const GeneralExchangeSettingsModal = ({ balance, userid }) => {
 
     const updatedFields = {};
 
-    console.log("COMPARE",settings, originalsettings);
+console.log("COMPARE", settings, originalsettings);
 
-    Object.keys(settings).forEach((key) => {
-      if (settings[key] !== originalsettings[key]) {
-        updatedFields[key] = settings[key];
-      }
-    });
+// Check if originalsettings exists
+if (originalsettings) {
+  Object.keys(settings).forEach((key) => {
+    if (settings[key] !== originalsettings[key]) {
+      updatedFields[key] = settings[key];
+    }
+  });
+} else {
+  // If originalsettings is not set, treat all settings as updated
+  Object.assign(updatedFields, settings);
+}
 
+console.log("Updated Fields", updatedFields);
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userid}/settings`, {
         method: 'POST',
