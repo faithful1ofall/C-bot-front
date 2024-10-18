@@ -368,26 +368,79 @@ export default function UserReports() {
     console.log('User Permissions:', permissions);
 
       // Generate success message based on enabled permissions
-const enabledPermissions = Object.entries(permissions)
-  .filter(([_, value]) => value)
-  .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
+      const enabledPermissions = Object.entries(permissions)
+        .filter(([_, value]) => value)
+        .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
 
-// If any permissions are enabled, show the success message
-if (enabledPermissions.length > 0) {
-  const formattedPermissions = enabledPermissions.length > 2
-    ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
-    : enabledPermissions.join(' and ');
+      // If any permissions are enabled, show the success message
+      if (enabledPermissions.length > 0) {
+        const formattedPermissions = enabledPermissions.length > 2
+          ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
+          : enabledPermissions.join(' and ');
 
-  toast({
-    title: 'API Successfully Validated!',
-    description: `${formattedPermissions} enabled.`,
-    status: 'success',
-    duration: 7000,
-    isClosable: true,
-  });
-}
+        toast({
+          title: 'API Successfully Validated!',
+          description: `${formattedPermissions} enabled.`,
+          status: 'success',
+          duration: 7000,
+          isClosable: true,
+        });
+      }
     } catch (error) {
       console.error('Error fetching Validation info:', error);
+    }
+  };
+
+  const fetchapiinfo = async (usid) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-exchange-info/${usid}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        },
+      })
+        if (!response.ok) {
+        const error = await response.json();
+        console.log(error);
+          toast({
+        title: 'Error',
+        description: `There was an issue fetching API info. ${JSON.stringify(error.message)}`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      }
+
+      const { data } = await response.json();  // Parse the JSON response
+      // Display enabled permissions
+      const permissions = {
+        limit: data.exchangeInfo,
+        usedlimit: data.headersInfo.usedIPWeight1M
+      };
+
+      console.log('User Permissions:', permissions);
+
+      // Generate success message based on enabled permissions
+      const enabledPermissions = Object.entries(permissions)
+        .filter(([_, value]) => value)
+        .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
+
+      // If any permissions are enabled, show the success message
+      if (enabledPermissions.length > 0) {
+        const formattedPermissions = enabledPermissions.length > 2
+          ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
+          : enabledPermissions.join(' out of ');
+
+        toast({
+          title: 'IP Limit Used, Total Per minute(1 minute)',
+          description: `${formattedPermissions} per-minute.`,
+          status: 'success',
+          duration: 7000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching API info:', error);
     }
   };
   
@@ -1454,6 +1507,7 @@ const handleSubmitedit = async() => {
                   <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Internal Transfer</MenuItem>
                   <MenuItem onClick={() => { SetUserEdit(user.id); handleEditUser(user.id); onUserOpen()}}>Edit User</MenuItem>
                   <MenuItem onClick={() => fetchtradeinfo(user.id) }>Validate API connection</MenuItem>
+                  <MenuItem onClick={() => fetchapiinfo(user.id) }> API IP Limit </MenuItem>
                   <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
                   
                 </MenuList>
@@ -1521,11 +1575,6 @@ const handleSubmitedit = async() => {
         ))}
       </SimpleGrid>
 
-
-
-      
-{/*       <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} balance={accountinfo} userid={transferuserid} fetchAccountinfo={fetchAccountinfo(transferuserid)}/>
- */}
       <Box mt={5} position="relative" textAlign="left">
         <Text
           as="span"
