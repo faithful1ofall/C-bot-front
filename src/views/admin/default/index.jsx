@@ -931,12 +931,7 @@ const handleSubmitedit = async() => {
       setName(data1.name);
       setApiKey(data1.apiKey);
       setApiSecret(data1.apiSecret);
-      toast({
-  title: "User details updated successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+      
 
     }  catch (error) {
       toast({
