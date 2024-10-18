@@ -8,12 +8,15 @@ import {
   Text,
   RadioGroup,
   Radio,
+  useToast,
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
 const GeneralExchangeSettingsModal = ({ balance, userid }) => {
   
   const [settings, setSettings] = useState({});
+  
+  const toast = useToast();
   
   const [originalsettings, setOriginalSettings] = useState(null);
 
@@ -29,7 +32,9 @@ const GeneralExchangeSettingsModal = ({ balance, userid }) => {
             'Authorization': `Bearer ${jwttoken}`,
           }
         });
+        
         if (!response.ok) {
+          
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
@@ -75,14 +80,32 @@ console.log("Updated Fields", updatedFields);
       });
 
       if (!response.ok) {
+        toast({
+  title: "Error saving Settings.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
         throw new Error('Settings save failed');
       }
 
       const data = await response.json();
       console.log('Settings save successful:', data);
+      toast({
+  title: "Settings saved successfully.",
+  status: "success",
+  duration: 5000,
+  isClosable: true,
+});
       // Reset modal state after success
     } catch (error) {
       console.error('Settings error:', error);
+      toast({
+  title: "Error saving Settings.",
+  status: "error",
+  duration: 5000,
+  isClosable: true,
+});
     }
   };
 
