@@ -13,10 +13,9 @@ import { useState } from 'react';
 
 export default function Main() {
   // eslint-disable-next-line
-  const [currentTheme, setCurrentTheme] = useState(initialTheme);
+  const [currentTheme, setCurrentTheme] = useState(null);
   return (
-    <ChakraProvider theme={currentTheme}>
-      <Routes>
+     <Routes>
         <Route path="auth/*" element={<AuthLayout />} />
         <Route
           path="admin/*"
@@ -26,6 +25,6 @@ export default function Main() {
         />
         <Route path="/" element={<Navigate to="/admin" replace />} />
       </Routes>
-    </ChakraProvider>
+    
   );
 }
