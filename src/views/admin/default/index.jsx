@@ -1595,7 +1595,7 @@ const handleSubmitedit = async() => {
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
       
         {users.map((user, index) => (
-          <Box key={`${index}-${index}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+          <Box key={`${user._id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
             <Flex align="center" justify="space-between">
               <Avatar src="https://bit.ly/dan-abramov" />
               <Menu>
