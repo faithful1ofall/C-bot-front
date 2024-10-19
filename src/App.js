@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 export default function Main() {
   // eslint-disable-next-line
-  const [currentTheme, setCurrentTheme] = useState(null);
+  const [currentTheme, setCurrentTheme] = useState(initialTheme);
   return (
      <Routes>
         <Route path="auth/*" element={<AuthLayout />} />
