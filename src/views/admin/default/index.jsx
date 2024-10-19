@@ -2136,15 +2136,14 @@ const handleHookKeyChange = (e) => {
           <FormControl>
               <FormLabel>Strategy Name</FormLabel>
               <Input value={newStrategyName} onChange={handleNameChange} />
-            </FormControl>
-            <FormControl>
+            
+            
               <FormLabel>Webhook Key</FormLabel>
               <Input value={hookkey} onChange={handleHookKeyChange} />
-            </FormControl>
-
-            <FormControl mb="4">
-              <FormLabel>TradingView Link</FormLabel>
+            
+              <FormLabel mb="4"> TradingView Link</FormLabel>
               <Input value={tradingViewLink} isReadOnly />
+            
             </FormControl>
 
             
