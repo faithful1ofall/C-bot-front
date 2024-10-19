@@ -59,6 +59,7 @@ import {
 import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
+import TradeHistoryTable from './components/Tradehistory';
 
 
 
@@ -157,6 +158,32 @@ export default function UserReports() {
 
   const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
   const [positions, setPositions] = useState([]); // Your trade positions data
+  const [positionshistory, setPositionsHistory] = useState([]); // Your trade positions data
+
+  const fetchPositionhistory = useCallback(async () => {
+    try {        
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-past-trades`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+        },
+      })
+
+      const data = await response.json();  // Parse the JSON response
+
+      if (!response.ok) {
+        console.log("positions error data",data);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      setPositionsHistory(data);
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [jwttoken]);
+
+
 
   const fetchPosition = useCallback(async () => {
     try {        
@@ -596,7 +623,8 @@ export default function UserReports() {
     fetchStrategies();
     fetchPairs();
     fetchPosition();
-  }, [fetchPosition, fetchUsers, fetchStrategies, fetchPairs]);
+    fetchPositionhistory();
+  }, [fetchPositionhistory, fetchPosition, fetchUsers, fetchStrategies, fetchPairs]);
 
   useEffect(() => {
     setSelectedPairs(filteredSelectedPairs);
@@ -1278,7 +1306,7 @@ const handleSubmitedit = async() => {
           />
         }
         name="Active trade(s)"
-        value={positions?.positions.length || 0}
+        value={positions?.positions?.length || 0}
       />
       <MiniStatistics
         startContent={
@@ -2082,6 +2110,7 @@ const handleSubmitedit = async() => {
         />
         <TradePositionTable positions={positions?.positions} onClosePosition={handleClosePosition} />
 
+        <TradeHistoryTable tradeHistory={positionshistory.pastTrades} />
       </Box>
 
     </Box>
