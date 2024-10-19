@@ -1275,11 +1275,11 @@ const handleSubmitedit = async() => {
     }
   };
   const handleNameChange = (e) => {
-  setNewStrategyName(e);
+  setNewStrategyName(e.target.value);
 };
 
 const handleHookKeyChange = (e) => {
-  setHookKey(e);
+  setHookKey(e.target.value);
 };
 
   return (
