@@ -1274,6 +1274,13 @@ const handleSubmitedit = async() => {
       }
     }
   };
+  const handleNameChange = useCallback((e) => {
+  setNewStrategyName(e.target.value);
+}, []);
+
+const handleHookKeyChange = useCallback((e) => {
+  setHookKey(e.target.value);
+}, []);
 
   return (
     <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
@@ -2128,11 +2135,11 @@ const handleSubmitedit = async() => {
 
           <FormControl>
               <FormLabel>Strategy Name</FormLabel>
-              <Input value={newStrategyName} onChange={(e) => setNewStrategyName(e.target.value)} />
+              <Input value={newStrategyName} onChange={handleNameChange} />
             </FormControl>
             <FormControl>
               <FormLabel>Webhook Key</FormLabel>
-              <Input value={hookkey} onChange={(e) => setHookKey(e.target.value)} />
+              <Input value={hookkey} onChange={setHookKey} />
             </FormControl>
 
             <FormControl mb="4">
