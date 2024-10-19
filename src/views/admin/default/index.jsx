@@ -61,47 +61,7 @@ import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
 import Logger from './components/logger';
-
-// Memoized Modal component
-const CreateStrategyModal = React.memo(({ 
-  isCreateStrategyOpen, 
-  onCreateStrategyClose, 
-  newStrategyName, 
-  hookkey, 
-  tradingViewLink, 
-  handleNameChange, 
-  handleHookKeyChange, 
-  handleSubmit 
-}) => {
-
-  return (
-    <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create Strategy</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <FormControl>
-            <FormLabel>Strategy Name</FormLabel>
-            <Input value={newStrategyName} onChange={handleNameChange} />
-
-            <FormLabel>Webhook Key</FormLabel>
-            <Input value={hookkey} onChange={handleHookKeyChange} />
-
-            <FormLabel mb="4">TradingView Link</FormLabel>
-            <Input value={tradingViewLink} isReadOnly />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="teal" onClick={handleSubmit}>
-            Create Strategy
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
-});
-
+import CreateStrategyModal from './components/createstrategy';
 
 
 export default function UserReports() {
@@ -2174,36 +2134,7 @@ const handleHookKeyChange = (e) => {
       handleHookKeyChange={handleHookKeyChange}
       handleSubmit={handleSubmit}
     />
-       {/* Create Strategy Modal */}
-      {/* <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create Strategy</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-
-          <FormControl>
-              <FormLabel>Strategy Name</FormLabel>
-              <Input value={newStrategyName} onChange={handleNameChange} />
-            
-            
-              <FormLabel>Webhook Key</FormLabel>
-              <Input value={hookkey} onChange={handleHookKeyChange} />
-            
-              <FormLabel mb="4"> TradingView Link</FormLabel>
-              <Input value={tradingViewLink} isReadOnly />
-            
-            </FormControl>
-
-            
-            </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="teal" onClick={handleSubmit}>   
-              Create Strategy
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal> */}
+      
       
       <Box mt={5} position="relative" textAlign="left">
         <Text
