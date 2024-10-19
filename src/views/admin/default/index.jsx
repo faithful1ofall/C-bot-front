@@ -2135,7 +2135,7 @@ const handleHookKeyChange = (e) => {
 
           <FormControl>
               <FormLabel>Strategy Name</FormLabel>
-              <input value={newStrategyName} onChange={handleNameChange} />
+              <Input value={newStrategyName} onChange={handleNameChange} />
             </FormControl>
             <FormControl>
               <FormLabel>Webhook Key</FormLabel>
