@@ -90,6 +90,7 @@ export default function UserReports() {
   const [todelete, setToDelete] = useState("");
 
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { isOpen: isDeleteOpen1, onOpen: onDeleteOpen1, onClose: onDeleteClose1 } = useDisclosure();
 
   const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
   const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
@@ -1520,10 +1521,10 @@ const handleSubmitedit = async() => {
       <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete Confirmation</ModalHeader>
+          <ModalHeader>Strategy Delete Confirmation</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Are you sure you want to delete? This action cannot be undone.
+            Are you sure you want to delete this strategy? This action cannot be undone.
           </ModalBody>
 
           <ModalFooter>
@@ -1536,6 +1537,27 @@ const handleSubmitedit = async() => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Modal isOpen={isDeleteOpen1} onClose={onDeleteClose1}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>User Delete Confirmation</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Are you sure you want to delete this User? This action cannot be undone.
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={onDeleteClose1}>
+              Cancel
+            </Button>
+            <Button colorScheme="red" onClick={() => deleteuser(useredit)} ml={3}>
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
 
       
      {/* Add User Modal */}
@@ -1584,7 +1606,7 @@ const handleSubmitedit = async() => {
                   <MenuItem onClick={() => { SetUserEdit(user.id); handleEditUser(user.id); onUserOpen()}}>Edit User</MenuItem>
                   <MenuItem onClick={() => fetchtradeinfo(user.id) }>Validate API connection</MenuItem>
                   <MenuItem onClick={() => fetchapiinfo(user.id) }> API IP Limit </MenuItem>
-                  <MenuItem onClick={() => deleteuser(user.id) }>Delete User</MenuItem>
+                  <MenuItem onClick={() => { SetUserEdit(user.id); onDeleteOpen1() }}>Delete User</MenuItem>
                   
                 </MenuList>
               </Menu>
