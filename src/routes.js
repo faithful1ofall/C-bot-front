@@ -22,6 +22,13 @@ const routes = [
     component: <MainDashboard />,
   },
   {
+    name: 'Bot Admin interface',
+    layout: '/auth',
+    path: '/default',
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    component: <MainDashboard />,
+  },
+  {
     name: 'Sign In',
     layout: '/auth',
     path: '/sign-in',
