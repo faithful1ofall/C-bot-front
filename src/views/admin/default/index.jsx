@@ -2135,11 +2135,11 @@ const handleHookKeyChange = useCallback((e) => {
 
           <FormControl>
               <FormLabel>Strategy Name</FormLabel>
-              <Input value={newStrategyName} onChange={handleNameChange} />
+              <input value={newStrategyName} onChange={handleNameChange} />
             </FormControl>
             <FormControl>
               <FormLabel>Webhook Key</FormLabel>
-              <Input value={hookkey} onChange={setHookKey} />
+              <Input value={hookkey} onChange={handleHookKeyChange} />
             </FormControl>
 
             <FormControl mb="4">
