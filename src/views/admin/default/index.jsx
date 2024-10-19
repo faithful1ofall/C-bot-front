@@ -533,6 +533,7 @@ export default function UserReports() {
   isClosable: true,
 });
         fetchUsers();
+        onDeleteClose1();
       } else {
         toast({
   title: "Error deleting user.",
