@@ -1274,13 +1274,13 @@ const handleSubmitedit = async() => {
       }
     }
   };
-  const handleNameChange = useCallback((e) => {
-  setNewStrategyName(e.target.value);
-}, []);
+  const handleNameChange = (e) => {
+  setNewStrategyName(e);
+};
 
-const handleHookKeyChange = useCallback((e) => {
-  setHookKey(e.target.value);
-}, []);
+const handleHookKeyChange = (e) => {
+  setHookKey(e);
+};
 
   return (
     <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
