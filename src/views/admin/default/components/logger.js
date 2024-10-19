@@ -84,7 +84,7 @@ const Logger = () => {
       overflowY="auto"
     >
       <Text fontSize="2xl" fontWeight="bold" color={textColor} mb={4}>
-        Logger
+        Activity Logs
       </Text>
       {loading && (
         <Flex justifyContent="center" alignItems="center">

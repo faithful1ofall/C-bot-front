@@ -4,6 +4,8 @@ import { NavLink, useLocation } from "react-router-dom";
 // chakra imports
 import { Box, Flex, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 
+import { useNavigate } from "react-router-dom";
+
 export function SidebarLinks(props) {
   //   Chakra color mode
   let location = useLocation();
@@ -23,11 +25,13 @@ export function SidebarLinks(props) {
     return location.pathname.includes(routeName);
   };
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     // Perform logout logic here
     // Example: Clear tokens, redirect to login, etc.
     localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
-    window.location.href = '/auth/sign-in'; // Redirect to login page
+    navigate("/auth/sign-in"); // Redirect to login page
   };
 
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
