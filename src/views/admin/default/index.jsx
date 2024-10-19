@@ -2074,17 +2074,17 @@ const handleHookKeyChange = (e) => {
       </InputGroup>
     </>
   )}
-</FormControl>
-                    <FormControl mb="4">
-                      <FormLabel>Order Type (for SL/TP)</FormLabel>
+
+                    
+                      <FormLabel mt="4">Order Type (for SL/TP)</FormLabel>
                       <Select value={orderType || ""} onChange={(e) => setOrderType(e.target.value)}>
                         <option value="limit">Limit Order</option>
                         <option value="market">Market Order</option>
                       </Select>
-                    </FormControl>
+                    
 
-                    <FormControl mb="4">
-                      <Flex alignItems="center">
+                  
+                      <Flex mt="4" alignItems="center">
                         <FormLabel>Delayed SL and TP</FormLabel>
                         <Checkbox isChecked={isDelayEnabled.active || false} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: e.target.checked }))}>Enable</Checkbox>
                       </Flex>
@@ -2097,10 +2097,10 @@ const handleHookKeyChange = (e) => {
                             </NumberInput>
                         </Box>
                       )}
-                    </FormControl>
+                    
 
-                    <FormControl mb="4">
-                    <Flex alignItems="center">
+                    
+                    <Flex mt='4' lignItems="center">
                     <FormLabel>Enable Compounding</FormLabel>
                       <Checkbox isChecked={TradableAmount?.compounding || false} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: e.target.checked }))}>Enable</Checkbox>
                     </Flex>
@@ -2115,7 +2115,7 @@ const handleHookKeyChange = (e) => {
                     </FormControl>
 
                     
-                  <Button mt="4" colorScheme="teal" onClick={handleSubmitedit}>
+                  <Button mt="8" colorScheme="teal" onClick={handleSubmitedit}>
                     Update Strategy
                   </Button>
                 </Box>
