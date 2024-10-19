@@ -83,9 +83,12 @@ const Logger = () => {
       maxHeight="400px"
       overflowY="auto"
     >
-      <Text fontSize="2xl" fontWeight="bold" color={textColor} mb={4}>
+      <Text fontSize="2xl" fontWeight="bold" color={textColor} mb={2}>
         Activity Logs
       </Text>
+      <Button mb={2} onClick={() => openLoggerInNewTab()} colorScheme="blue">
+        Open in New Tab
+      </Button>
       {loading && (
         <Flex justifyContent="center" alignItems="center">
           <Spinner />
@@ -106,9 +109,7 @@ const Logger = () => {
     {/*   <Button mt={4} onClick={() => setLogs([])} colorScheme="red">
         Clear Logs
       </Button> */}
-      <Button mt={4} onClick={() => openLoggerInNewTab()} colorScheme="blue">
-        Open in New Tab
-      </Button>
+      
     </Box>
   );
 };
