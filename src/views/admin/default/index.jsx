@@ -60,6 +60,7 @@ import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
+import Logger from './components/logger';
 
 
 
@@ -2110,8 +2111,25 @@ const handleSubmitedit = async() => {
         />
         <TradePositionTable positions={positions?.positions} onClosePosition={handleClosePosition} />
 
+        <Divider
+          mt={5} // Move the divider up to align with the text
+          mb={5}
+          borderColor="black.400"
+          borderWidth="1px"
+        />
         <TradeHistoryTable tradeHistory={positionshistory.pastTrades} />
+
+
       </Box>
+
+      <Divider
+          mt={5} // Move the divider up to align with the text
+          mb={5}
+          borderColor="black.400"
+          borderWidth="1px"
+        />
+        
+      <Logger />
 
     </Box>
   );
