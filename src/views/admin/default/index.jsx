@@ -613,8 +613,32 @@ export default function UserReports() {
   };
 
   useEffect(() => {
+    const isTokenExpired = (token) => {
+      const base64Url = token.split(".")[1]; // Get payload part
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+      
+      const decoded = JSON.parse(jsonPayload);
+      const currentTime = Date.now() / 1000;
+
+      console.log('decoded', decoded.exp, currentTime);
+      return decoded.exp <= currentTime;
+    }
+
+    if (isTokenExpired(jwttoken)) {
+      navigate("/auth/sign-in");
+      console.log("Token has expired");
+    }
+    
     if (!jwttoken) {
-      navigate("/auth/sign-in"); 
+      navigate("/auth/sign-in");       
       console.error("No JWT token found");
     }
   },[jwttoken, navigate]);
@@ -2128,7 +2152,7 @@ const handleSubmitedit = async() => {
           borderColor="black.400"
           borderWidth="1px"
         />
-        
+
       <Logger />
 
     </Box>
