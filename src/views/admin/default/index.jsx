@@ -1491,6 +1491,7 @@ const handleSubmitedit = async() => {
         </Button>
       </Flex>
 
+      { isTradingHookTriggerOpen && (
       <Modal isOpen={isTradingHookTriggerOpen} onClose={onTradingHookTriggerClose}>
       <ModalOverlay />
       <ModalContent>
@@ -1517,8 +1518,10 @@ const handleSubmitedit = async() => {
         </ModalFooter>
       </ModalContent>
     </Modal>
+      )}
 
 
+      { isDeleteOpen && (
       <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
         <ModalOverlay />
         <ModalContent>
@@ -1538,7 +1541,9 @@ const handleSubmitedit = async() => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      )}
 
+      { isDeleteOpen1 && (
       <Modal isOpen={isDeleteOpen1} onClose={onDeleteClose1}>
         <ModalOverlay />
         <ModalContent>
@@ -1558,10 +1563,12 @@ const handleSubmitedit = async() => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      )}
 
 
       
      {/* Add User Modal */}
+      {isUserOpen && (
      <Modal isOpen={isUserOpen} onClose={onUserClose}>
         <ModalOverlay />
         <ModalContent>
@@ -1591,6 +1598,7 @@ const handleSubmitedit = async() => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      )}
 
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
       
