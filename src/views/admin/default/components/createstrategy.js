@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -10,14 +10,17 @@ import {
   FormControl,
   FormLabel,
   Input,
+  useToast
   Button
 } from '@chakra-ui/react';
 
 const CreateStrategyModal = React.memo(({ 
   isCreateStrategyOpen,
   onCreateStrategyClose,
+  jwttoken
   
 }) => {
+  const toast = useToast();
 const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
 const [newStrategyName, setNewStrategyName] = useState({
   name: false,
