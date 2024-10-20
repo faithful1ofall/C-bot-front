@@ -2133,6 +2133,7 @@ const handleHookKeyChange = (e) => {
       <CreateStrategyModal
       isCreateStrategyOpen={isCreateStrategyOpen}
       onCreateStrategyClose={onCreateStrategyClose}
+        jwttoken={jwttoken}
     />
       )}
       
