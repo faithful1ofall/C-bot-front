@@ -15,8 +15,8 @@ import {
 } from '@chakra-ui/react';
 
 const EditStrategyModal = React.memo(({ 
-  isCreateStrategyOpen,
-  onCreateStrategyClose,
+  isEditStrategyOpen,
+  onEditStrategyClose,
   jwttoken
   
 }) => {
@@ -24,7 +24,26 @@ const EditStrategyModal = React.memo(({
 const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
 const [newStrategyName, setNewStrategyName] = useState({
   name: false,
-  hookkey: ""
+  hookkey: "",
+  tradingPair: "",
+      tradeDirection:"",
+      timeFrame:'',
+      negativeCandleTrigger: null,
+    isNegativeCandleEnabled: false,
+      calls: callFunds.map((funds, index) => ({
+        funds,
+        tp: callTPs[index],
+        negTrigger: callNegTriggers[index],
+      })),
+      trailingStop:'',
+      profitLock:'',
+      stopLoss:'',
+      takeProfit:'',
+      orderType:'',
+      isDelayEnabled:'',
+      TradableAmount:'',
+      leverage:'',
+      marginMode:'',
   });
 const handleNameChange = (e) => {
   setNewStrategyName((prev) => ({ ...prev, name: e.target.value }))
@@ -37,48 +56,67 @@ const handleHookKeyChange = (e) => {
   const handleSubmit = async() => {
     const newStrategy = {
       name: newStrategyName.name,
-      hookkey: newStrategyName.hookkey
+      hookkey: newStrategyName.hookkey,
+      tradingPair: tradingPairs,
+      tradeDirection,
+      timeFrame,
+      negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
+    isNegativeCandleEnabled: isNegativeCandleEnabled,
+      calls: callFunds.map((funds, index) => ({
+        funds,
+        tp: callTPs[index],
+        negTrigger: callNegTriggers[index],
+      })),
+      trailingStop,
+      profitLock,
+      stopLoss,
+      takeProfit,
+      orderType,
+      isDelayEnabled,
+      TradableAmount,
+      leverage,
+      marginMode,
     };
+    
+      // Create an object with only the changed fields
+      const updatedFields = {};
+
+      Object.keys(newStrategy).forEach((key) => {
+        if (newStrategy[key] !== originalStrategy[key]) {
+          updatedFields[key] = newStrategy[key];
+        }
+      });
+      
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
-          method: 'POST',
+        
+        await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${isEdit}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwttoken}`,
           },
-          body:  JSON.stringify(newStrategy),
+          body:  JSON.stringify(updatedFields),
         });
-    
-        if (response.ok) {
-          toast({
-  title: "Strategy created successfully.",
+        toast({
+  title: "Strategy updated successfully.",
   status: "success",
   duration: 5000,
   isClosable: true,
 });
-          console.log('Strategy added successfully');
-        } else {
-          toast({
-  title: "Error creating strategy.",
-  description: "Please verify the inputs and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-          console.error('Error adding strategy');
-        }
+
       } catch (error) {
         toast({
-  title: "Error creating strategy.",
-  description: "Please verify the inputs and try again.",
+  title: "Failed to update strategy.",
+  description: "Please check the inputs and try again.",
   status: "error",
   duration: 5000,
   isClosable: true,
 });
- }
+              }
 
-     // setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
-   //  fetchStrategies();
+      
+      
+      // fetchStrategies();
       onCreateStrategyClose();
   };
   
