@@ -1653,9 +1653,11 @@ const handleHookKeyChange = (e) => {
           <FormControl>
             <FormLabel>Select Strategies to Link</FormLabel>
             <SimpleGrid mt="20px" columns={{ base: 1 }} gap="20px">
-              {strategies.map((strategy) => (
+              {strategies.map((strategy) => {
           const isLinked = selectedStrategyIds.includes(strategy.id);
-                <Box
+          
+          return (
+                      <Box
                   key={strategy.id}
                   p="5"
                   shadow="md"
@@ -1676,10 +1678,12 @@ const handleHookKeyChange = (e) => {
                     </Button>
                   </Flex>
                 </Box>
-              ))}
+            );
+        })}
               </SimpleGrid>
           </FormControl>
         </Box>
+                            
       )}
              {transferuserid === user.id && (
                 <Box mt="4" bg="gray.50" p="4" borderRadius="md">
