@@ -708,7 +708,7 @@ export default function UserReports() {
   }
 };
 
-  const handleSubmit = async() => {
+ /* const handleSubmit = async() => {
     const newStrategy = {
       name: newStrategyName,
       hookkey: hookkey,
@@ -780,7 +780,7 @@ export default function UserReports() {
 
       onCreateStrategyClose();
     }
-  };
+  };*/
 
 
       
@@ -2125,16 +2125,12 @@ const handleHookKeyChange = (e) => {
         ))}
       </SimpleGrid>
 
+      {isCreateStrategyOpen && (
       <CreateStrategyModal
       isCreateStrategyOpen={isCreateStrategyOpen}
       onCreateStrategyClose={onCreateStrategyClose}
-      newStrategyName={newStrategyName}
-      hookkey={hookkey}
-      tradingViewLink={tradingViewLink}
-      handleNameChange={handleNameChange}
-      handleHookKeyChange={handleHookKeyChange}
-      handleSubmit={handleSubmit}
     />
+      )}
       
       
       <Box mt={5} position="relative" textAlign="left">
