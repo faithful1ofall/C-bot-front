@@ -1654,6 +1654,7 @@ const handleHookKeyChange = (e) => {
             <FormLabel>Select Strategies to Link</FormLabel>
             <SimpleGrid mt="20px" columns={{ base: 1 }} gap="20px">
               {strategies.map((strategy) => (
+          const isLinked = selectedStrategyIds.includes(strategy.id);
                 <Box
                   key={strategy.id}
                   p="5"
@@ -1665,13 +1666,13 @@ const handleHookKeyChange = (e) => {
                   <Flex align="center" justify="space-between">
                     <Text fontWeight="bold">{strategy.name}</Text>
                     <Button
-                      colorScheme={selectedStrategyIds.includes(strategy.id) ? "red" : "teal"} // Change color for linked strategies
+                      colorScheme={isLinked ? "red" : "teal"} // Change color for linked strategies
                       size="sm"
                       onClick={() =>
                         handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))
                       }
                     >
-                      {selectedStrategyIds.includes(strategy.id) ? 'Unlink' : 'Link'}
+                      {isLinked ? 'Unlink' : 'Link'}
                     </Button>
                   </Flex>
                 </Box>
