@@ -20,7 +20,9 @@ import {
 } from '@chakra-ui/react';
 
 const EditStrategyForm = React.memo(
-  ({  jwttoken, strategyid, selectedPairs }) => {
+  ({  strategyid, selectedPairs }) => {
+
+    const jwttoken = localStorage.getItem('jwtToken');
     const toast = useToast();
     const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
     const [originalStrategy, setOriginalStrategy] = useState();
@@ -66,7 +68,7 @@ const EditStrategyForm = React.memo(
       marginMode: '',
     });
 
-   /*  const handleEdit = useCallback(async (editid) => {
+    const handleEdit = useCallback(async (editid) => {
       try {
         const response1 = await fetch(
           `${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`,
@@ -95,7 +97,7 @@ const EditStrategyForm = React.memo(
     useEffect(() => {
       handleEdit(strategyid);
     }, [handleEdit, strategyid]);
- */
+
     const handleSyncCallValues = () => {
       const callsCount = newStrategyName.negativeCandleTrigger + 1;
       setNewStrategyName((prevState) => {
@@ -209,11 +211,11 @@ const EditStrategyForm = React.memo(
       }
 
       // fetchStrategies();
-    //  onCreateStrategyClose();
+    //  onClose();
     };
 
     return (
-      <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+      <Box mt="20" bg="gray.50" p="4" borderRadius="md">
         {/* Form Content Goes Here */}
         <FormControl mb="4">
           <FormLabel>Strategy Name</FormLabel>
@@ -265,7 +267,7 @@ const EditStrategyForm = React.memo(
             value={newStrategyName.tradingPairs}
             onChange={(e) => handleChange('tradingPairs', e.target.value)}
           >
-            {selectedPairs.map((pair) => (
+            {selectedPairs?.map((pair) => (
               <option key={pair} value={pair}>
                 {pair}
               </option>
@@ -320,7 +322,7 @@ const EditStrategyForm = React.memo(
           <FormControl mb="4">
             <FormLabel>Initail Call Funds %</FormLabel>
             <NumberInput
-              value={newStrategyName.calls[0].funds || ''}
+              value={newStrategyName.calls[0]?.funds || ''}
               onChange={(valueString) => handleCallChange(0, 'funds', isNaN(valueString) ? 0 : valueString)}
             >
               <NumberInputField />
@@ -331,14 +333,14 @@ const EditStrategyForm = React.memo(
             <FormLabel>Initial Call TP%</FormLabel>
             <InputGroup>
               <NumberInput
-                value={newStrategyName.calls[0].tp || ''}
+                value={newStrategyName.calls[0]?.tp || ''}
                 onChange={(valueString) => handleCallChange(0, 'tp', isNaN(valueString) ? 0 : valueString)}
                 width="100%"
               >
                 <NumberInputField />
               </NumberInput>
               <InputRightElement width="4.5rem">
-                <Text>{(newStrategyName.calls[0].tp * newStrategyName.leverage).toFixed(2) || 0}%</Text>
+                <Text>{(newStrategyName.calls[0]?.tp * newStrategyName.leverage).toFixed(2) || 0}%</Text>
               </InputRightElement>
             </InputGroup>
           </FormControl>
@@ -550,13 +552,13 @@ const EditStrategyForm = React.memo(
           <Flex mt="4" alignItems="center">
             <FormLabel>Delayed SL and TP</FormLabel>
             <Checkbox
-              isChecked={newStrategyName.isDelayEnabled.active || false}
+              isChecked={newStrategyName.isDelayEnabled?.active || false}
               onChange={(e) => handleNestedChange('isDelayEnabled', 'active', e.target.checked)}
             >
               Enable
             </Checkbox>
           </Flex>
-          {newStrategyName.isDelayEnabled.active && (
+          {newStrategyName.isDelayEnabled?.active && (
             <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
               <FormLabel>
                 If enabled, the bot will wait until the price is near the SL/TP
@@ -565,7 +567,7 @@ const EditStrategyForm = React.memo(
               </FormLabel>
               <FormLabel>Offset %</FormLabel>
               <NumberInput
-                value={newStrategyName.isDelayEnabled.offset || ''}
+                value={newStrategyName.isDelayEnabled?.offset || ''}
                 onChange={(e) => handleNestedChange('isDelayEnabled', 'offset', e)}
               >
                 <NumberInputField />

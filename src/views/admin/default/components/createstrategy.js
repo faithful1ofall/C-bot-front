@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   FormControl,
   FormLabel,
   Input,
   useToast,
-  Button
+  Button,
+  Box
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateStrategyModal = React.memo(({ 
-  isCreateStrategyOpen,
-  onCreateStrategyClose,
-  jwttoken
-  
+  isCreateStrategyOpen
 }) => {
+
+  const jwttoken = localStorage.getItem('jwtToken');
+  const navigate = useNavigate();
+
   const toast = useToast();
 const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
 const [newStrategyName, setNewStrategyName] = useState({
-  name: false,
+  name: "",
   hookkey: ""
   });
 const handleNameChange = (e) => {
@@ -50,59 +46,44 @@ const handleHookKeyChange = (e) => {
         });
     
         if (response.ok) {
+          console.log("newStrategy", newStrategy);
           toast({
-  title: "Strategy created successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+            title: "Strategy created successfully.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
           console.log('Strategy added successfully');
+         // fetchStrategies();
+          navigate("/admin/default");
+
         } else {
           toast({
-  title: "Error creating strategy.",
-  description: "Please verify the inputs and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+            title: "Error creating strategy.",
+            description: "Please verify the inputs and try again.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
           console.error('Error adding strategy');
         }
       } catch (error) {
         toast({
-  title: "Error creating strategy.",
-  description: "Please verify the inputs and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: "Error creating strategy.",
+          description: "Please verify the inputs and try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Request failed', error);
       }
 
      // setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
    //  fetchStrategies();
-
-      console.log("newStrategy", newStrategy);
-
-      onCreateStrategyClose();
   };
   
   return (
-    <>
-    <FormControl isRequired mt="10" >
-            <FormLabel>Strategy Name</FormLabel>
-            <Input 
-              value={newStrategyName.name} 
-              onChange={handleNameChange} 
-              placeholder="Enter strategy name" 
-            />
-          </FormControl>
-    <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create Strategy</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-        <form>
+    <Box mt={20}>
           <FormControl isRequired>
             <FormLabel>Strategy Name</FormLabel>
             <Input 
@@ -128,16 +109,12 @@ const handleHookKeyChange = (e) => {
               placeholder="Enter TradingView link" 
             />
           </FormControl>
-        </form>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="teal" onClick={handleSubmit}>
+
+          <Button mt={5} colorScheme="teal" onClick={handleSubmit}>
             Create Strategy
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-                </>
+       
+    </Box>
   );
 });
 

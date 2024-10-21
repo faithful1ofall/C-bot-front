@@ -9,7 +9,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  FormHelperText,
   Input,
   Icon,
   IconButton,
@@ -19,14 +18,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -39,7 +30,8 @@ import {
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+
 import {
   MdAttachMoney,
   MdAutorenew,
@@ -55,19 +47,19 @@ import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
-import Logger from './components/logger';
+// import Logger from './components/logger';
 import CreateStrategyModal from './components/createstrategy';
 import EditStrategyForm from './components/editstrategy';
+import TradingHookTriggerModal from './components/tradehook';
+import StrategyDeleteConfirmationModal from './components/strategydelete';
+import UserDeleteConfirmationModal from './components/userdelete';
+import UserModal from './components/adduser';
 
 export default function UserReports() {
   const toast = useToast();
   const navigate = useNavigate();
 
   const jwttoken = localStorage.getItem('jwtToken');
-
-  const [nameError, setNameError] = useState('');
-  const [apiKeyError, setApiKeyError] = useState('');
-  const [apiSecretError, setApiSecretError] = useState('');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryvalue, setSearchQueryvalue] = useState('');
@@ -80,7 +72,6 @@ export default function UserReports() {
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
   const [selectedStrategy, setSelectedStrategy] = useState('');
 
-  const [todelete, setToDelete] = useState('');
 
   const {
     isOpen: isDeleteOpen,
@@ -118,9 +109,6 @@ export default function UserReports() {
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
   const [users, setUsers] = useState([]);
-  const [name, setName] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [apiSecret, setApiSecret] = useState('');
   const [strategies, setStrategies] = useState([]);
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
@@ -800,10 +788,6 @@ export default function UserReports() {
       }
       const data1 = await response1.json();
       setOldUser(data1);
-
-      setName(data1.name);
-      setApiKey(data1.apiKey);
-      setApiSecret(data1.apiSecret);
     } catch (error) {
       toast({
         title: 'Error updating user details.',
@@ -813,129 +797,6 @@ export default function UserReports() {
         isClosable: true,
       });
       console.error('Request failed', error);
-    }
-  };
-
-  // Function to validate input
-  const validateInputs = () => {
-    let isValid = true;
-
-    // Reset errors
-    setNameError('');
-    setApiKeyError('');
-    setApiSecretError('');
-
-    // Validate User Name
-    if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-      setNameError(
-        'User Name can only contain letters, numbers, and underscores.',
-      );
-      isValid = false;
-    }
-
-    // Validate API Key (example: 32 alphanumeric characters)
-    if (apiKey.length < 64) {
-      setApiKeyError('API Key must be 64 alphanumeric characters.');
-      isValid = false;
-    }
-
-    // Validate API Secret (example: at least 8 characters)
-    if (apiSecret.length < 64) {
-      setApiSecretError('API Secret must be at least 64 characters long.');
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
-  const handleAddUser = async () => {
-    const newUser = {
-      name,
-      apiKey,
-      apiSecret,
-    };
-
-    if (validateInputs() && !useredit) {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKENDAPI}/api/users`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${jwttoken}`,
-            },
-            body: JSON.stringify(newUser),
-          },
-        );
-
-        const data = await response.json();
-
-        toast({
-          title: 'User created successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        fetchUsers();
-
-        onUserClose(); // Close modal or form
-        console.log('User added successfully:', data);
-      } catch (error) {
-        toast({
-          title: 'Failed to create user.',
-          description: 'Please check the input and try again.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        console.error('Error:', error);
-      }
-    } else {
-      const updatedFields = {};
-
-      Object.keys(newUser).forEach((key) => {
-        if (newUser[key] !== olduser[key]) {
-          updatedFields[key] = newUser[key];
-        }
-      });
-
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKENDAPI}/api/users/${useredit}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${jwttoken}`,
-            },
-            body: JSON.stringify(updatedFields),
-          },
-        );
-
-        const data = await response.json();
-
-        toast({
-          title: 'User details updated successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        fetchUsers();
-
-        SetUserEdit(false);
-        onUserClose(); // Close modal or form
-        console.log('User added successfully:', data);
-      } catch (error) {
-        toast({
-          title: 'Error updating user details.',
-          description: 'Please try again.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        console.error('Error:', error);
-      }
     }
   };
 
@@ -1186,7 +1047,7 @@ export default function UserReports() {
         />
       </Box>
 
-      {/* Dropdown Button */}
+      
       <Menu>
         <MenuButton
           mt={5}
@@ -1198,7 +1059,7 @@ export default function UserReports() {
         </MenuButton>
 
         <MenuList p={4} width="300px">
-          {/* Search Bar */}
+          
           <InputGroup mb={4}>
             <InputLeftElement
               pointerEvents="none"
@@ -1229,7 +1090,7 @@ export default function UserReports() {
             </Box>
           )}
 
-          {/* Checkbox List for Trading Pairs */}
+         
           <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
             <Stack spacing={3}>
               {filteredPairs.map((pair) => (
@@ -1248,7 +1109,7 @@ export default function UserReports() {
           </CheckboxGroup>
         </MenuList>
       </Menu>
-      {/* Section to show added trading pairs */}
+      
       <Box mt={4}>
         <Text fontWeight="bold" mb={2}>
           Added Trading Pairs:
@@ -1303,139 +1164,31 @@ export default function UserReports() {
         </Button>
       </Flex>
 
-      {isTradingHookTriggerOpen && (
-        <Modal
-          isOpen={isTradingHookTriggerOpen}
-          onClose={onTradingHookTriggerClose}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Trading Hook Trigger</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl>
-                <FormLabel>Select Strategy</FormLabel>
-                <Select
-                  placeholder="Select strategy"
-                  value={selectedStrategy}
-                  onChange={(e) => setSelectedStrategy(e.target.value)}
-                >
-                  {strategies.map((strategy) => (
-                    <option key={strategy.id} value={strategy.hookkey}>
-                      {strategy.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="teal" onClick={tradinghook}>
-                Trigger Hook
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
-
-      {isDeleteOpen && (
-        <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Strategy Delete Confirmation</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Are you sure you want to delete this strategy? This action cannot
-              be undone.
-            </ModalBody>
-
-            <ModalFooter>
-              <Button variant="ghost" onClick={onDeleteClose}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => deleteStrategy(todelete)}
-                ml={3}
-              >
-                Delete
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
+    {isTradingHookTriggerOpen && (
+      <TradingHookTriggerModal
+        isOpen={isTradingHookTriggerOpen}
+        onClose={onTradingHookTriggerClose}
+        strategies={strategies}
+      />
+    )}
+      
 
       {isDeleteOpen1 && (
-        <Modal isOpen={isDeleteOpen1} onClose={onDeleteClose1}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>User Delete Confirmation</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Are you sure you want to delete this User? This action cannot be
-              undone.
-            </ModalBody>
-
-            <ModalFooter>
-              <Button variant="ghost" onClick={onDeleteClose1}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => deleteuser(useredit)}
-                ml={3}
-              >
-                Delete
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <UserDeleteConfirmationModal
+          isOpen={isDeleteOpen1}
+          onClose={onDeleteClose1}
+          deleteuser={deleteuser}
+          useredit={useredit}
+        />
       )}
 
-      {/* Add User Modal */}
       {isUserOpen && (
-        <Modal isOpen={isUserOpen} onClose={onUserClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader> {useredit ? 'Edit User' : 'Add User'}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl isInvalid={!!nameError}>
-                <FormLabel>User Name</FormLabel>
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
-                {nameError && (
-                  <FormHelperText color="red.500">{nameError}</FormHelperText>
-                )}
-              </FormControl>
-              <FormControl isInvalid={!!apiKeyError}>
-                <FormLabel>API Key</FormLabel>
-                <Input
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                />
-                {apiKeyError && (
-                  <FormHelperText color="red.500">{apiKeyError}</FormHelperText>
-                )}
-              </FormControl>
-              <FormControl mt="4" isInvalid={!!apiSecretError}>
-                <FormLabel>API Secret</FormLabel>
-                <Input
-                  value={apiSecret}
-                  onChange={(e) => setApiSecret(e.target.value)}
-                />
-                {apiSecretError && (
-                  <FormHelperText color="red.500">
-                    {apiSecretError}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="teal" onClick={handleAddUser}>
-                {useredit ? 'Edit User' : 'Add User'}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <UserModal
+          isOpen={isUserOpen}
+          onClose={onUserClose}
+          jwttoken={jwttoken}
+          useredit={useredit}
+        />
       )}
 
       <SimpleGrid
@@ -1556,6 +1309,7 @@ export default function UserReports() {
                       const isLinked = selectedStrategyIds.includes(
                         strategy.id,
                       );
+                     
 
                       return (
                         <Box
@@ -1615,12 +1369,11 @@ export default function UserReports() {
       </Box>
 
       <Button
+        as={NavLink}
+        to="/admin/create" 
         mt="20px"
         leftIcon={<Icon as={MdAddAlert} />}
         colorScheme="blue"
-        onClick={() => {
-          onCreateStrategyOpen();
-        }}
       >
         Create Strategy
       </Button>
@@ -1641,11 +1394,6 @@ export default function UserReports() {
             <Flex
               align="center"
               justify="space-between"
-              onClick={() => {
-                setExpandedStrategyId((prev) =>
-                  prev === strategy.id ? null : strategy.id,
-                ); // Toggle form visibility
-              }}
             >
               <Text fontWeight="bold">{strategy.name}</Text>
 
@@ -1653,6 +1401,8 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem
+                  as={NavLink}
+                  to={`/admin/edit/${strategy.id}/${selectedPairs}`}
                     onClick={() => {
                       setExpandedStrategyId((prev) =>
                         prev === strategy.id ? null : strategy.id,
@@ -1665,7 +1415,6 @@ export default function UserReports() {
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      setToDelete(strategy.id);
                       onDeleteOpen();
                     }}
                   >
@@ -1681,6 +1430,14 @@ export default function UserReports() {
                 colorScheme="teal"
               />
             </Flex>
+            {isDeleteOpen && (
+              <StrategyDeleteConfirmationModal
+                isOpen={isDeleteOpen}
+                onClose={onDeleteClose}
+                todelete={strategy.id}
+                jwttoken={jwttoken}
+              />
+            )}
             {/* Collapsible Form */}
             {expandedStrategyId === strategy.id && (
               <EditStrategyForm jwttoken={jwttoken} strategyid={strategy.id} selectedPairs={selectedPairs}/>
@@ -1719,15 +1476,6 @@ export default function UserReports() {
         />
         <TradeHistoryTable tradeHistory={positionshistory.pastTrades} />
       </Box>
-
-      <Divider
-        mt={5} // Move the divider up to align with the text
-        mb={5}
-        borderColor="black.400"
-        borderWidth="1px"
-      />
-
-      <Logger />
     </Box>
   );
 }

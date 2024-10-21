@@ -29,7 +29,6 @@ export function SidebarLinks(props) {
 
   const handleLogout = () => {
     // Perform logout logic here
-    // Example: Clear tokens, redirect to login, etc.
     localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
     navigate("/auth/sign-in"); // Redirect to login page
   };

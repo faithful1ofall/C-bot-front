@@ -9,6 +9,7 @@ import {
 // Admin Imports
 import MainDashboard from 'views/admin/default';
 import CreateStrategyModal from 'views/admin/default/components/createstrategy';
+import EditStrategyForm from 'views/admin/default/components/editstrategy';
 import Logger from 'views/admin/default/components/logger';
 
 // Auth Imports
@@ -23,18 +24,23 @@ const routes = [
     component: <MainDashboard />,
   },
   {
+    name: 'Edit Strategy',
+    layout: '/admin',
+    path: '/edit',
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    element: ({ match }) => (
+      <EditStrategyForm
+        jwttoken={match.params.jwttoken}
+        strategyid={match.params.strategyid}
+        selectedPairs={match.params.selectedPairs}
+      />
+  },
+  {
     name: 'Create Strategy',
     layout: '/admin',
     path: '/create',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <CreateStrategyModal />,
-  },
-  {
-    name: 'Bot Admin interface',
-    layout: '/auth',
-    path: '/default',
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    component: <MainDashboard />,
   },
   {
     name: 'Sign In',
@@ -45,7 +51,7 @@ const routes = [
   },
   {
     name: 'Logger',
-    layout: '/auth',
+    layout: '/admin',
     path: '/logger',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
     component: <Logger />,
