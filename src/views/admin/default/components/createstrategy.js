@@ -87,6 +87,14 @@ const handleHookKeyChange = (e) => {
   };
   
   return (
+    <FormControl isRequired>
+            <FormLabel>Strategy Name</FormLabel>
+            <Input 
+              value={newStrategyName.name} 
+              onChange={handleNameChange} 
+              placeholder="Enter strategy name" 
+            />
+          </FormControl>
     <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
       <ModalOverlay />
       <ModalContent>
