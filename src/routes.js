@@ -26,11 +26,10 @@ const routes = [
   {
     name: 'Edit Strategy',
     layout: '/admin',
-    path: '/edit/:jwttoken/:strategyid/:selectedPairs',
+    path: '/edit/:strategyid/:selectedPairs',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     element: ({ match }) => (
       <EditStrategyForm
-        jwttoken={match.params.jwttoken}
         strategyid={match.params.strategyid}
         selectedPairs={match.params.selectedPairs}
       />
