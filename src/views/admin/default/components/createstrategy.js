@@ -88,7 +88,7 @@ const handleHookKeyChange = (e) => {
   
   return (
     <>
-    <FormControl isRequired>
+    <FormControl isRequired mt="10" >
             <FormLabel>Strategy Name</FormLabel>
             <Input 
               value={newStrategyName.name} 
