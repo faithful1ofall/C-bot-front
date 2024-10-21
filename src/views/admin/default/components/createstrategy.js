@@ -96,7 +96,7 @@ const handleHookKeyChange = (e) => {
         <form>
           <FormControl isRequired>
             <FormLabel>Strategy Name</FormLabel>
-            <Input 
+            <input 
               value={newStrategyName.name} 
               onChange={handleNameChange} 
               placeholder="Enter strategy name" 
@@ -105,7 +105,7 @@ const handleHookKeyChange = (e) => {
 
         <FormControl isRequired>
             <FormLabel>Webhook Key</FormLabel>
-            <Input 
+            <input 
               value={newStrategyName.hookkey} 
               onChange={handleHookKeyChange} 
               placeholder="Enter webhook key" 
