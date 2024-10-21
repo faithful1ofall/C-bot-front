@@ -1760,6 +1760,7 @@ const handleHookKeyChange = (e) => {
               {expandedStrategyId === strategy.id && (
                 <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                   {/* Form Content Goes Here */}
+                  <form>
                   <FormControl mb="4">
                     <FormLabel>Strategy Name</FormLabel>
                     <Input value={newStrategyName || ""} onChange={(e) => setNewStrategyName(e.target.value)} />
@@ -1894,6 +1895,7 @@ const handleHookKeyChange = (e) => {
                     <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">                 
                       <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>   
                           <Box  mb="4" key={index}>
+                            
 
                             <FormControl mb="4">
                               <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
@@ -1923,6 +1925,7 @@ const handleHookKeyChange = (e) => {
                                 </InputRightElement>
                               </InputGroup>
                             </FormControl>
+                              
 
                             
                           </Box>                 
@@ -2118,6 +2121,7 @@ const handleHookKeyChange = (e) => {
                         <NumberInputField />
                       </NumberInput>
                     </FormControl>
+                    </form>
 
                     
                   <Button mt="8" colorScheme="teal" onClick={handleSubmitedit}>
