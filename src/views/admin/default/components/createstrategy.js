@@ -87,6 +87,7 @@ const handleHookKeyChange = (e) => {
   };
   
   return (
+    <>
     <FormControl isRequired>
             <FormLabel>Strategy Name</FormLabel>
             <Input 
@@ -136,6 +137,7 @@ const handleHookKeyChange = (e) => {
         </ModalFooter>
       </ModalContent>
     </Modal>
+                </>
   );
 });
 
