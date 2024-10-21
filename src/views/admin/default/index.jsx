@@ -13,7 +13,6 @@ import {
   Input,
   Icon,
   IconButton,
-  InputRightElement,
   InputLeftElement,
   InputGroup,
   Menu,
@@ -27,10 +26,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberInput,
-  NumberInputField,
-  RadioGroup,
-  Radio,
   Select,
   SimpleGrid,
   Stack,
@@ -39,12 +34,12 @@ import {
   useColorModeValue,
   useDisclosure,
   Switch,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 // Custom components
-import MiniStatistics from "components/card/MiniStatistics";
-import IconBox from "components/icons/IconBox";
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import MiniStatistics from 'components/card/MiniStatistics';
+import IconBox from 'components/icons/IconBox';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   MdAttachMoney,
   MdAutorenew,
@@ -55,21 +50,20 @@ import {
   MdMoreVert,
   MdMonetizationOn,
   MdSearch,
-} from "react-icons/md";
+} from 'react-icons/md';
 import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
 import Logger from './components/logger';
 import CreateStrategyModal from './components/createstrategy';
-
+import EditStrategyForm from './components/editstrategy';
 
 export default function UserReports() {
   const toast = useToast();
   const navigate = useNavigate();
 
-  const jwttoken = localStorage.getItem("jwtToken");
-
+  const jwttoken = localStorage.getItem('jwtToken');
 
   const [nameError, setNameError] = useState('');
   const [apiKeyError, setApiKeyError] = useState('');
@@ -80,104 +74,89 @@ export default function UserReports() {
   const [searchHistory, setSearchHistory] = useState([]);
   const [selectedPairs, setSelectedPairs] = useState([]);
   const [selectedTradingPairs1, setSelectedTradingPairs1] = useState([]);
-  
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [isLinkStrategyOpen, setLinkStrategyOpen] = useState(false);
   const [expandedStrategyId, setExpandedStrategyId] = useState(null);
   const [selectedStrategy, setSelectedStrategy] = useState('');
 
-  const [todelete, setToDelete] = useState("");
+  const [todelete, setToDelete] = useState('');
 
-  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
-  const { isOpen: isDeleteOpen1, onOpen: onDeleteOpen1, onClose: onDeleteClose1 } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen1,
+    onOpen: onDeleteOpen1,
+    onClose: onDeleteClose1,
+  } = useDisclosure();
 
-  const { isOpen: isUserOpen, onOpen: onUserOpen, onClose: onUserClose } = useDisclosure();
-  const { isOpen: isTransferOpen, onOpen: onTransferOpen, onClose: onTransferClose } = useDisclosure();
-  const { isOpen: isCreateStrategyOpen, onOpen: onCreateStrategyOpen, onClose: onCreateStrategyClose } = useDisclosure();
-  const { isOpen: isTradingHookTriggerOpen, onOpen: onTradingHookTriggerOpen, onClose: onTradingHookTriggerClose } = useDisclosure();
+  const {
+    isOpen: isUserOpen,
+    onOpen: onUserOpen,
+    onClose: onUserClose,
+  } = useDisclosure();
+  const {
+    isOpen: isTransferOpen,
+    onOpen: onTransferOpen,
+    onClose: onTransferClose,
+  } = useDisclosure();
+  const {
+    isOpen: isCreateStrategyOpen,
+    onOpen: onCreateStrategyOpen,
+    onClose: onCreateStrategyClose,
+  } = useDisclosure();
+  const {
+    isOpen: isTradingHookTriggerOpen,
+    onOpen: onTradingHookTriggerOpen,
+    onClose: onTradingHookTriggerClose,
+  } = useDisclosure();
 
   // Chakra Color Mode
-  const brandColor = useColorModeValue("brand.500", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const brandColor = useColorModeValue('brand.500', 'white');
+  const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
   const [users, setUsers] = useState([]);
-  const [name, setName] = useState("");
-  const [hookkey, setHookKey] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [apiSecret, setApiSecret] = useState("");
-  const [newStrategyName, setNewStrategyName] = useState('');
+  const [name, setName] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [apiSecret, setApiSecret] = useState('');
   const [strategies, setStrategies] = useState([]);
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
-  const [marginMode, setmarginMode] = useState('CROSSED');
-
 
   // new parameters
-  
-  const [tradingPairs, setTradingPairs] = useState('');
-  const [tradeDirection, setTradeDirection] = useState('Both');
-  const [timeFrame, setTimeFrame] = useState('1m');
-  const [negativeCandleTrigger, setNegativeCandleTrigger] = useState('');
-  const [isNegativeCandleEnabled, setIsNegativeCandleEnabled] = useState(false);
-  const [profitLock, setProfitLock] = useState({
-  trigger: 0,
-  lockPercent: 0
-});
-  const [stopLoss, setStopLoss] = useState({
-  currentTrade: 0,
-  tradableAmount: 0,
-});
-  const [trailingStop, setTrailingStop] = useState({
-  enabled: false,
-  callbackRate: 0,
-  price: 0,
-  amount: 0,
-});
-  const [takeProfit, setTakeProfit] = useState(0);
-  const [orderType, setOrderType] = useState("Limit");
-  const [isDelayEnabled, setIsDelayEnabled] = useState({
-    active: false,
-    offset: 0,
-  });
-  const [isEdit, SetEdit] = useState(false);
-  const [useredit, SetUserEdit] = useState(false);
-  const [TradableAmount, setTradableAmount] = useState({
-  min: 0, 
-  max: 0, 
-  compounding: false, 
-});
-  const [leverage, setLeverage] = useState(10); // Leverage state
-  const [originalStrategy, setOriginalStrategy] = useState(null);
- const [olduser, setOldUser] = useState(null);
- 
-  const [callFunds, setCallFunds] = useState([]); // Funds percentage for each call
-  const [callTPs, setCallTPs] = useState([]); // TP percentage for each call
-  const [callNegTriggers, setCallNegTriggers] = useState([]); // Negative trigger percentage for each call
 
+  const [useredit, SetUserEdit] = useState(false);
+
+  const [olduser, setOldUser] = useState(null);
 
   const [accountinfo, setAccountinfo] = useState(0);
 
-  const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
+ // const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
   const [positions, setPositions] = useState([]); // Your trade positions data
   const [positionshistory, setPositionsHistory] = useState([]); // Your trade positions data
 
   const fetchPositionhistory = useCallback(async () => {
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-past-trades`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-past-trades`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`, // Attach the token
+          },
         },
-      })
+      );
 
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
 
       if (!response.ok) {
-        console.log("positions error data",data);
+        console.log('positions error data', data);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       setPositionsHistory(data);
       console.log(data);
     } catch (err) {
@@ -185,25 +164,25 @@ export default function UserReports() {
     }
   }, [jwttoken]);
 
-
-
   const fetchPosition = useCallback(async () => {
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-open-positions`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-open-positions`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`, // Attach the token
+          },
         },
-      })
+      );
 
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
 
       if (!response.ok) {
-        console.log("positions error data",data);
+        console.log('positions error data', data);
         throw new Error(`HTTP error! status: ${response.status}`);
-        
       }
-      
+
       setPositions(data);
       console.log(data);
     } catch (err) {
@@ -211,58 +190,60 @@ export default function UserReports() {
     }
   }, [jwttoken]);
 
-
-  const handleClosePosition = async(position) => {
-
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/close-position/${position.userId}/${position.symbol}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+  const handleClosePosition = async (position) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/close-position/${position.userId}/${position.symbol}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`, // Attach the token
+          },
         },
-      })
+      );
 
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
 
       if (!response.ok) {
-        console.log("Closed positions error data",data);
+        console.log('Closed positions error data', data);
         toast({
-  title: "Error closing trade.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Error closing trade.',
+          description: 'Please try again later.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         throw new Error(`HTTP error! status: ${response.status}`);
-        
       }
-      console.log(data, "closed position success");
+      console.log(data, 'closed position success');
       toast({
-  title: "Trade closed successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+        title: 'Trade closed successfully.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
       fetchPosition();
     } catch (err) {
       toast({
-  title: "Error closing trade.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-      console.error(err, "close posiotn error");
+        title: 'Error closing trade.',
+        description: 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      console.error(err, 'close posiotn error');
     }
   };
 
   const fetchPairs = useCallback(async () => {
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/saved-trading-pairs`); // Adjust the URL based on your backend setup
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/saved-trading-pairs`,
+      ); // Adjust the URL based on your backend setup
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
       setSelectedTradingPairs1(data.data);
       console.log(data.data);
     } catch (err) {
@@ -270,96 +251,65 @@ export default function UserReports() {
     }
   }, []);
 
-
-
-  
-
-   // Handle search query change
-   const handleSearch = (event) => {
+  // Handle search query change
+  const handleSearch = (event) => {
     const query = event.target.value;
     setSearchQueryvalue(query);
   };
 
-
-
   const handleSelectPair = async (selectedValues, selectedbool) => {
-
     const boolSelected = selectedbool === 'true';
 
-    console.log("id", selectedValues, !boolSelected );
+    console.log('id', selectedValues, !boolSelected);
 
     const selbool = {
-      isSelected: !boolSelected
-    }
+      isSelected: !boolSelected,
+    };
     try {
       // Send a PUT request to update the selected trading pairs on the server
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs/${selectedValues}/select`, {
-        method: 'PUT',
-         headers: {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs/${selectedValues}/select`,
+        {
+          method: 'PUT',
+          headers: {
             'Content-Type': 'application/json',
           },
-          body:  JSON.stringify(selbool),
-      });
-  
+          body: JSON.stringify(selbool),
+        },
+      );
+
       if (!response.ok) {
         console.log(response);
         throw new Error('Error selecting trading pairs');
-        
       }
-  
+
       const data = await response.json();
-      
+
       console.log('Selected trading pairs updated successfully:', data);
       await fetchPairs();
     } catch (error) {
       console.error('Error:', error);
     }
   };
-  
-
-  const handleCallFundsChange = (index, value) => {
-    const newCallFunds = [...callFunds];
-    newCallFunds[index] = value;
-    setCallFunds(newCallFunds);
-  };
-
-
-
-  const handleSyncCallValues = () => {
-    setCallFunds(Array(negativeCandleTrigger + 1).fill(callFunds[0]));
-    setCallTPs(Array(negativeCandleTrigger + 1).fill(callTPs[0]));
-  };
-
-
-  const handleCallTPChange = (index, value) => {
-    const newCallTPs = [...callTPs];
-    newCallTPs[index] = value;
-    setCallTPs(newCallTPs);
-  };
-
-
-  const handleCallNegTriggerChange = (index, value) => {
-    const newCallNegTriggers = [...callNegTriggers];
-    newCallNegTriggers[index] = value;
-    setCallNegTriggers(newCallNegTriggers);
-  };
 
   const fetchAccountinfo = async (accuserid, assetpass) => {
-    
-    const assetfind = "USDT" || assetpass;
+    const assetfind = 'USDT' || assetpass;
 
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
         },
-      })
+      );
       if (!response.ok) {
-        const error = await response.json(); 
+        const error = await response.json();
         return error.message.msg;
       }
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
       setAccountinfo(data);
       return data;
     } catch (err) {
@@ -370,33 +320,36 @@ export default function UserReports() {
 
   const fetchtradeinfo = async (usid) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/valid/${usid}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/valid/${usid}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
         },
-      })
-        if (!response.ok) {
+      );
+      if (!response.ok) {
         const error = await response.json();
         console.log(error);
-          toast({
-        title: 'Error',
-        description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+        toast({
+          title: 'Error',
+          description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       }
 
-      const { data } = await response.json();  // Parse the JSON response
+      const { data } = await response.json(); // Parse the JSON response
       // Display enabled permissions
-    const permissions = {
-      Reading: data.enableReading,
-      Futures: data.enableFutures,
-      UniversalTransfer: data.permitsUniversalTransfer,
-    };
+      const permissions = {
+        Reading: data.enableReading,
+        Futures: data.enableFutures,
+        UniversalTransfer: data.permitsUniversalTransfer,
+      };
 
-    console.log('User Permissions:', permissions);
+      console.log('User Permissions:', permissions);
 
       // Generate success message based on enabled permissions
       const enabledPermissions = Object.entries(permissions)
@@ -405,9 +358,10 @@ export default function UserReports() {
 
       // If any permissions are enabled, show the success message
       if (enabledPermissions.length > 0) {
-        const formattedPermissions = enabledPermissions.length > 2
-          ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
-          : enabledPermissions.join(' and ');
+        const formattedPermissions =
+          enabledPermissions.length > 2
+            ? `${enabledPermissions.slice(0, -1).join(', ')} and ${enabledPermissions.slice(-1)}`
+            : enabledPermissions.join(' and ');
 
         toast({
           title: 'API Successfully Validated!',
@@ -424,32 +378,35 @@ export default function UserReports() {
 
   const fetchapiinfo = async (usid) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-exchange-info/${usid}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-exchange-info/${usid}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
         },
-      })
-        if (!response.ok) {
+      );
+      if (!response.ok) {
         const error = await response.json();
         console.log(error);
-          toast({
-        title: 'Error',
-        description: `There was an issue fetching API info. ${JSON.stringify(error.message)}`,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+        toast({
+          title: 'Error',
+          description: `There was an issue fetching API info. ${JSON.stringify(error.message)}`,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       }
 
-      const { exchangeInfo } = await response.json();  // Parse the JSON response
+      const { exchangeInfo } = await response.json(); // Parse the JSON response
 
       console.log('User api info data:', exchangeInfo);
 
       // Display enabled permissions
       const permissions = {
         limit: exchangeInfo[0].exchangeInfo[0].limit,
-        usedlimit: exchangeInfo[0].headersInfo.usedIPWeight1M
+        usedlimit: exchangeInfo[0].headersInfo.usedIPWeight1M,
       };
 
       console.log('User Permissions:', permissions);
@@ -461,7 +418,6 @@ export default function UserReports() {
 
       // If any permissions are enabled, show the success message
       if (enabledPermissions.length > 0) {
-
         toast({
           title: 'IP Limit Used and Total Per minute(1 minute)',
           description: `${permissions.usedlimit}/${permissions.limit} per-minute.`,
@@ -474,39 +430,39 @@ export default function UserReports() {
       console.error('Error fetching API info:', error);
     }
   };
-  
-  const filteredPairs = selectedTradingPairs1.filter(pair =>
-    pair.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const filteredPairs = selectedTradingPairs1.filter((pair) =>
+    pair.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const filteredSelectedPairs = selectedTradingPairs1
-  .filter(pair => pair.isSelected === "true") // Filter pairs where isSelected is "true"
-  .map(pair => pair.symbol); // Map to get only the symbols
+    .filter((pair) => pair.isSelected === 'true') // Filter pairs where isSelected is "true"
+    .map((pair) => pair.symbol); // Map to get only the symbols
 
-
-    // Handle pair selection
-    const handleSelectPairs = () => {
-      setSelectedPairs(filteredSelectedPairs);
-    };
-
+  // Handle pair selection
+  const handleSelectPairs = () => {
+    setSelectedPairs(filteredSelectedPairs);
+  };
 
   const fetchUsers = useCallback(async () => {
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/users`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`, // Attach the token
+          },
         },
-      })
+      );
 
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
 
       if (!response.ok) {
         console.log(data, jwttoken);
         throw new Error(`HTTP error! status: ${response.status}`);
-        
       }
-      
+
       setUsers(data);
       console.log(data);
     } catch (err) {
@@ -515,59 +471,64 @@ export default function UserReports() {
   }, [jwttoken]);
 
   const deleteuser = async (id) => {
-
-    console.log("user id", id);
+    console.log('user id', id);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`, // Attach the token
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/users/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`, // Attach the token
+          },
         },
-      });
-  
+      );
+
       if (response.ok) {
         toast({
-  title: "User deleted successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'User deleted successfully.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
         fetchUsers();
         onDeleteClose1();
       } else {
         toast({
-  title: "Error deleting user.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Error deleting user.',
+          description: 'Please try again later.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Failed to delete User');
       }
     } catch (error) {
       toast({
-  title: "Error deleting user.",
-  description: "Please try again later.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+        title: 'Error deleting user.',
+        description: 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       console.error('Error deleting User:', error);
     }
   };
 
   const fetchStrategies = useCallback(async () => {
-    try {        
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/strategies`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
         },
-      });
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();  // Parse the JSON response
+      const data = await response.json(); // Parse the JSON response
       setStrategies(data);
     } catch (err) {
       console.error(err.message);
@@ -576,16 +537,19 @@ export default function UserReports() {
 
   const deleteStrategy = async (id) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
         },
-      });
+      );
       if (response.ok) {
         toast({
-          title: "Strategy deleted successfully.",
-          status: "success",
+          title: 'Strategy deleted successfully.',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
@@ -594,9 +558,9 @@ export default function UserReports() {
         fetchUsers();
       } else {
         toast({
-          title: "Error deleting strategy.",
-          description: "Please try again later.",
-          status: "error",
+          title: 'Error deleting strategy.',
+          description: 'Please try again later.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
@@ -604,9 +568,9 @@ export default function UserReports() {
       }
     } catch (error) {
       toast({
-        title: "Error deleting strategy.",
-        description: "Please try again later.",
-        status: "error",
+        title: 'Error deleting strategy.',
+        description: 'Please try again later.',
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
@@ -616,447 +580,241 @@ export default function UserReports() {
 
   useEffect(() => {
     const isTokenExpired = (token) => {
-      const base64Url = token.split(".")[1]; // Get payload part
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const base64Url = token.split('.')[1]; // Get payload part
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(
         atob(base64)
-          .split("")
+          .split('')
           .map(function (c) {
-            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
           })
-          .join("")
+          .join(''),
       );
-      
+
       const decoded = JSON.parse(jsonPayload);
       const currentTime = Date.now() / 1000;
 
       console.log('decoded', decoded.exp, currentTime);
       return decoded.exp <= currentTime;
-    }
+    };
 
     if (isTokenExpired(jwttoken)) {
-      navigate("/auth/sign-in");
-      console.log("Token has expired");
+      navigate('/auth/sign-in');
+      console.log('Token has expired');
     }
-    
+
     if (!jwttoken) {
-      navigate("/auth/sign-in");       
-      console.error("No JWT token found");
+      navigate('/auth/sign-in');
+      console.error('No JWT token found');
     }
-  },[jwttoken, navigate]);
-  
-   useEffect(() => {
+  }, [jwttoken, navigate]);
+
+  useEffect(() => {
     fetchUsers();
     fetchStrategies();
     fetchPairs();
     fetchPosition();
     fetchPositionhistory();
-  }, [fetchPositionhistory, fetchPosition, fetchUsers, fetchStrategies, fetchPairs]);
+  }, [
+    fetchPositionhistory,
+    fetchPosition,
+    fetchUsers,
+    fetchStrategies,
+    fetchPairs,
+  ]);
 
   useEffect(() => {
     setSelectedPairs(filteredSelectedPairs);
-  }, [filteredSelectedPairs])
+  }, [filteredSelectedPairs]);
 
- const tradinghook = async () => {
-  const hooking = { 
-    strategy: selectedStrategy,
-  };
-
-  try {
-    const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(hooking),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      toast({
-      title: "Error initiating trade hook.",
-      description: `Trade not executed, info: ${errorData.error}`,
-      status: "error",
-      duration: 5000,
-      isClosable: true,
-    });
-      throw new Error(errorData.error || 'Error initiating trade hook.');
-    }
-
-    const data = await response.json();
-    console.log("hooking", data);
-
-    // Fetch updated position data
-    await fetchPosition();
-
-    toast({
-      title: "Trade hook successful.",
-      description: `Trade executed successfully.`,
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-  } catch (error) {
-    toast({
-      title: "Error initiating trade hook.",
-      description: error.error || "Please try again later.",
-      status: "error",
-      duration: 5000,
-      isClosable: true,
-    });
-    console.error('Request failed', error);
-  }
-};
-
- /* const handleSubmit = async() => {
-    const newStrategy = {
-      name: newStrategyName,
-      hookkey: hookkey,
-      tradingPair: tradingPairs,
-      tradeDirection,
-      timeFrame,
-      negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
-      isNegativeCandleEnabled: isNegativeCandleEnabled,
-      
-      calls: callFunds.map((funds, index) => ({
-        funds,
-        tp: callTPs[index],
-        negTrigger: callNegTriggers[index],
-      })),
-      profitLock,
-      stopLoss,
-      takeProfit,
-      orderType,
-      isDelayEnabled,
-      TradableAmount,
-      leverage,
-      marginMode,
+  const tradinghook = async () => {
+    const hooking = {
+      strategy: selectedStrategy,
     };
 
-    if (!isEdit || isEdit === 0){
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`,
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwttoken}`,
           },
-          body:  JSON.stringify(newStrategy),
-        });
-    
-        if (response.ok) {
-          toast({
-  title: "Strategy created successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
-          console.log('Strategy added successfully');
-        } else {
-          toast({
-  title: "Error creating strategy.",
-  description: "Please verify the inputs and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-          console.error('Error adding strategy');
-        }
-      } catch (error) {
+          body: JSON.stringify(hooking),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
         toast({
-  title: "Error creating strategy.",
-  description: "Please verify the inputs and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-        console.error('Request failed', error);
+          title: 'Error initiating trade hook.',
+          description: `Trade not executed, info: ${errorData.error}`,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        throw new Error(errorData.error || 'Error initiating trade hook.');
       }
 
-     // setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
-     fetchStrategies();
+      const data = await response.json();
+      console.log('hooking', data);
 
-      console.log("newStrategy", newStrategy);
+      // Fetch updated position data
+      await fetchPosition();
 
-      onCreateStrategyClose();
-    }
-  };*/
-
-
-      
-
-const handleSubmitedit = async() => {
-  
-  const newStrategy = {
-      name: newStrategyName,
-      hookkey: hookkey,
-      tradingPair: tradingPairs,
-      tradeDirection,
-      timeFrame,
-      negativeCandleTrigger: isNegativeCandleEnabled ? negativeCandleTrigger : null,
-    isNegativeCandleEnabled: isNegativeCandleEnabled,
-      calls: callFunds.map((funds, index) => ({
-        funds,
-        tp: callTPs[index],
-        negTrigger: callNegTriggers[index],
-      })),
-      trailingStop,
-      profitLock,
-      stopLoss,
-      takeProfit,
-      orderType,
-      isDelayEnabled,
-      TradableAmount,
-      leverage,
-      marginMode,
-    };
-  
-   
-      console.log("isEdit", isEdit);
-
-      // Create an object with only the changed fields
-      const updatedFields = {};
-
-      Object.keys(newStrategy).forEach((key) => {
-        if (newStrategy[key] !== originalStrategy[key]) {
-          updatedFields[key] = newStrategy[key];
-        }
+      toast({
+        title: 'Trade hook successful.',
+        description: `Trade executed successfully.`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
       });
-      
-      try {
-        
-        await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${isEdit}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwttoken}`,
-          },
-          body:  JSON.stringify(updatedFields),
-        });
-        toast({
-  title: "Strategy updated successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
-
-      } catch (error) {
-        toast({
-  title: "Failed to update strategy.",
-  description: "Please check the inputs and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-        console.error('Request failed', error);
-      }
-
-      console.log("newStrategy Update", newStrategy);
-
-      fetchUsers();
-      fetchStrategies();
-
-      onCreateStrategyClose();
-      
-      SetEdit(null);
+    } catch (error) {
+      toast({
+        title: 'Error initiating trade hook.',
+        description: error.error || 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      console.error('Request failed', error);
+    }
   };
 
-  const handleCreate = () => {
-    // Clear all the form values by resetting them to their initial/default state
-    setOriginalStrategy(null); // No original strategy for creation
-    setNewStrategyName(''); // Clear strategy name
-    setHookKey('');
-  };
 
   const handleuseractive = async (userIdd, currentstatus) => {
-
     const activate = {
       active: !currentstatus,
     };
 
-    try {      
+    try {
       await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userIdd}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwttoken}`,
+          Authorization: `Bearer ${jwttoken}`,
         },
-        body:  JSON.stringify(activate),
+        body: JSON.stringify(activate),
       });
-      
-      if (!currentstatus){
+
+      if (!currentstatus) {
         toast({
-          title: "User activated successfully.",
-          status: "success",
+          title: 'User activated successfully.',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
-        
-
       } else {
         toast({
-          title: "User deactivated successfully.",
-          status: "error",
+          title: 'User deactivated successfully.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
       }
       await fetchUsers();
-      
     } catch (error) {
       toast({
-        title: "Error activating user.",
-        description: "Please try again later.",
-        status: "error",
+        title: 'Error activating user.',
+        description: 'Please try again later.',
+        status: 'error',
         duration: 5000,
         isClosable: true,
       });
       console.error('Request failed', error);
     }
 
-    console.log("User activate Update", activate);
-  }
-
-
+    console.log('User activate Update', activate);
+  };
 
   const handleactive = async (strategyIdd, currentstatus) => {
-
     const activate = {
       active: !currentstatus,
     };
-    
+
     try {
-      
-      await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${strategyIdd}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwttoken}`,
+      await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/strategy/${strategyIdd}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwttoken}`,
+          },
+          body: JSON.stringify(activate),
         },
-        body:  JSON.stringify(activate),
-      });
-      if(!currentstatus) {
+      );
+      if (!currentstatus) {
         toast({
-          title: "Strategy actived successfully.",
-          status: "success",
+          title: 'Strategy actived successfully.',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
       } else {
         toast({
-          title: "Strategy deactived successfully.",
-          status: "error",
+          title: 'Strategy deactived successfully.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
       }
-      
-
     } catch (error) {
       toast({
-  title: "Failed to activate strategy.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+        title: 'Failed to activate strategy.',
+        description: 'Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       console.error('Request failed', error);
     }
 
-    
     await fetchStrategies();
-    console.log("activate Update", activate);
-  }
+    console.log('activate Update', activate);
+  };
+
   
 
-
-  const handleEdit = async (editid) => {
-  try {
-    const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy/${editid}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${jwttoken}`,
-      }
-    });
-
-    if (!response1.ok) {
-      throw new Error(`HTTP error! status: ${response1.status}`);
-    }
-    
-    const data1 = await response1.json();
-
-    setOriginalStrategy(data1);
-
-    // Use default values if the API response is missing certain fields
-    setNewStrategyName(data1.name || "");
-    setTradingPairs(data1.tradingPair || []);
-    setTradeDirection(data1.tradeDirection || ""); // Assuming empty string as a default
-    setTimeFrame(data1.timeFrame || "1m"); // Assuming empty string as a default
-    setNegativeCandleTrigger(data1.negativeCandleTrigger || null);
-    setIsNegativeCandleEnabled(data1.isNegativeCandleEnabled || false);
-    setHookKey(data1.hookkey || "");
-    setTrailingStop(data1.trailingStop || { enabled: false }); // Assuming trailing stop has a default object
-
-    setCallFunds(data1.calls ? data1.calls.map(call => call.funds || 0) : []); // Default to 0 if funds are missing
-    setCallTPs(data1.calls ? data1.calls.map(call => call.tp || 0) : []); // Default to 0 if tp is missing
-    setCallNegTriggers(data1.calls ? data1.calls.map(call => call.negTrigger || 0) : []); // Default to 0 if negTrigger is missing
-
-    setProfitLock(data1.profitLock || 0); // Default to 0 if profitLock is missing
-    setStopLoss(data1.stopLoss || 0); // Default to 0 if stopLoss is missing
-    setTakeProfit(data1.takeProfit || 0); // Default to 0 if takeProfit is missing
-    setOrderType(data1.orderType || "Market"); // Assuming 'Market' as a default order type
-    setIsDelayEnabled(data1.isDelayEnabled || { active: false, offset: 0 }); // Default to inactive delay with no offset
-    setTradableAmount(data1.TradableAmount || { min: 0, max: 0 }); // Default to min 0 and max 100
-    setLeverage(data1.leverage || 10); // Default to 1 if leverage is missing
-    setmarginMode(data1.marginMode || ""); // Assuming empty string as a default
-
-  } catch (error) {
-    console.error('Request failed', error);
-  }
-  }
-
-  const handleEditUser = async(editid) => {
-
+  const handleEditUser = async (editid) => {
     try {
-      
-      const response1 = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwttoken}`,
-        }
-      });
+      const response1 = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
+        },
+      );
 
       if (!response1.ok) {
         toast({
-  title: "Error updating user details.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Error updating user details.',
+          description: 'Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         throw new Error(`HTTP error! status: ${response1.status}`);
       }
-      const data1 = await response1.json(); 
+      const data1 = await response1.json();
       setOldUser(data1);
 
       setName(data1.name);
       setApiKey(data1.apiKey);
       setApiSecret(data1.apiSecret);
-      
-
-    }  catch (error) {
+    } catch (error) {
       toast({
-  title: "Error updating user details.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+        title: 'Error updating user details.',
+        description: 'Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       console.error('Request failed', error);
     }
-
-  }
-
+  };
 
   // Function to validate input
   const validateInputs = () => {
@@ -1069,7 +827,9 @@ const handleSubmitedit = async() => {
 
     // Validate User Name
     if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-      setNameError('User Name can only contain letters, numbers, and underscores.');
+      setNameError(
+        'User Name can only contain letters, numbers, and underscores.',
+      );
       isValid = false;
     }
 
@@ -1088,51 +848,50 @@ const handleSubmitedit = async() => {
     return isValid;
   };
 
-
-  const handleAddUser = async() => {
+  const handleAddUser = async () => {
     const newUser = {
       name,
       apiKey,
-      apiSecret
-    } 
+      apiSecret,
+    };
 
     if (validateInputs() && !useredit) {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwttoken}`,
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/users`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwttoken}`,
+            },
+            body: JSON.stringify(newUser),
           },
-          body: JSON.stringify(newUser),
-        });
-  
+        );
+
         const data = await response.json();
-  
-        
-          toast({
-  title: "User created successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
-          fetchUsers();
-          
-          onUserClose(); // Close modal or form
-          console.log('User added successfully:', data);
-        
+
+        toast({
+          title: 'User created successfully.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        fetchUsers();
+
+        onUserClose(); // Close modal or form
+        console.log('User added successfully:', data);
       } catch (error) {
         toast({
-  title: "Failed to create user.",
-  description: "Please check the input and try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Failed to create user.',
+          description: 'Please check the input and try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Error:', error);
       }
     } else {
-
       const updatedFields = {};
 
       Object.keys(newUser).forEach((key) => {
@@ -1142,156 +901,150 @@ const handleSubmitedit = async() => {
       });
 
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useredit}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwttoken}`,
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/users/${useredit}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwttoken}`,
+            },
+            body: JSON.stringify(updatedFields),
           },
-          body: JSON.stringify(updatedFields),
-        });
-  
-        const data = await response.json();
-  
-        
-          toast({
-  title: "User details updated successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
-          fetchUsers();
+        );
 
-          SetUserEdit(false);
-          onUserClose(); // Close modal or form
-          console.log('User added successfully:', data);
-        
+        const data = await response.json();
+
+        toast({
+          title: 'User details updated successfully.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        fetchUsers();
+
+        SetUserEdit(false);
+        onUserClose(); // Close modal or form
+        console.log('User added successfully:', data);
       } catch (error) {
         toast({
-  title: "Error updating user details.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Error updating user details.',
+          description: 'Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Error:', error);
       }
-      
     }
   };
 
-  const handleLinkStrategyToUser = async(userId, strategyid, boole) => {
-
+  const handleLinkStrategyToUser = async (userId, strategyid, boole) => {
     if (boole) {
       try {
-        await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${jwttoken}`,
-          }
-        });
+        await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${jwttoken}`,
+            },
+          },
+        );
         toast({
-  title: "Strategy unlinked from user successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Strategy unlinked from user successfully.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
       } catch (error) {
         toast({
-  title: "Error unlinking strategy from user.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Error unlinking strategy from user.',
+          description: 'Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Error:', error);
       }
       fetchUsers();
 
-        const updatedStrategyIds = selectedStrategyIds.filter(id => id !== strategyid);
-  
-        // Set the new array as the state
-        setSelectedStrategyIds(updatedStrategyIds);
+      const updatedStrategyIds = selectedStrategyIds.filter(
+        (id) => id !== strategyid,
+      );
 
+      // Set the new array as the state
+      setSelectedStrategyIds(updatedStrategyIds);
     } else {
-
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwttoken}`,
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwttoken}`,
+            },
           },
-        });
-        
+        );
+
         const data = await response.json();
-        console.log("linking", data);
+        console.log('linking', data);
 
         if (response.ok) {
           toast({
-  title: "Strategy linked to user successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
+            title: 'Strategy linked to user successfully.',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
           fetchUsers();
 
           const updatedStrategyIds = [...selectedStrategyIds, strategyid];
-    
+
           // Set the new array as the state
           setSelectedStrategyIds(updatedStrategyIds);
-         } else {
+        } else {
           toast({
-  title: "Error linking strategy to user.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+            title: 'Error linking strategy to user.',
+            description: 'Please try again.',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
           console.error('Error adding user:', data.error);
         }
       } catch (error) {
         toast({
-  title: "Error linking strategy to user.",
-  description: "Please try again.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+          title: 'Error linking strategy to user.',
+          description: 'Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
         console.error('Error:', error);
       }
     }
   };
 
   const handleKeyPress = (e) => {
-    
     if (e.key === 'Enter') {
       setSearchQuery(e.target.value);
 
       // Add the current query to the search history if it's not empty
       if (searchQuery.trim()) {
-        setSearchHistory((prevHistory) => [searchQuery, ...prevHistory.slice(0, 3)]); // Add new search and limit to 4
+        setSearchHistory((prevHistory) => [
+          searchQuery,
+          ...prevHistory.slice(0, 3),
+        ]); // Add new search and limit to 4
       }
     }
   };
-  const handleNameChange = (e) => {
-  setNewStrategyName(e.target.value);
-};
-
-const handleHookKeyChange = (e) => {
-  setHookKey(e.target.value);
-};
 
   return (
-    <Box pt={{ base: "40px", md: "80px", xl: "80px" }}>
-
+    <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
       <Box mt={15} position="relative" textAlign="left">
-        <Text
-          as="span"
-          zIndex={1}
-          fontSize="2xl"
-          fontWeight="bold"
-        >
+        <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
           INFO
         </Text>
         <Divider
@@ -1301,93 +1054,129 @@ const handleHookKeyChange = (e) => {
         />
       </Box>
       <SimpleGrid
-          columns={{ base: 2, lg: 2 }} // Ensures 2 columns even on small screens
-      gap="20px"
-      mb="10px"
-      mt={5}
-    >
-      <MiniStatistics
-        startContent={
-          <IconBox
-            w={{ base: "48px", md: "56px" }} // Responsive width
-            h={{ base: "48px", md: "56px" }} // Responsive height
-            bg="linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)"
-            icon={<Icon w={{ base: "24px", md: "28px" }} h={{ base: "24px", md: "28px" }} as={MdPerson} color="white" />}
-          />
-        }
-        name="Total users"
-        value={users.length}
-      />
-      <MiniStatistics
-        startContent={
-          <IconBox
-            w={{ base: "48px", md: "56px" }}
-            h={{ base: "48px", md: "56px" }}
-            bg={boxBg}
-            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAttachMoney} color={brandColor} />}
-          />
-        }
-        name="Active users"
-        value={users.filter(user => user.active).length}
-      />
-      <MiniStatistics
-        startContent={
-          <IconBox
-            w={{ base: "48px", md: "56px" }}
-            h={{ base: "48px", md: "56px" }}
-            bg={boxBg}
-            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdAutorenew} color={brandColor} />}
-          />
-        }
-        name="Active trade(s)"
-        value={positions?.positions?.length || 0}
-      />
-      <MiniStatistics
-        startContent={
-          <IconBox
-            w={{ base: "48px", md: "56px" }}
-            h={{ base: "48px", md: "56px" }}
-            bg={boxBg}
-            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdShowChart} color={brandColor} />}
-          />
-        }
-        name="Total strategies"
-        value={strategies.length}
-      />
-      <MiniStatistics
-        startContent={
-          <IconBox
-            w={{ base: "48px", md: "56px" }}
-            h={{ base: "48px", md: "56px" }}
-            bg={boxBg}
-            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdCheckCircle} color={brandColor} />}
-          />
-        }
-        name="Active strategies"
-        value={strategies.filter(strategy => strategy.active).length}
-      />
-      <MiniStatistics
-        startContent={
-          <IconBox
-            w={{ base: "48px", md: "56px" }}
-            h={{ base: "48px", md: "56px" }}
-            bg={boxBg}
-            icon={<Icon w={{ base: "28px", md: "32px" }} h={{ base: "28px", md: "32px" }} as={MdMonetizationOn} color={brandColor} />}
-          />
-        }
-        name="Total ROI"
-        value="0"
-      />
-    </SimpleGrid>
+        columns={{ base: 2, lg: 2 }} // Ensures 2 columns even on small screens
+        gap="20px"
+        mb="10px"
+        mt={5}
+      >
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w={{ base: '48px', md: '56px' }} // Responsive width
+              h={{ base: '48px', md: '56px' }} // Responsive height
+              bg="linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)"
+              icon={
+                <Icon
+                  w={{ base: '24px', md: '28px' }}
+                  h={{ base: '24px', md: '28px' }}
+                  as={MdPerson}
+                  color="white"
+                />
+              }
+            />
+          }
+          name="Total users"
+          value={users.length}
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w={{ base: '48px', md: '56px' }}
+              h={{ base: '48px', md: '56px' }}
+              bg={boxBg}
+              icon={
+                <Icon
+                  w={{ base: '28px', md: '32px' }}
+                  h={{ base: '28px', md: '32px' }}
+                  as={MdAttachMoney}
+                  color={brandColor}
+                />
+              }
+            />
+          }
+          name="Active users"
+          value={users.filter((user) => user.active).length}
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w={{ base: '48px', md: '56px' }}
+              h={{ base: '48px', md: '56px' }}
+              bg={boxBg}
+              icon={
+                <Icon
+                  w={{ base: '28px', md: '32px' }}
+                  h={{ base: '28px', md: '32px' }}
+                  as={MdAutorenew}
+                  color={brandColor}
+                />
+              }
+            />
+          }
+          name="Active trade(s)"
+          value={positions?.positions?.length || 0}
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w={{ base: '48px', md: '56px' }}
+              h={{ base: '48px', md: '56px' }}
+              bg={boxBg}
+              icon={
+                <Icon
+                  w={{ base: '28px', md: '32px' }}
+                  h={{ base: '28px', md: '32px' }}
+                  as={MdShowChart}
+                  color={brandColor}
+                />
+              }
+            />
+          }
+          name="Total strategies"
+          value={strategies.length}
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w={{ base: '48px', md: '56px' }}
+              h={{ base: '48px', md: '56px' }}
+              bg={boxBg}
+              icon={
+                <Icon
+                  w={{ base: '28px', md: '32px' }}
+                  h={{ base: '28px', md: '32px' }}
+                  as={MdCheckCircle}
+                  color={brandColor}
+                />
+              }
+            />
+          }
+          name="Active strategies"
+          value={strategies.filter((strategy) => strategy.active).length}
+        />
+        <MiniStatistics
+          startContent={
+            <IconBox
+              w={{ base: '48px', md: '56px' }}
+              h={{ base: '48px', md: '56px' }}
+              bg={boxBg}
+              icon={
+                <Icon
+                  w={{ base: '28px', md: '32px' }}
+                  h={{ base: '28px', md: '32px' }}
+                  as={MdMonetizationOn}
+                  color={brandColor}
+                />
+              }
+            />
+          }
+          name="Total ROI"
+          value="0"
+        />
+      </SimpleGrid>
 
-
-    <Box mt={5} position="relative" textAlign="left">
-        <Text
-          as="span"
-          zIndex={1}
-          fontSize="2xl"
-          fontWeight="bold"
-        >
+      <Box mt={5} position="relative" textAlign="left">
+        <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
           PAIRS
         </Text>
         <Divider
@@ -1397,13 +1186,16 @@ const handleHookKeyChange = (e) => {
         />
       </Box>
 
-       {/* Dropdown Button */}
-       <Menu>
-        <MenuButton mt={5} as={Button} leftIcon={<Icon as={MdPerson} />} colorScheme="teal">
+      {/* Dropdown Button */}
+      <Menu>
+        <MenuButton
+          mt={5}
+          as={Button}
+          leftIcon={<Icon as={MdPerson} />}
+          colorScheme="teal"
+        >
           Add Trading Pairs
         </MenuButton>
-
-
 
         <MenuList p={4} width="300px">
           {/* Search Bar */}
@@ -1420,28 +1212,35 @@ const handleHookKeyChange = (e) => {
             />
           </InputGroup>
 
-        {searchHistory.length > 0 && (
-        <Box mb={4}>
-          <strong>Recent Searches:</strong>
-          <SimpleGrid columns={2} spacing={2}>
-            {searchHistory.slice(0, 4).map((query, index) => (
-              <Button
-                key={index}
-                variant="link"
-                onClick={() => setSearchQuery(query)}
-              >
-                {query}
-              </Button>
-            ))}
-          </SimpleGrid>
-        </Box>
-      )}
+          {searchHistory.length > 0 && (
+            <Box mb={4}>
+              <strong>Recent Searches:</strong>
+              <SimpleGrid columns={2} spacing={2}>
+                {searchHistory.slice(0, 4).map((query, index) => (
+                  <Button
+                    key={index}
+                    variant="link"
+                    onClick={() => setSearchQuery(query)}
+                  >
+                    {query}
+                  </Button>
+                ))}
+              </SimpleGrid>
+            </Box>
+          )}
 
           {/* Checkbox List for Trading Pairs */}
           <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
             <Stack spacing={3}>
               {filteredPairs.map((pair) => (
-                <Checkbox key={pair._id} value={pair.symbol}  isChecked={pair.isSelected} onChange={() => { handleSelectPair(pair._id, pair.isSelected);}}>
+                <Checkbox
+                  key={pair._id}
+                  value={pair.symbol}
+                  isChecked={pair.isSelected}
+                  onChange={() => {
+                    handleSelectPair(pair._id, pair.isSelected);
+                  }}
+                >
                   {pair.symbol}
                 </Checkbox>
               ))}
@@ -1451,11 +1250,19 @@ const handleHookKeyChange = (e) => {
       </Menu>
       {/* Section to show added trading pairs */}
       <Box mt={4}>
-        <Text fontWeight="bold" mb={2}>Added Trading Pairs:</Text>
+        <Text fontWeight="bold" mb={2}>
+          Added Trading Pairs:
+        </Text>
         {selectedPairs.length > 0 ? (
           <Stack spacing={2}>
             {selectedPairs.map((pair) => (
-              <Text key={pair} p={2} borderWidth="1px" borderRadius="md" borderColor="gray.200">
+              <Text
+                key={pair}
+                p={2}
+                borderWidth="1px"
+                borderRadius="md"
+                borderColor="gray.200"
+              >
                 {pair}
               </Text>
             ))}
@@ -1466,12 +1273,7 @@ const handleHookKeyChange = (e) => {
       </Box>
 
       <Box mt={5} position="relative" textAlign="left">
-        <Text
-          as="span"
-          zIndex={1}
-          fontSize="2xl"
-          fontWeight="bold"
-        >
+        <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
           USERS
         </Text>
         <Divider
@@ -1485,7 +1287,10 @@ const handleHookKeyChange = (e) => {
         <Button
           leftIcon={<Icon as={MdPerson} />}
           colorScheme="teal"
-          onClick={()=> {SetUserEdit(""); onUserOpen();}}
+          onClick={() => {
+            SetUserEdit('');
+            onUserOpen();
+          }}
         >
           Add User
         </Button>
@@ -1498,146 +1303,240 @@ const handleHookKeyChange = (e) => {
         </Button>
       </Flex>
 
-      { isTradingHookTriggerOpen && (
-      <Modal isOpen={isTradingHookTriggerOpen} onClose={onTradingHookTriggerClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Trading Hook Trigger</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-
-          <FormControl>
-            <FormLabel>Select Strategy</FormLabel>
-            <Select placeholder="Select strategy" value={selectedStrategy} onChange={(e) => setSelectedStrategy(e.target.value)}>
-              {strategies.map((strategy) => (
-                <option key={strategy.id} value={strategy.hookkey}>
-                  {strategy.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="teal" onClick={tradinghook}>
-            Trigger Hook
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+      {isTradingHookTriggerOpen && (
+        <Modal
+          isOpen={isTradingHookTriggerOpen}
+          onClose={onTradingHookTriggerClose}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Trading Hook Trigger</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl>
+                <FormLabel>Select Strategy</FormLabel>
+                <Select
+                  placeholder="Select strategy"
+                  value={selectedStrategy}
+                  onChange={(e) => setSelectedStrategy(e.target.value)}
+                >
+                  {strategies.map((strategy) => (
+                    <option key={strategy.id} value={strategy.hookkey}>
+                      {strategy.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="teal" onClick={tradinghook}>
+                Trigger Hook
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
 
+      {isDeleteOpen && (
+        <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Strategy Delete Confirmation</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to delete this strategy? This action cannot
+              be undone.
+            </ModalBody>
 
-      { isDeleteOpen && (
-      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Strategy Delete Confirmation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to delete this strategy? This action cannot be undone.
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="ghost" onClick={onDeleteClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={() => deleteStrategy(todelete)} ml={3}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <ModalFooter>
+              <Button variant="ghost" onClick={onDeleteClose}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => deleteStrategy(todelete)}
+                ml={3}
+              >
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
 
-      { isDeleteOpen1 && (
-      <Modal isOpen={isDeleteOpen1} onClose={onDeleteClose1}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>User Delete Confirmation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to delete this User? This action cannot be undone.
-          </ModalBody>
+      {isDeleteOpen1 && (
+        <Modal isOpen={isDeleteOpen1} onClose={onDeleteClose1}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>User Delete Confirmation</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to delete this User? This action cannot be
+              undone.
+            </ModalBody>
 
-          <ModalFooter>
-            <Button variant="ghost" onClick={onDeleteClose1}>
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={() => deleteuser(useredit)} ml={3}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <ModalFooter>
+              <Button variant="ghost" onClick={onDeleteClose1}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() => deleteuser(useredit)}
+                ml={3}
+              >
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
 
-
-      
-     {/* Add User Modal */}
+      {/* Add User Modal */}
       {isUserOpen && (
-     <Modal isOpen={isUserOpen} onClose={onUserClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader> {useredit ? 'Edit User' : 'Add User'}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl isInvalid={!!nameError}>
-              <FormLabel>User Name</FormLabel>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
-              {nameError && <FormHelperText color="red.500">{nameError}</FormHelperText>}
-            </FormControl>
-            <FormControl isInvalid={!!apiKeyError}>
-              <FormLabel>API Key</FormLabel>
-              <Input value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
-              {apiKeyError && <FormHelperText color="red.500">{apiKeyError}</FormHelperText>}
-            </FormControl>
-            <FormControl mt="4" isInvalid={!!apiSecretError} >
-              <FormLabel>API Secret</FormLabel>
-              <Input value={apiSecret} onChange={(e) => setApiSecret(e.target.value)} />
-              {apiSecretError && <FormHelperText color="red.500">{apiSecretError}</FormHelperText>}
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="teal" onClick={handleAddUser}>
-              {useredit ? 'Edit User' : 'Add User'}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        <Modal isOpen={isUserOpen} onClose={onUserClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader> {useredit ? 'Edit User' : 'Add User'}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl isInvalid={!!nameError}>
+                <FormLabel>User Name</FormLabel>
+                <Input value={name} onChange={(e) => setName(e.target.value)} />
+                {nameError && (
+                  <FormHelperText color="red.500">{nameError}</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl isInvalid={!!apiKeyError}>
+                <FormLabel>API Key</FormLabel>
+                <Input
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                />
+                {apiKeyError && (
+                  <FormHelperText color="red.500">{apiKeyError}</FormHelperText>
+                )}
+              </FormControl>
+              <FormControl mt="4" isInvalid={!!apiSecretError}>
+                <FormLabel>API Secret</FormLabel>
+                <Input
+                  value={apiSecret}
+                  onChange={(e) => setApiSecret(e.target.value)}
+                />
+                {apiSecretError && (
+                  <FormHelperText color="red.500">
+                    {apiSecretError}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="teal" onClick={handleAddUser}>
+                {useredit ? 'Edit User' : 'Add User'}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px' mt="40px">
-      
+      <SimpleGrid
+        columns={{ base: 1, md: 2, lg: 3, '2xl': 3 }}
+        gap="20px"
+        mt="40px"
+      >
         {users.map((user, index) => (
-          <Box key={`${user._id}`} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+          <Box
+            key={`${user._id}`}
+            p="5"
+            shadow="md"
+            borderWidth="1px"
+            borderRadius="md"
+          >
             <Flex align="center" justify="space-between">
               <Avatar src="https://bit.ly/dan-abramov" />
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                  <MenuItem onClick={() => { setSelectedStrategyId(user.id); setSelectedStrategyIds(user.strategyIds.map(id => strategies.find(s => s.id === id)?.id)); setLinkStrategyOpen((prev) => (prev === user.id ? null : user.id)); }}>Link Strategies</MenuItem>
-                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); setIsGeneralSettingsOpen((prev) => (prev === user.id ? null : user.id));}}>User/Exchange Settings</MenuItem>
-                  <MenuItem onClick={() => { fetchAccountinfo(user.id); setTransferUserId(user.id); onTransferOpen((prev) => (prev === user.id ? null : user.id)); }}>Internal Transfer</MenuItem>
-                  <MenuItem onClick={() => { SetUserEdit(user.id); handleEditUser(user.id); onUserOpen()}}>Edit User</MenuItem>
-                  <MenuItem onClick={() => fetchtradeinfo(user.id) }>Validate API connection</MenuItem>
-                  <MenuItem onClick={() => fetchapiinfo(user.id) }> API IP Limit </MenuItem>
-                  <MenuItem onClick={() => { SetUserEdit(user.id); onDeleteOpen1() }}>Delete User</MenuItem>
-                  
+                  <MenuItem
+                    onClick={() => {
+                      setSelectedStrategyId(user.id);
+                      setSelectedStrategyIds(
+                        user.strategyIds.map(
+                          (id) => strategies.find((s) => s.id === id)?.id,
+                        ),
+                      );
+                      setLinkStrategyOpen((prev) =>
+                        prev === user.id ? null : user.id,
+                      );
+                    }}
+                  >
+                    Link Strategies
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      fetchAccountinfo(user.id);
+                      setTransferUserId(user.id);
+                      setIsGeneralSettingsOpen((prev) =>
+                        prev === user.id ? null : user.id,
+                      );
+                    }}
+                  >
+                    User/Exchange Settings
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      fetchAccountinfo(user.id);
+                      setTransferUserId(user.id);
+                      onTransferOpen((prev) =>
+                        prev === user.id ? null : user.id,
+                      );
+                    }}
+                  >
+                    Internal Transfer
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      SetUserEdit(user.id);
+                      handleEditUser(user.id);
+                      onUserOpen();
+                    }}
+                  >
+                    Edit User
+                  </MenuItem>
+                  <MenuItem onClick={() => fetchtradeinfo(user.id)}>
+                    Validate API connection
+                  </MenuItem>
+                  <MenuItem onClick={() => fetchapiinfo(user.id)}>
+                    {' '}
+                    API IP Limit{' '}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      SetUserEdit(user.id);
+                      onDeleteOpen1();
+                    }}
+                  >
+                    Delete User
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
             <Switch
-                isChecked={user?.active}
-                onChange={() =>  handleuseractive(user.id, user.active)}
-                colorScheme="teal"
-              />
+              isChecked={user?.active}
+              onChange={() => handleuseractive(user.id, user.active)}
+              colorScheme="teal"
+            />
 
             <Box mt="4">
               <Text>User Name: {user?.name}</Text>
-              <Text>Strategies: {user.strategyIds.map(id => strategies.find(s => s.id === id)?.name || 'None').join(', ')}</Text>
+              <Text>
+                Strategies:{' '}
+                {user.strategyIds
+                  .map(
+                    (id) => strategies.find((s) => s.id === id)?.name || 'None',
+                  )
+                  .join(', ')}
+              </Text>
             </Box>
-
 
             {isGeneralSettingsOpen === user.id && (
               <Box mt="4" bg="gray.50" p="4" borderRadius="md">
@@ -1647,60 +1546,65 @@ const handleHookKeyChange = (e) => {
                 />
               </Box>
             )}
-            
+
             {isLinkStrategyOpen === user.id && (
-        <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-          <FormControl>
-            <FormLabel>Select Strategies to Link</FormLabel>
-            <SimpleGrid mt="20px" columns={{ base: 1 }} gap="20px">
-              {strategies.map((strategy) => {
-          const isLinked = selectedStrategyIds.includes(strategy.id);
-          
-          return (
-                      <Box
-                  key={strategy.id}
-                  p="5"
-                  shadow="md"
-                  borderWidth="1px"
-                  borderRadius="md"
-                  minWidth={{ base: "100%", md: "250px" }} // Ensure boxes have a minimum width
-                >
-                  <Flex align="center" justify="space-between">
-                    <Text fontWeight="bold">{strategy.name}</Text>
-                    <Button
-                      colorScheme={isLinked ? "red" : "teal"} // Change color for linked strategies
-                      size="sm"
-                      onClick={() =>
-                        handleLinkStrategyToUser(selectedStrategyId, strategy.id, selectedStrategyIds.includes(strategy.id))
-                      }
-                    >
-                      {isLinked ? 'Unlink' : 'Link'}
-                    </Button>
-                  </Flex>
-                </Box>
-            );
-        })}
-              </SimpleGrid>
-          </FormControl>
-        </Box>
-                            
-      )}
-             {transferuserid === user.id && (
-                <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-                  <TransferModal isOpen={isTransferOpen} onClose={onTransferClose} userid={transferuserid} balance={accountinfo} />
-                </Box>
-              )}
-          </Box>         
+              <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+                <FormControl>
+                  <FormLabel>Select Strategies to Link</FormLabel>
+                  <SimpleGrid mt="20px" columns={{ base: 1 }} gap="20px">
+                    {strategies.map((strategy) => {
+                      const isLinked = selectedStrategyIds.includes(
+                        strategy.id,
+                      );
+
+                      return (
+                        <Box
+                          key={strategy.id}
+                          p="5"
+                          shadow="md"
+                          borderWidth="1px"
+                          borderRadius="md"
+                          minWidth={{ base: '100%', md: '250px' }} // Ensure boxes have a minimum width
+                        >
+                          <Flex align="center" justify="space-between">
+                            <Text fontWeight="bold">{strategy.name}</Text>
+                            <Button
+                              colorScheme={isLinked ? 'red' : 'teal'} // Change color for linked strategies
+                              size="sm"
+                              onClick={() =>
+                                handleLinkStrategyToUser(
+                                  selectedStrategyId,
+                                  strategy.id,
+                                  selectedStrategyIds.includes(strategy.id),
+                                )
+                              }
+                            >
+                              {isLinked ? 'Unlink' : 'Link'}
+                            </Button>
+                          </Flex>
+                        </Box>
+                      );
+                    })}
+                  </SimpleGrid>
+                </FormControl>
+              </Box>
+            )}
+            {transferuserid === user.id && (
+              <Box mt="4" bg="gray.50" p="4" borderRadius="md">
+                <TransferModal
+                  isOpen={isTransferOpen}
+                  onClose={onTransferClose}
+                  userid={transferuserid}
+                  balance={accountinfo}
+                />
+              </Box>
+            )}
+          </Box>
         ))}
       </SimpleGrid>
 
       <Box mt={5} position="relative" textAlign="left">
-        <Text
-          as="span"
-          zIndex={1}
-          fontSize="2xl"
-          fontWeight="bold"
-        >
+        <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
           STRATEGIES
         </Text>
         <Divider
@@ -1711,440 +1615,90 @@ const handleHookKeyChange = (e) => {
       </Box>
 
       <Button
-          mt="20px"
-          leftIcon={<Icon as={MdAddAlert} />}
-          colorScheme="blue"
-          onClick={() => {SetEdit(""); handleCreate(); onCreateStrategyOpen();}}
-        >
-          Create Strategy
-        </Button>
+        mt="20px"
+        leftIcon={<Icon as={MdAddAlert} />}
+        colorScheme="blue"
+        onClick={() => {
+          onCreateStrategyOpen();
+        }}
+      >
+        Create Strategy
+      </Button>
 
-      
-
-      
-
-
-      <SimpleGrid mt="20px" columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }} gap='20px'>
+      <SimpleGrid
+        mt="20px"
+        columns={{ base: 1, md: 2, lg: 3, '2xl': 3 }}
+        gap="20px"
+      >
         {strategies.map((strategy) => (
-          <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
-            <Flex align="center" justify="space-between"  onClick={() => {
-              SetEdit(strategy.id);
-              handleEdit(strategy.id); // Assuming you use this to set form data
-              setExpandedStrategyId((prev) => (prev === strategy.id ? null : strategy.id)); // Toggle form visibility
-            }}>
+          <Box
+            key={strategy.id}
+            p="5"
+            shadow="md"
+            borderWidth="1px"
+            borderRadius="md"
+          >
+            <Flex
+              align="center"
+              justify="space-between"
+              onClick={() => {
+                setExpandedStrategyId((prev) =>
+                  prev === strategy.id ? null : strategy.id,
+                ); // Toggle form visibility
+              }}
+            >
               <Text fontWeight="bold">{strategy.name}</Text>
-             
+
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
-                <MenuItem
+                  <MenuItem
                     onClick={() => {
-                      SetEdit(strategy.id);
-                      handleEdit(strategy.id); // Assuming you use this to set form data
-                      setExpandedStrategyId((prev) => (prev === strategy.id ? null : strategy.id)); // Toggle form visibility
+                      setExpandedStrategyId((prev) =>
+                        prev === strategy.id ? null : strategy.id,
+                      ); // Toggle form visibility
                     }}
                   >
-                    {expandedStrategyId === strategy.id ? 'Close Form' : 'Edit Strategy'}
+                    {expandedStrategyId === strategy.id
+                      ? 'Close Form'
+                      : 'Edit Strategy'}
                   </MenuItem>
-                  <MenuItem onClick={() => { setToDelete(strategy.id); onDeleteOpen(); }}>Delete Strategy</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setToDelete(strategy.id);
+                      onDeleteOpen();
+                    }}
+                  >
+                    Delete Strategy
+                  </MenuItem>
                 </MenuList>
               </Menu>
               <Switch
                 isChecked={strategy.active}
-                onChange={() => { handleactive(strategy.id, strategy.active);}}
+                onChange={() => {
+                  handleactive(strategy.id, strategy.active);
+                }}
                 colorScheme="teal"
               />
-              
             </Flex>
-             {/* Collapsible Form */}
-              {expandedStrategyId === strategy.id && (
-                <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-                  {/* Form Content Goes Here */}
-                  <FormControl mb="4">
-                    <FormLabel>Strategy Name</FormLabel>
-                    <Input value={newStrategyName || ""} onChange={(e) => setNewStrategyName(e.target.value)} />
-                  </FormControl>
-
-                  <FormControl mb="4">
-                    <FormLabel>Hook Key</FormLabel>
-                    <Input value={hookkey || ""} onChange={(e) => setHookKey(e.target.value)} />
-                  </FormControl>
-
-
-                  <FormControl mb="4">
-                    <FormLabel>TradingView Link</FormLabel>
-                    <Input value={tradingViewLink || ""} isReadOnly />
-                  </FormControl>
-
-                  <FormControl mb="4">
-                      <FormLabel>Leverage</FormLabel>
-                      <NumberInput value={leverage || ""} onChange={(valueString) => setLeverage(isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-
-                    <FormControl mt="4">
-                      <FormLabel>Cross/Isolated Mode</FormLabel>
-                      <RadioGroup onChange={(value) => setmarginMode(value)} value={marginMode}>
-                        <Stack direction="row">
-                          <Radio value="CROSSED">Cross</Radio>
-                          <Radio value="ISOLATED">Isolated</Radio>
-                        </Stack>
-                      </RadioGroup>
-                    </FormControl>
-
-                  <FormControl mb="4">
-                    <FormLabel>Trading Pair</FormLabel>
-                    <Select
-                      value={tradingPairs}
-                      onChange={(e) => setTradingPairs(e.target.value)}
-                    >
-                      {selectedPairs.map((pair) => (
-                        <option key={pair} value={pair}>
-                          {pair}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-                  <FormControl mb="4">
-                    <FormLabel>Trade Direction</FormLabel>
-                    <Select value={tradeDirection} onChange={(e) => setTradeDirection(e.target.value)}>
-                      <option value="Buy">Long/Buy</option>
-                      <option value="Sell">Short/Sell</option>
-                      <option value="Both">Both</option>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl mb="4">
-                    <FormLabel>Time Frame</FormLabel>
-                    <Select value={timeFrame || ''} onChange={(e) => setTimeFrame(e.target.value)}>
-                    <option value="15s">15 Seconds</option>
-                      <option value="30s">30 Seconds</option>
-                      <option value="45s">45 Seconds</option>
-                      <option value="1m">1 Minute</option>
-                      <option value="2m">2 Minute</option>
-                      <option value="3m">3 Minute</option>
-                      <option value="5m">5 Minute</option>
-                      <option value="15m">15 Minute</option>
-                      <option value="30m">30 Minute</option>
-                      <option value="1h">1 Hour</option>
-                      <option value="2h">2 Hour</option>
-                      <option value="4h">4 Hour</option>
-                      <option value="6h">6 Hour</option>
-                      <option value="8h">8 Hour</option>
-                      <option value="12h">12 Hour</option>
-                      <option value="24h">24 Hour</option>
-                      <option value="48h">48 Hour</option>
-                      <option value="72h">72 Hour</option>
-                    </Select>
-                  </FormControl>
-
-                  
-
-                  <FormControl mb="4">
-                    <FormLabel>Initial Call</FormLabel>
-                  </FormControl>
-
-                  <Box mt="4" p="4" bg="gray.100" borderRadius="md">
-
-                    <FormControl mb="4">
-                      <FormLabel>Initail Call Funds %</FormLabel>
-                      <NumberInput value={callFunds[0] || ""} onChange={(valueString) => handleCallFundsChange(0, isNaN(valueString) ? 0 : valueString)}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-
-                    <FormControl mb="4">
-                      <FormLabel>Initial Call TP%</FormLabel>
-                      <InputGroup>
-                                <NumberInput 
-                                  value={callTPs[0] || ""} onChange={(valueString) => handleCallTPChange(0, isNaN(valueString) ? 0 : valueString)}
-                                  width="100%"
-                                >
-                                  <NumberInputField />
-                                </NumberInput>
-                                <InputRightElement width="4.5rem">
-                                  <Text>{(callTPs[0] * leverage).toFixed(2) || 0}%</Text>
-                                </InputRightElement>
-                              </InputGroup>
-                    </FormControl>
-
-                    {/* Sync Call 1 Values */}
-                    <Button mt="2" colorScheme="blue" onClick={handleSyncCallValues}>
-                      Sync Initial Call Values to All
-                    </Button>
-                  </Box> 
-
-                  <FormControl mb="4">
-                    <Flex alignItems="center">
-                      <FormLabel>Negative Value Trigger (%)</FormLabel>
-                      <Checkbox isChecked={isNegativeCandleEnabled || false} onChange={(e) => setIsNegativeCandleEnabled(e.target.checked)}>Enable</Checkbox>
-                    </Flex>
-                    {isNegativeCandleEnabled && (
-                      <NumberInput value={negativeCandleTrigger || ""} onChange={(valueString) => setNegativeCandleTrigger(parseInt(valueString))}>
-                        <NumberInputField />
-                      </NumberInput>
-                    )}
-                  </FormControl>  
-
-                  {/* Loop through each call and display grouped inputs */}
-                  {isNegativeCandleEnabled && (
-                    Array.from({ length: negativeCandleTrigger }, (_, index) => (
-                    <Box key={index} mt="4" p="4" bg="gray.100" borderRadius="md">                 
-                      <Text fontSize="lg" fontWeight="bold">Call {index + 1}</Text>   
-                          <Box  mb="4" key={index}>
-
-                            <FormControl mb="4">
-                              <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
-                              <NumberInput value={callNegTriggers[index + 1] || ""} onChange={(valueString) => handleCallNegTriggerChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                                <NumberInputField />
-                              </NumberInput>
-                            </FormControl>
-
-                            <FormControl mb="4">
-                              <FormLabel>Call {index + 1} Funds %</FormLabel>
-                              <NumberInput  min={0} max={100} value={callFunds[index + 1] || ""} onChange={(valueString) => handleCallFundsChange(index + 1, isNaN(valueString) ? 0 : valueString)}>
-                                <NumberInputField />
-                              </NumberInput>
-                            </FormControl>
-
-                            <FormControl mb="4">
-                              <FormLabel>Call {index + 1} TP%</FormLabel>
-                              <InputGroup>
-                                <NumberInput 
-                                  value={callTPs[index + 1] || ""} onChange={(valueString) => handleCallTPChange(index + 1, isNaN(valueString) ? 0 : valueString)}
-                                  width="100%"
-                                >
-                                  <NumberInputField />
-                                </NumberInput>
-                                <InputRightElement width="4.5rem">
-                                  <Text>{(callTPs[index + 1] * leverage).toFixed(2) || 0}%</Text>
-                                </InputRightElement>
-                              </InputGroup>
-                            </FormControl>
-
-                            
-                          </Box>                 
-                    </Box>
-                  )))}
-                    <FormControl mb="4">
-                      <FormLabel>Profit Lock Settings</FormLabel>
-                      <FormLabel>Lock % Trigger</FormLabel>
-                      <InputGroup>
-                        <NumberInput 
-                          value={profitLock?.trigger || ""} 
-                          onChange={(valueString) => setProfitLock((prev) => ({ 
-                            ...prev, 
-                            trigger: isNaN(valueString) ? 0 : valueString 
-                          }))}
-                          width="100%"
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightElement width="4.5rem">
-                          <Text>{(profitLock?.trigger * leverage).toFixed(2) || 0}%</Text>
-                        </InputRightElement>
-                      </InputGroup>
-                      <FormLabel>Lock %</FormLabel>
-                      <InputGroup>
-                        <NumberInput 
-                          value={profitLock?.lockPercent || ""} 
-                          onChange={(valueString) => setProfitLock((prev) => ({ 
-                            ...prev, 
-                            lockPercent: isNaN(valueString) ? 0 : valueString 
-                          }))}
-                          width="100%"
-                        >
-                          <NumberInputField />
-                        </NumberInput>
-                        <InputRightElement width="4.5rem">
-                          <Text>{(profitLock?.lockPercent * leverage).toFixed(2) || 0}%</Text>
-                        </InputRightElement>
-                      </InputGroup>
-                    </FormControl>
-
-                    <FormControl mb="4">
-                  <FormLabel>Trailing Stop Settings</FormLabel>
-
-                   {/* Enable Trailing Stop */}
-                    <Checkbox
-                      isChecked={trailingStop?.enabled || false}
-                      onChange={(e) =>
-                        setTrailingStop((prev) => ({
-                          ...prev,
-                          enabled: e.target.checked,
-                        }))
-                      }
-                    >
-                      Enable Trailing Stop
-                    </Checkbox>
-                  {/* Callback Rate */}
-                  {trailingStop?.enabled && (
-                  <Box>
-                  <FormLabel>Callback Rate (%)</FormLabel>
-                  <NumberInput
-                    value={trailingStop?.callbackRate || ""}
-                    onChange={(valueString) =>
-                      setTrailingStop((prev) => ({
-                        ...prev,
-                        callbackRate: isNaN(valueString) ? 0 : valueString,
-                      }))
-                    }
-                  >
-                    <NumberInputField />
-                  </NumberInput>
-
-                  {/* Price */}
-                  <FormLabel>Price (offset %)</FormLabel>
-                  <NumberInput
-                    value={trailingStop?.price || ""}
-                    onChange={(valueString) =>
-                      setTrailingStop((prev) => ({
-                        ...prev,
-                        price: isNaN(valueString) ? 0 : valueString,
-                      }))
-                    }
-                  >
-                    <NumberInputField />
-                  </NumberInput>
-
-                  {/* Amount */}
-                  <FormLabel>Amount of funds to be used (in %)</FormLabel>
-                  <NumberInput
-                    value={trailingStop?.amount || ""}
-                    onChange={(valueString) =>
-                      setTrailingStop((prev) => ({
-                        ...prev,
-                        amount: isNaN(valueString) ? 0 : valueString,
-                      }))
-                    }
-                  >
-                    <NumberInputField />
-                  </NumberInput>
-                    </Box>
-                  )}
-                </FormControl>
-
-
-                    <FormControl>
-  <FormLabel>Stop Loss Settings</FormLabel>
-
-  {/* Stop Loss % (Current Trade) */}
-  {!stopLoss?.tradableAmount && (
-    <>
-      <FormLabel>Stop Loss % (Current Trade)</FormLabel>
-      <InputGroup>
-        <NumberInput
-          value={stopLoss?.currentTrade || ""}
-          onChange={(valueString) =>
-            setStopLoss((prev) => ({
-              ...prev,
-              currentTrade: isNaN(valueString) ? 0 : valueString,
-              tradableAmount: "", // Clear other field
-            }))
-          }
-          width="100%"
-        >
-          <NumberInputField />
-        </NumberInput>
-        <InputRightElement width="4.5rem">
-          <Text>{(stopLoss?.currentTrade * leverage).toFixed(2) || 0}%</Text>
-        </InputRightElement>
-      </InputGroup>
-    </>
-  )}
-
-  {/* Stop Loss % (Tradable Amount) */}
-  {!stopLoss?.currentTrade && (
-    <>
-      <FormLabel>Stop Loss % (Tradable Amount)</FormLabel>
-      <InputGroup>
-        <NumberInput
-          value={stopLoss?.tradableAmount || ""}
-          onChange={(valueString) =>
-            setStopLoss((prev) => ({
-              ...prev,
-              tradableAmount: isNaN(valueString) ? 0 : valueString,
-              currentTrade: "", // Clear other field
-            }))
-          }
-          width="100%"
-        >
-          <NumberInputField />
-        </NumberInput>
-        <InputRightElement width="4.5rem">
-          <Text>{(stopLoss?.tradableAmount * leverage).toFixed(2) || 0}%</Text>
-        </InputRightElement>
-      </InputGroup>
-    </>
-  )}
-
-                    
-                      <FormLabel mt="4">Order Type (for SL/TP)</FormLabel>
-                      <Select value={orderType || ""} onChange={(e) => setOrderType(e.target.value)}>
-                        <option value="limit">Limit Order</option>
-                        <option value="market">Market Order</option>
-                      </Select>
-                    
-
-                  
-                      <Flex mt="4" alignItems="center">
-                        <FormLabel>Delayed SL and TP</FormLabel>
-                        <Checkbox isChecked={isDelayEnabled.active || false} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, active: e.target.checked }))}>Enable</Checkbox>
-                      </Flex>
-                      {isDelayEnabled.active && (
-                        <Box mt="2" mb="4" p="4" bg="gray.100" borderRadius="md">
-                          <FormLabel>If enabled, the bot will wait until the price is near the SL/TP before placing a limit order. If the limit order fails, a market order will be executed instead.</FormLabel>
-                          <FormLabel>Offset %</FormLabel>
-                            <NumberInput value={isDelayEnabled.offset || ""} onChange={(e) => setIsDelayEnabled((prev) => ({ ...prev, offset: isNaN(e) ? 0 : e, }))}>
-                              <NumberInputField />
-                            </NumberInput>
-                        </Box>
-                      )}
-                    
-
-                    
-                    <Flex mt='4' lignItems="center">
-                    <FormLabel>Enable Compounding</FormLabel>
-                      <Checkbox isChecked={TradableAmount?.compounding || false} onChange={(e) => setTradableAmount((prev) => ({ ...prev, compounding: e.target.checked }))}>Enable</Checkbox>
-                    </Flex>
-                    <FormLabel>Min Tradable Amount</FormLabel>
-                      <NumberInput value={TradableAmount?.min || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, min: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
-                      <FormLabel>Max Tradable Amount</FormLabel>
-                      <NumberInput value={TradableAmount?.max || ""} onChange={(valueString) => setTradableAmount((prev) => ({ ...prev, max: isNaN(valueString) ? 0 : valueString, }))}>
-                        <NumberInputField />
-                      </NumberInput>
-                    </FormControl>
-
-                    
-                  <Button mt="8" colorScheme="teal" onClick={handleSubmitedit}>
-                    Update Strategy
-                  </Button>
-                </Box>
-              )}
+            {/* Collapsible Form */}
+            {expandedStrategyId === strategy.id && (
+              <EditStrategyForm jwttoken={jwttoken} strategyid={strategy.id} selectedPairs={selectedPairs}/>
+            )}
           </Box>
         ))}
       </SimpleGrid>
 
       {isCreateStrategyOpen && (
-      <CreateStrategyModal
-      isCreateStrategyOpen={isCreateStrategyOpen}
-      onCreateStrategyClose={onCreateStrategyClose}
-        jwttoken={jwttoken}
-    />
+        <CreateStrategyModal
+          isCreateStrategyOpen={isCreateStrategyOpen}
+          onCreateStrategyClose={onCreateStrategyClose}
+          jwttoken={jwttoken}
+        />
       )}
-      
-      
+
       <Box mt={5} position="relative" textAlign="left">
-        <Text
-          as="span"
-          zIndex={1}
-          fontSize="2xl"
-          fontWeight="bold"
-        >
+        <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
           TRADES
         </Text>
         <Divider
@@ -2152,7 +1706,10 @@ const handleHookKeyChange = (e) => {
           borderColor="black.400"
           borderWidth="1px"
         />
-        <TradePositionTable positions={positions?.positions} onClosePosition={handleClosePosition} />
+        <TradePositionTable
+          positions={positions?.positions}
+          onClosePosition={handleClosePosition}
+        />
 
         <Divider
           mt={5} // Move the divider up to align with the text
@@ -2161,19 +1718,16 @@ const handleHookKeyChange = (e) => {
           borderWidth="1px"
         />
         <TradeHistoryTable tradeHistory={positionshistory.pastTrades} />
-
-
       </Box>
 
       <Divider
-          mt={5} // Move the divider up to align with the text
-          mb={5}
-          borderColor="black.400"
-          borderWidth="1px"
-        />
+        mt={5} // Move the divider up to align with the text
+        mb={5}
+        borderColor="black.400"
+        borderWidth="1px"
+      />
 
       <Logger />
-
     </Box>
   );
 }
