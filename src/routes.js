@@ -8,7 +8,7 @@ import {
 
 // Admin Imports
 import MainDashboard from 'views/admin/default';
-import Create from 'views/admin/default/components/createstrategy';
+import CreateStrategyModal from 'views/admin/default/components/createstrategy';
 import Logger from 'views/admin/default/components/logger';
 
 // Auth Imports
@@ -27,7 +27,7 @@ const routes = [
     layout: '/admin',
     path: '/create',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    component: <Create />,
+    component: <CreateStrategyModal />,
   },
   {
     name: 'Bot Admin interface',
