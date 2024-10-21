@@ -93,6 +93,7 @@ const handleHookKeyChange = (e) => {
         <ModalHeader>Create Strategy</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+        <form>
           <FormControl isRequired>
             <FormLabel>Strategy Name</FormLabel>
             <Input 
@@ -118,6 +119,7 @@ const handleHookKeyChange = (e) => {
               placeholder="Enter TradingView link" 
             />
           </FormControl>
+        </form>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="teal" onClick={handleSubmit}>
