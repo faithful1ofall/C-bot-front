@@ -34,6 +34,7 @@ const routes = [
         strategyid={match.params.strategyid}
         selectedPairs={match.params.selectedPairs}
       />
+    )
   },
   {
     name: 'Create Strategy',
