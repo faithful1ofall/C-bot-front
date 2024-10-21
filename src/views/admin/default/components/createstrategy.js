@@ -87,12 +87,22 @@ const handleHookKeyChange = (e) => {
   };
   
   return (
+    <>
+    <FormControl isRequired mt="10" >
+            <FormLabel>Strategy Name</FormLabel>
+            <Input 
+              value={newStrategyName.name} 
+              onChange={handleNameChange} 
+              placeholder="Enter strategy name" 
+            />
+          </FormControl>
     <Modal isOpen={isCreateStrategyOpen} onClose={onCreateStrategyClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create Strategy</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+        <form>
           <FormControl isRequired>
             <FormLabel>Strategy Name</FormLabel>
             <Input 
@@ -118,6 +128,7 @@ const handleHookKeyChange = (e) => {
               placeholder="Enter TradingView link" 
             />
           </FormControl>
+        </form>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="teal" onClick={handleSubmit}>
@@ -126,6 +137,7 @@ const handleHookKeyChange = (e) => {
         </ModalFooter>
       </ModalContent>
     </Modal>
+                </>
   );
 });
 
