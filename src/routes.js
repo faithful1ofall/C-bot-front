@@ -26,7 +26,7 @@ const routes = [
   {
     name: 'Edit Strategy',
     layout: '/admin',
-    path: '/edit',
+    path: '/edit/:jwttoken/:strategyid/:selectedPairs',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     element: ({ match }) => (
       <EditStrategyForm
