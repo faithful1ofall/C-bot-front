@@ -102,7 +102,6 @@ const EditStrategyForm = React.memo(
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
   isNegativeCandleEnabled: data1.isNegativeCandleEnabled !== undefined ? data1.isNegativeCandleEnabled : false, // Use undefined check
 }));
-};
         
           
       } catch (error) {
