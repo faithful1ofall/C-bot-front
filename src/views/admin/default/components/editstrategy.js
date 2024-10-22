@@ -35,7 +35,7 @@ const EditStrategyForm = React.memo(
     const [newStrategyName, setNewStrategyName] = useState({
       name: false,
       hookkey: '',
-      tradingPairs: '',
+      tradingPairs: `${selectedPairs[0]}`,
       tradeDirection: '',
       timeFrame: '',
       negativeCandleTrigger: null,
