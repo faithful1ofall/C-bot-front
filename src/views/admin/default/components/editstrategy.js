@@ -384,12 +384,19 @@ const EditStrategyForm = React.memo(
               <Box mb="4" key={index}>
                 <FormControl mb="4">
                   <FormLabel>Call {index + 1} Negative Trigger %</FormLabel>
-                  <NumberInput
-                    value={newStrategyName.calls[index + 1]?.negTrigger || ''}
-                    onChange={(valueString) => handleCallChange(index + 1, 'negTrigger', isNaN(valueString) ? 0 : valueString)}
-                  >
-                    <NumberInputField />
-                  </NumberInput>
+                  <InputGroup>
+                    <NumberInput
+                      value={newStrategyName.calls[index + 1]?.negTrigger || ''}
+                      onChange={(valueString) => handleCallChange(index + 1, 'negTrigger', isNaN(valueString) ? 0 : valueString)}
+                    >
+                      <NumberInputField />
+                    </NumberInput>
+                    <InputRightElement width="4.5rem">
+                        <Text>
+                          {(newStrategyName.calls[index + 1]?.negTrigger * newStrategyName.leverage).toFixed(2) || 0}%
+                        </Text>
+                    </InputRightElement>
+                  </InputGroup>
                 </FormControl>
 
                 <FormControl mb="4">
