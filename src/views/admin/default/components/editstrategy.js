@@ -96,7 +96,7 @@ const EditStrategyForm = React.memo(
         setNewStrategyName((prevState) => ({
   ...prevState,
   ...data1,
-  tradingPairs: data1.tradingPairs || selectedPairs[0], // Default if not provided
+  tradingPair: data1.tradingPairs || selectedPairs[0], // Default if not provided
   marginMode: data1.marginMode || 'CROSSED', // Default if not provided
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
