@@ -129,8 +129,11 @@ console.log("Updated Fields", updatedFields);
           {/* Hedge Mode / One Way Mode */}
           <FormControl mt="4">
             <FormLabel>Hedge Mode/One Way Mode</FormLabel>
-            <RadioGroup onChange={(value) => setSettings({ ...settings, hedgeMode: value })} value={hedgeMode}>
-              <Stack direction="row">
+            <RadioGroup
+  onChange={(value) => setSettings({ ...settings, hedgeMode: value === "true" })}
+  value={hedgeMode ? "true" : "false"}
+>
+  <Stack direction="row">
                 <Radio value="false">One Way</Radio>
                 <Radio value="true">Hedge Mode</Radio>
               </Stack>
