@@ -906,10 +906,6 @@ export default function UserReports() {
 
   // Function to handle navigation and setting local storage
   const handleEditStrategy = (strategyId) => {
-
-    setExpandedStrategyId((prev) =>
-                        prev === strategyId ? null : strategyId,
-                      ); // Toggle form visibility
     // Set local storage items
     localStorage.setItem("strategyid", strategyId);
     localStorage.setItem("selectpairs", selectedPairs);
@@ -1421,9 +1417,7 @@ export default function UserReports() {
                       handleEditStrategy(strategy.id)
                       }}
                   >
-                    {expandedStrategyId === strategy.id
-                      ? 'Close Form'
-                      : 'Edit Strategy'}
+                   Edit Strategy
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
@@ -1449,10 +1443,6 @@ export default function UserReports() {
                 todelete={strategy.id}
                 jwttoken={jwttoken}
               />
-            )}
-            {/* Collapsible Form */}
-            {expandedStrategyId === strategy.id && (
-              <EditStrategyForm jwttoken={jwttoken} strategyid={strategy.id} selectedPairs={selectedPairs}/>
             )}
           </Box>
         ))}

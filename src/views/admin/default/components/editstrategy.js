@@ -216,9 +216,6 @@ const EditStrategyForm = React.memo(
           isClosable: true,
         });
       }
-
-      // fetchStrategies();
-    //  onClose();
     };
 
     return (
