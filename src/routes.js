@@ -12,7 +12,7 @@ import Logger from 'views/admin/default/components/logger';
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';
 
-const EditStrategyWrapper = () => {
+const EditStrategyWrapper = (props) => {
   const { strategyid, selectedPairs } = props.match.params;
   return <EditStrategyForm strategyid={strategyid} selectedPairs={selectedPairs} />;
 };
