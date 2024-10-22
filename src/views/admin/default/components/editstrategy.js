@@ -22,7 +22,6 @@ import {
 const EditStrategyForm = React.memo(
   () => {
 
- //   const selectedPairs = selectedPairs.split(',');
     const strategyid = localStorage.getItem('strategyid');
 
     const pair = localStorage.getItem('selectpairs');

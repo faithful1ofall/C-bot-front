@@ -1,15 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 
 const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit }) => {
 
     const toast = useToast();
+    const [olduser, setOldUser] = useState(null);
     
     const [newUser, setNewUser] = useState({
         name: '',
         apiKey:'',
         apiSecret: ''
     });
+
+
+
+    const handleEditUser = useCallback(async (editid) => {
+      try {
+        const response1 = await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${jwttoken}`,
+            },
+          },
+        );
+  
+        if (!response1.ok) {
+          throw new Error(`HTTP error! status: ${response1.status}`);
+        }
+        const data1 = await response1.json();
+        setOldUser(data1);
+        setNewUser(data1);
+      } catch (error) {
+        toast({
+          title: 'Error fetching user details.',
+          description: 'Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        console.error('Request failed', error);
+      }
+    }, [jwttoken, toast]);
+
+    useEffect(() => {
+      if(useredit === '') {
+        handleEditUser(useredit);
+      }      
+    }, [handleEditUser, useredit]);
+  
 
     const handleChange = (field, value) => {
         console.log(value);
@@ -102,13 +142,13 @@ const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit }) => {
             console.error('Error:', error);
           }
         } else {
-          const updatedFields = newUser;
+          const updatedFields = {};
     
-          /* Object.keys(newUser).forEach((key) => {
+           Object.keys(newUser).forEach((key) => {
             if (newUser[key] !== olduser[key]) {
               updatedFields[key] = newUser[key];
             }
-          }); */
+          }); 
     
           try {
             const response = await fetch(

@@ -3,23 +3,17 @@ import {
   Avatar,
   Box,
   Button,
-  Checkbox,
-  CheckboxGroup,
   Divider,
   Flex,
   FormControl,
   FormLabel,
-  Input,
   Icon,
   IconButton,
-  InputLeftElement,
-  InputGroup,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   SimpleGrid,
-  Stack,
   Text,
   useToast,
   useColorModeValue,
@@ -41,19 +35,17 @@ import {
   MdAddAlert,
   MdMoreVert,
   MdMonetizationOn,
-  MdSearch,
 } from 'react-icons/md';
 import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
 // import Logger from './components/logger';
-import CreateStrategyModal from './components/createstrategy';
-import EditStrategyForm from './components/editstrategy';
 import TradingHookTriggerModal from './components/tradehook';
 import StrategyDeleteConfirmationModal from './components/strategydelete';
 import UserDeleteConfirmationModal from './components/userdelete';
 import UserModal from './components/adduser';
+import TradingPairs from './components/tradingpair';
 
 export default function UserReports() {
   const toast = useToast();
@@ -61,16 +53,8 @@ export default function UserReports() {
 
   const jwttoken = localStorage.getItem('jwtToken');
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchQueryvalue, setSearchQueryvalue] = useState('');
-  const [searchHistory, setSearchHistory] = useState([]);
-  const [selectedPairs, setSelectedPairs] = useState([]);
-  const [selectedTradingPairs1, setSelectedTradingPairs1] = useState([]);
-
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [isLinkStrategyOpen, setLinkStrategyOpen] = useState(false);
-  const [expandedStrategyId, setExpandedStrategyId] = useState(null);
-  const [selectedStrategy, setSelectedStrategy] = useState('');
 
 
   const {
@@ -95,11 +79,6 @@ export default function UserReports() {
     onClose: onTransferClose,
   } = useDisclosure();
   const {
-    isOpen: isCreateStrategyOpen,
-    onOpen: onCreateStrategyOpen,
-    onClose: onCreateStrategyClose,
-  } = useDisclosure();
-  const {
     isOpen: isTradingHookTriggerOpen,
     onOpen: onTradingHookTriggerOpen,
     onClose: onTradingHookTriggerClose,
@@ -117,8 +96,6 @@ export default function UserReports() {
   // new parameters
 
   const [useredit, SetUserEdit] = useState(false);
-
-  const [olduser, setOldUser] = useState(null);
 
   const [accountinfo, setAccountinfo] = useState(0);
 
@@ -223,63 +200,7 @@ export default function UserReports() {
     }
   };
 
-  const fetchPairs = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/saved-trading-pairs`,
-      ); // Adjust the URL based on your backend setup
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json(); // Parse the JSON response
-      setSelectedTradingPairs1(data.data);
-      console.log(data.data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }, []);
-
-  // Handle search query change
-  const handleSearch = (event) => {
-    const query = event.target.value;
-    setSearchQueryvalue(query);
-  };
-
-  const handleSelectPair = async (selectedValues, selectedbool) => {
-    const boolSelected = selectedbool === 'true';
-
-    console.log('id', selectedValues, !boolSelected);
-
-    const selbool = {
-      isSelected: !boolSelected,
-    };
-    try {
-      // Send a PUT request to update the selected trading pairs on the server
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/trading-pairs/${selectedValues}/select`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(selbool),
-        },
-      );
-
-      if (!response.ok) {
-        console.log(response);
-        throw new Error('Error selecting trading pairs');
-      }
-
-      const data = await response.json();
-
-      console.log('Selected trading pairs updated successfully:', data);
-      await fetchPairs();
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
+  
   const fetchAccountinfo = async (accuserid, assetpass) => {
     const assetfind = 'USDT' || assetpass;
 
@@ -419,19 +340,6 @@ export default function UserReports() {
     }
   };
 
-  const filteredPairs = selectedTradingPairs1.filter((pair) =>
-    pair.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const filteredSelectedPairs = selectedTradingPairs1
-    .filter((pair) => pair.isSelected === 'true') // Filter pairs where isSelected is "true"
-    .map((pair) => pair.symbol); // Map to get only the symbols
-
-  // Handle pair selection
-  const handleSelectPairs = () => {
-    setSelectedPairs(filteredSelectedPairs);
-  };
-
   const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch(
@@ -523,49 +431,6 @@ export default function UserReports() {
     }
   }, [jwttoken]);
 
-  const deleteStrategy = async (id) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/strategies/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (response.ok) {
-        toast({
-          title: 'Strategy deleted successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        onDeleteClose();
-        fetchStrategies();
-        fetchUsers();
-      } else {
-        toast({
-          title: 'Error deleting strategy.',
-          description: 'Please try again later.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        console.error('Failed to delete strategy');
-      }
-    } catch (error) {
-      toast({
-        title: 'Error deleting strategy.',
-        description: 'Please try again later.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      console.error('Error deleting strategy:', error);
-    }
-  };
-
   useEffect(() => {
     const isTokenExpired = (token) => {
       const base64Url = token.split('.')[1]; // Get payload part
@@ -600,75 +465,14 @@ export default function UserReports() {
   useEffect(() => {
     fetchUsers();
     fetchStrategies();
-    fetchPairs();
     fetchPosition();
     fetchPositionhistory();
   }, [
     fetchPositionhistory,
     fetchPosition,
     fetchUsers,
-    fetchStrategies,
-    fetchPairs,
+    fetchStrategies
   ]);
-
-  useEffect(() => {
-    setSelectedPairs(filteredSelectedPairs);
-  }, [filteredSelectedPairs]);
-
-  const tradinghook = async () => {
-    const hooking = {
-      strategy: selectedStrategy,
-    };
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(hooking),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast({
-          title: 'Error initiating trade hook.',
-          description: `Trade not executed, info: ${errorData.error}`,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        throw new Error(errorData.error || 'Error initiating trade hook.');
-      }
-
-      const data = await response.json();
-      console.log('hooking', data);
-
-      // Fetch updated position data
-      await fetchPosition();
-
-      toast({
-        title: 'Trade hook successful.',
-        description: `Trade executed successfully.`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error initiating trade hook.',
-        description: error.error || 'Please try again later.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      console.error('Request failed', error);
-    }
-  };
-
 
   const handleuseractive = async (userIdd, currentstatus) => {
     const activate = {
@@ -764,42 +568,7 @@ export default function UserReports() {
 
   
 
-  const handleEditUser = async (editid) => {
-    try {
-      const response1 = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/users/${editid}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-
-      if (!response1.ok) {
-        toast({
-          title: 'Error updating user details.',
-          description: 'Please try again.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        throw new Error(`HTTP error! status: ${response1.status}`);
-      }
-      const data1 = await response1.json();
-      setOldUser(data1);
-    } catch (error) {
-      toast({
-        title: 'Error updating user details.',
-        description: 'Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      console.error('Request failed', error);
-    }
-  };
-
+  
   const handleLinkStrategyToUser = async (userId, strategyid, boole) => {
     if (boole) {
       try {
@@ -887,29 +656,12 @@ export default function UserReports() {
       }
     }
   };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      setSearchQuery(e.target.value);
-
-      // Add the current query to the search history if it's not empty
-      if (searchQuery.trim()) {
-        setSearchHistory((prevHistory) => [
-          searchQuery,
-          ...prevHistory.slice(0, 3),
-        ]); // Add new search and limit to 4
-      }
-    }
-  };
-
   
 
   // Function to handle navigation and setting local storage
   const handleEditStrategy = (strategyId) => {
     // Set local storage items
-    localStorage.setItem("strategyid", strategyId);
-    localStorage.setItem("selectpairs", selectedPairs);
-    
+    localStorage.setItem("strategyid", strategyId);    
     // Navigate to the edit route
     navigate(`/admin/edit`);
   };
@@ -1059,91 +811,10 @@ export default function UserReports() {
         />
       </Box>
 
+
+      <TradingPairs />
+
       
-      <Menu>
-        <MenuButton
-          mt={5}
-          as={Button}
-          leftIcon={<Icon as={MdPerson} />}
-          colorScheme="teal"
-        >
-          Add Trading Pairs
-        </MenuButton>
-
-        <MenuList p={4} width="300px">
-          
-          <InputGroup mb={4}>
-            <InputLeftElement
-              pointerEvents="none"
-              children={<Icon as={MdSearch} color="gray.300" />}
-            />
-            <Input
-              placeholder="Search trading pairs"
-              value={searchQueryvalue}
-              onChange={handleSearch}
-              onKeyDown={handleKeyPress}
-            />
-          </InputGroup>
-
-          {searchHistory.length > 0 && (
-            <Box mb={4}>
-              <strong>Recent Searches:</strong>
-              <SimpleGrid columns={2} spacing={2}>
-                {searchHistory.slice(0, 4).map((query, index) => (
-                  <Button
-                    key={index}
-                    variant="link"
-                    onClick={() => setSearchQuery(query)}
-                  >
-                    {query}
-                  </Button>
-                ))}
-              </SimpleGrid>
-            </Box>
-          )}
-
-         
-          <CheckboxGroup value={selectedPairs} onChange={handleSelectPairs}>
-            <Stack spacing={3}>
-              {filteredPairs.map((pair) => (
-                <Checkbox
-                  key={pair._id}
-                  value={pair.symbol}
-                  isChecked={pair.isSelected}
-                  onChange={() => {
-                    handleSelectPair(pair._id, pair.isSelected);
-                  }}
-                >
-                  {pair.symbol}
-                </Checkbox>
-              ))}
-            </Stack>
-          </CheckboxGroup>
-        </MenuList>
-      </Menu>
-      
-      <Box mt={4}>
-        <Text fontWeight="bold" mb={2}>
-          Added Trading Pairs:
-        </Text>
-        {selectedPairs.length > 0 ? (
-          <Stack spacing={2}>
-            {selectedPairs.map((pair) => (
-              <Text
-                key={pair}
-                p={2}
-                borderWidth="1px"
-                borderRadius="md"
-                borderColor="gray.200"
-              >
-                {pair}
-              </Text>
-            ))}
-          </Stack>
-        ) : (
-          <Text color="gray.500">No trading pairs added.</Text>
-        )}
-      </Box>
 
       <Box mt={5} position="relative" textAlign="left">
         <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
@@ -1217,7 +888,7 @@ export default function UserReports() {
             borderRadius="md"
           >
             <Flex align="center" justify="space-between">
-              <Avatar src="https://bit.ly/dan-abramov" />
+             <Avatar src="https://bit.ly/dan-abramov" /> 
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
@@ -1261,7 +932,6 @@ export default function UserReports() {
                   <MenuItem
                     onClick={() => {
                       SetUserEdit(user.id);
-                      handleEditUser(user.id);
                       onUserOpen();
                     }}
                   >
@@ -1330,12 +1000,12 @@ export default function UserReports() {
                           shadow="md"
                           borderWidth="1px"
                           borderRadius="md"
-                          minWidth={{ base: '100%', md: '250px' }} // Ensure boxes have a minimum width
+                          minWidth={{ base: '100%', md: '250px' }}
                         >
                           <Flex align="center" justify="space-between">
                             <Text fontWeight="bold">{strategy.name}</Text>
                             <Button
-                              colorScheme={isLinked ? 'red' : 'teal'} // Change color for linked strategies
+                              colorScheme={isLinked ? 'red' : 'teal'}
                               size="sm"
                               onClick={() =>
                                 handleLinkStrategyToUser(
@@ -1374,7 +1044,7 @@ export default function UserReports() {
           STRATEGIES
         </Text>
         <Divider
-          mt={-1} // Move the divider up to align with the text
+          mt={-1}
           borderColor="black.400"
           borderWidth="1px"
         />
@@ -1448,20 +1118,12 @@ export default function UserReports() {
         ))}
       </SimpleGrid>
 
-      {isCreateStrategyOpen && (
-        <CreateStrategyModal
-          isCreateStrategyOpen={isCreateStrategyOpen}
-          onCreateStrategyClose={onCreateStrategyClose}
-          jwttoken={jwttoken}
-        />
-      )}
-
       <Box mt={5} position="relative" textAlign="left">
         <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
           TRADES
         </Text>
         <Divider
-          mt={-1} // Move the divider up to align with the text
+          mt={-1}
           borderColor="black.400"
           borderWidth="1px"
         />
@@ -1471,7 +1133,7 @@ export default function UserReports() {
         />
 
         <Divider
-          mt={5} // Move the divider up to align with the text
+          mt={5}
           mb={5}
           borderColor="black.400"
           borderWidth="1px"
