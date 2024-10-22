@@ -18,10 +18,14 @@ import {
   useToast,
   Button,
 } from '@chakra-ui/react';
+import { useParams } from 'react-router-dom';
 
 const EditStrategyForm = React.memo(
-  ({  strategyid, selectedPairs }) => {
+  () => {
 
+    
+const { strategyid,  selectedPairs } = useParams(); //
+    
     const jwttoken = localStorage.getItem('jwtToken');
     const toast = useToast();
     const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
