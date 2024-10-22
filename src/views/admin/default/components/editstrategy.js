@@ -94,6 +94,19 @@ const EditStrategyForm = React.memo(
   
         setOriginalStrategy(data1);
         setNewStrategyName(data1);
+        setNewStrategyName((prevState) => ({
+    ...prevState,
+    tradingPairs: data1.tradingPairs || selectedPairs[0],
+    marginMode: data1.marginMode || 'CROSSED',
+          timeFrame: data1.timeFrame || '15s',
+          tradeDirection: data1.tradeDirection || 'Buy',
+          isNegativeCandleEnabled: data1.isNegativeCandleEnabled || false,
+          
+          
+          
+  }));
+};
+        
           
       } catch (error) {
         console.error('Request failed', error);
