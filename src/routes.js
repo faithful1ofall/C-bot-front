@@ -22,7 +22,7 @@ const routes = [
   {
     name: 'Edit Strategy',
     layout: '/admin',
-    path: '/edit/:strategyid/:selectedPairs',
+    path: '/edit',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <EditStrategyForm />
   },
