@@ -25,7 +25,7 @@ const EditStrategyForm = React.memo(
 
     
 const { strategyid,  selectedPairs } = useParams(); 
-    const selectedPairs = selectedPairs.split(',');
+ //   const selectedPairs = selectedPairs.split(',');
     
     const jwttoken = localStorage.getItem('jwtToken');
     const toast = useToast();
