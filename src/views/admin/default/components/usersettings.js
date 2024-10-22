@@ -131,7 +131,7 @@ console.log("Updated Fields", updatedFields);
             <FormLabel>Hedge Mode/One Way Mode</FormLabel>
             <RadioGroup
   onChange={(value) => setSettings({ ...settings, hedgeMode: value })}
-  value={hedgeMode.toString()}
+  value={hedgeMode?.toString()}
 >
   <Stack direction="row">
                 <Radio value="false">One Way</Radio>
@@ -144,7 +144,7 @@ console.log("Updated Fields", updatedFields);
           {/* Single Asset / Multi Asset Mode */}
           <FormControl mt="4">
             <FormLabel>Single Asset / Multi Asset Mode</FormLabel>
-            <RadioGroup onChange={(value) => setSettings({ ...settings, assetMode: value })} value={assetMode.toString()}>
+            <RadioGroup onChange={(value) => setSettings({ ...settings, assetMode: value })} value={assetMode?.toString()}>
               <Stack direction="row">
                 <Radio value="false">Single Asset Mode (SAM)</Radio>
                 <Radio value="true">Multi Asset Mode (MAM)</Radio>
