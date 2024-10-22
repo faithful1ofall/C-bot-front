@@ -95,6 +95,13 @@ const EditStrategyForm = React.memo(
     }, [jwttoken]);
 
     useEffect(() => {
+      toast({
+          title: 'Failed to update strategyid and seleced pair.',
+          description: `${strategyid} ${selectedPairs} `,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       handleEdit(strategyid);
     }, [handleEdit, strategyid]);
 
