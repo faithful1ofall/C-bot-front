@@ -902,6 +902,22 @@ export default function UserReports() {
     }
   };
 
+  
+
+  // Function to handle navigation and setting local storage
+  const handleEditStrategy = (strategyId) => {
+
+    setExpandedStrategyId((prev) =>
+                        prev === strategy.id ? null : strategy.id,
+                      ); // Toggle form visibility
+    // Set local storage items
+    localStorage.setItem("strategyid", strategyId);
+    localStorage.setItem("selectpairs", selectedPairs);
+    
+    // Navigate to the edit route
+    navigate(`/admin/edit`);
+  };
+
   return (
     <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
       <Box mt={15} position="relative" textAlign="left">
@@ -1401,15 +1417,9 @@ export default function UserReports() {
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem
-                  as={NavLink}
-                  to={`/admin/edit`}
                     onClick={() => {
-                      setExpandedStrategyId((prev) =>
-                        prev === strategy.id ? null : strategy.id,
-                      ); // Toggle form visibility
-                      localStorage.setItem("strategyid", strategy.id);
-                      localStorage.setItem("selectpairs", selectedPairs);
-                    }}
+                      handleEditStrategy(strategy.id)
+                      }}
                   >
                     {expandedStrategyId === strategy.id
                       ? 'Close Form'
