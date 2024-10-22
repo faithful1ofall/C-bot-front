@@ -908,7 +908,7 @@ export default function UserReports() {
   const handleEditStrategy = (strategyId) => {
 
     setExpandedStrategyId((prev) =>
-                        prev === strategy.id ? null : strategy.id,
+                        prev === strategyId ? null : strategyId,
                       ); // Toggle form visibility
     // Set local storage items
     localStorage.setItem("strategyid", strategyId);
