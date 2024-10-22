@@ -131,20 +131,20 @@ console.log("Updated Fields", updatedFields);
             <FormLabel>Hedge Mode/One Way Mode</FormLabel>
             <RadioGroup
   onChange={(value) => setSettings({ ...settings, hedgeMode: value })}
-  value={hedgeMode}
+  value={settings.hedgeMode}
 >
   <Stack direction="row">
                 <Radio value="false">One Way</Radio>
                 <Radio value="true">Hedge Mode</Radio>
               </Stack>
             </RadioGroup>
-            <Text mt="2">Default mode is {hedgeMode === 'false' ? 'One Way' : 'Hedge Mode'}.</Text>
+            <Text mt="2">Default mode is {!settings.hedgeMode ? 'One Way' : 'Hedge Mode'}.</Text>
           </FormControl>
 
           {/* Single Asset / Multi Asset Mode */}
           <FormControl mt="4">
             <FormLabel>Single Asset / Multi Asset Mode</FormLabel>
-            <RadioGroup onChange={(value) => setSettings({ ...settings, assetMode: value })} value={assetMode}>
+            <RadioGroup onChange={(value) => setSettings({ ...settings, assetMode: value })} value={settings.assetMode}>
               <Stack direction="row">
                 <Radio value="false">Single Asset Mode (SAM)</Radio>
                 <Radio value="true">Multi Asset Mode (MAM)</Radio>
@@ -156,7 +156,7 @@ console.log("Updated Fields", updatedFields);
           {/* Stick Settings Button */}
           <FormControl mt="6">
             <Checkbox 
-                isChecked={stickSettings} 
+                isChecked={settings.stickSettings} 
                 onChange={(e) => setSettings({ ...settings, stickSettings: e.target.checked })}>
                 Stick Settings
             </Checkbox>
