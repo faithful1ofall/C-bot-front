@@ -23,35 +23,35 @@ const routes = [
     layout: '/admin',
     path: '/default',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    element: <MainDashboard />,
+    component: <MainDashboard />,
   },
   {
     name: 'Edit Strategy',
     layout: '/admin',
     path: '/edit/:strategyid/:selectedPairs',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    element: <EditStrategyWrapper />
+    component: <EditStrategyWrapper />
   },
   {
     name: 'Create Strategy',
     layout: '/admin',
     path: '/create',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    element: <CreateStrategyModal />,
+    component: <CreateStrategyModal />,
   },
   {
     name: 'Sign In',
     layout: '/auth',
     path: '/sign-in',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
-    element: <SignInCentered />,
+    component: <SignInCentered />,
   },
   {
     name: 'Logger',
     layout: '/admin',
     path: '/logger',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
-    element: <Logger />,
+    component: <Logger />,
   },
 ];
 
