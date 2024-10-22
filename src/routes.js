@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icon } from '@chakra-ui/react';
 import { MdHome, MdLock } from 'react-icons/md';
-import { useParams } from 'react-router-dom';
 
 // Admin Imports
 import MainDashboard from 'views/admin/default';
@@ -11,11 +10,6 @@ import Logger from 'views/admin/default/components/logger';
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';
-
-const EditStrategyWrapper = (props) => {
-  const { strategyid, selectedPairs } = props.match.params;
-  return <EditStrategyForm strategyid={strategyid} selectedPairs={selectedPairs} />;
-};
 
 const routes = [
   {
