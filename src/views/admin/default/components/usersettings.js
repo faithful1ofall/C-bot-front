@@ -138,7 +138,7 @@ console.log("Updated Fields", updatedFields);
                 <Radio value="true">Hedge Mode</Radio>
               </Stack>
             </RadioGroup>
-            <Text mt="2">Default mode is {!settings.hedgeMode ? 'One Way' : 'Hedge Mode'}.</Text>
+            <Text mt="2">Default mode is {!settings.hedgeMode ? 'One Way Mode' : 'Hedge Mode'}.</Text>
           </FormControl>
 
           {/* Single Asset / Multi Asset Mode */}
@@ -150,7 +150,7 @@ console.log("Updated Fields", updatedFields);
                 <Radio value="true">Multi Asset Mode (MAM)</Radio>
               </Stack>
             </RadioGroup>
-            <Text mt="2">Default is Single Asset Mode (SAM).</Text>
+            <Text mt="2">Default is {!assetMode ? 'Single Asset Mode (SAM)' : 'Multi Asset Mode (MAM)'}.</Text>
           </FormControl>
 
           {/* Stick Settings Button */}
