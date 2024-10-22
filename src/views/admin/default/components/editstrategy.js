@@ -93,18 +93,15 @@ const EditStrategyForm = React.memo(
         const data1 = await response1.json();
   
         setOriginalStrategy(data1);
-        setNewStrategyName(data1);
         setNewStrategyName((prevState) => ({
-    ...prevState,
-    tradingPairs: data1.tradingPairs || selectedPairs[0],
-    marginMode: data1.marginMode || 'CROSSED',
-          timeFrame: data1.timeFrame || '15s',
-          tradeDirection: data1.tradeDirection || 'Buy',
-          isNegativeCandleEnabled: data1.isNegativeCandleEnabled || false,
-          
-          
-          
-  }));
+  ...prevState,
+  ...data1,
+  tradingPairs: data1.tradingPairs || selectedPairs[0], // Default if not provided
+  marginMode: data1.marginMode || 'CROSSED', // Default if not provided
+  timeFrame: data1.timeFrame || '15s', // Default if not provided
+  tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
+  isNegativeCandleEnabled: data1.isNegativeCandleEnabled !== undefined ? data1.isNegativeCandleEnabled : false, // Use undefined check
+}));
 };
         
           
