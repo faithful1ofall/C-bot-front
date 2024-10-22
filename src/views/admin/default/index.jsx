@@ -40,7 +40,7 @@ import GeneralExchangeSettingsModal from './components/usersettings';
 import TransferModal from './components/Transfer';
 import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
-// import Logger from './components/logger';
+import LoggerDropdown from './components/loggerdrop';
 import TradingHookTriggerModal from './components/tradehook';
 import StrategyDeleteConfirmationModal from './components/strategydelete';
 import UserDeleteConfirmationModal from './components/userdelete';
@@ -1140,6 +1140,13 @@ export default function UserReports() {
         />
         <TradeHistoryTable tradeHistory={positionshistory.pastTrades} />
       </Box>
+      <Divider
+        mt={5}
+        mb={5}
+        borderColor="black.400"
+        borderWidth="1px"
+      />
+      <LoggerDropdown />
     </Box>
   );
 }
