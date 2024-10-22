@@ -1402,11 +1402,13 @@ export default function UserReports() {
                 <MenuList>
                   <MenuItem
                   as={NavLink}
-                  to={`/admin/edit/${strategy.id}/${selectedPairs}`}
+                  to={`/admin/edit`}
                     onClick={() => {
                       setExpandedStrategyId((prev) =>
                         prev === strategy.id ? null : strategy.id,
                       ); // Toggle form visibility
+                      localStorage.setItem("strategyid", strategy.id);
+                      localStorage.setItem("selectpairs", selectedPairs);
                     }}
                   >
                     {expandedStrategyId === strategy.id
