@@ -585,12 +585,17 @@ const EditStrategyForm = React.memo(
                 order will be executed instead.
               </FormLabel>
               <FormLabel>Offset %</FormLabel>
+              <InputGroup>
               <NumberInput
                 value={newStrategyName.isDelayEnabled?.offset || ''}
                 onChange={(e) => handleNestedChange('isDelayEnabled', 'offset', e)}
               >
                 <NumberInputField />
               </NumberInput>
+              <InputRightElement width="4.5rem">
+              <Text>{(newStrategyName.isDelayEnabled?.offset * newStrategyName.leverage).toFixed(2) || 0}%</Text>
+            </InputRightElement>
+          </InputGroup>
             </Box>
           )}
 
