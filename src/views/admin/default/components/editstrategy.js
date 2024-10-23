@@ -563,7 +563,7 @@ const EditStrategyForm = React.memo(
           <FormLabel mt="4">Order Type (for SL/TP)</FormLabel>
           <Select
             value={newStrategyName.orderType || ''}
-            onChange={(e) => handleChange('orderType', e)}
+            onChange={(e) => handleChange('orderType', e.target.value)}
           >
             <option value="limit">Limit Order</option>
             <option value="market">Market Order</option>
