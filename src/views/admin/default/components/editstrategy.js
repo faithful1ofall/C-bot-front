@@ -97,6 +97,7 @@ const EditStrategyForm = React.memo(
   ...prevState,
   ...data1,
   tradingPair: data1.tradingPair || 'ETHUSDT', // Default if not provided
+          orderType: data1.orderType || 'market'
   marginMode: data1.marginMode || 'CROSSED', // Default if not provided
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
