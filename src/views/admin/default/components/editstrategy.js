@@ -35,7 +35,7 @@ const EditStrategyForm = React.memo(
     const [newStrategyName, setNewStrategyName] = useState({
       name: false,
       hookkey: '',
-      tradingPairs: `${selectedPairs[0]}`,
+      tradingPairs: ``,
       tradeDirection: '',
       timeFrame: '',
       negativeCandleTrigger: null,
@@ -96,7 +96,7 @@ const EditStrategyForm = React.memo(
         setNewStrategyName((prevState) => ({
   ...prevState,
   ...data1,
-  tradingPair: data1.tradingPairs || selectedPairs[0], // Default if not provided
+  tradingPair: data1.tradingPair || selectedPairs[0], // Default if not provided
   marginMode: data1.marginMode || 'CROSSED', // Default if not provided
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
