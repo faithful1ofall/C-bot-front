@@ -53,7 +53,7 @@ const Logger = () => {
   }, [jwttoken]);
 
   const openLoggerInNewTab = () => {
-    window.open('/auth/logger', '_blank', 'noopener,noreferrer');
+    window.open('/admin/logger', '_blank', 'noopener,noreferrer');
   };
 
   const formatTimestamp = (timestamp) => {
