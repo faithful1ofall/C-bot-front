@@ -20,7 +20,6 @@ const GeneralExchangeSettingsModal = ({ balance, userid }) => {
   
   const [originalsettings, setOriginalSettings] = useState(null);
 
-  const {  stickSettings, hedgeMode, assetMode } = settings;
   const jwttoken = localStorage.getItem("jwtToken");
 
   const fetchSettings = useCallback(async (useridset) => {

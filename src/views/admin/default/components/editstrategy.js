@@ -107,7 +107,7 @@ const EditStrategyForm = React.memo(
       } catch (error) {
         console.error('Request failed', error);
       }
-    }, [jwttoken]);
+    }, [jwttoken, selectedPairs]);
 
     useEffect(() => {
       handleEdit(strategyid);
