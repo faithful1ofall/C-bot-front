@@ -276,8 +276,8 @@ const EditStrategyForm = React.memo(
         <FormControl mb="4">
           <FormLabel>Trading Pair</FormLabel>
           <Select
-            value={newStrategyName.tradingPairs}
-            onChange={(e) => handleChange('tradingPairs', e.target.value)}
+            value={newStrategyName.tradingPair}
+            onChange={(e) => handleChange('tradingPair', e.target.value)}
           >
             {selectedPairs?.map((pair) => (
               <option key={pair} value={pair}>
