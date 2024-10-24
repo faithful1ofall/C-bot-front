@@ -96,7 +96,8 @@ const EditStrategyForm = React.memo(
         setNewStrategyName((prevState) => ({
   ...prevState,
   ...data1,
-  tradingPair: data1.tradingPair || selectedPairs[0], // Default if not provided
+  tradingPair: data1.tradingPair || 'ETHUSDT', // Default if not provided
+          orderType: data1.orderType || 'market',
   marginMode: data1.marginMode || 'CROSSED', // Default if not provided
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
@@ -107,7 +108,7 @@ const EditStrategyForm = React.memo(
       } catch (error) {
         console.error('Request failed', error);
       }
-    }, [jwttoken, selectedPairs]);
+    }, [jwttoken]);
 
     useEffect(() => {
       handleEdit(strategyid);
@@ -583,7 +584,7 @@ const EditStrategyForm = React.memo(
           <FormLabel mt="4">Order Type (for SL/TP)</FormLabel>
           <Select
             value={newStrategyName.orderType || ''}
-            onChange={(e) => handleChange('orderType', e)}
+            onChange={(e) => handleChange('orderType', e.target.value)}
           >
             <option value="limit">Limit Order</option>
             <option value="market">Market Order</option>
