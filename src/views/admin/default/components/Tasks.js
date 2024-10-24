@@ -1,4 +1,4 @@
-// Chakra imports
+// Chakra import
 import {
   Box,
   Flex,
