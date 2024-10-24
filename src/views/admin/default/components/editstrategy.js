@@ -185,6 +185,27 @@ const EditStrategyForm = React.memo(
       });
     };
 
+    const handleApply = async () => {
+      try {
+        await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/binance/applystrategy/${strategyid}`);
+        toast({
+          title: 'Strategy update Applied successfully.',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      } catch (error) {
+        toast({
+          title: 'Failed to Apply update strategy.',
+          description: 'Please try again.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+
     const handleSubmit = async () => {
       const newStrategy = newStrategyName;
 
@@ -626,6 +647,9 @@ const EditStrategyForm = React.memo(
 
         <Button mt="8" colorScheme="teal" onClick={handleSubmit}>
           Update Strategy
+        </Button>
+        <Button mt="8" ml="8" colorScheme="teal" onClick={handleApply}>
+          Apply Now
         </Button>
       </Box>
     );
