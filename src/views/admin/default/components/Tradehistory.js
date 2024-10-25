@@ -78,6 +78,19 @@ import {
           </Text>
         ),
       }),
+      columnHelper.accessor('userName', {
+        id: 'userName',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            USERNAME
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue()}
+          </Text>
+        ),
+      }),
       columnHelper.accessor('symbol', {
         id: 'exitPrice',
         header: () => (
@@ -130,16 +143,42 @@ import {
           </Text>
         ),
       }),
-      columnHelper.accessor('userName', {
-        id: 'userName',
+      columnHelper.accessor('leverage', {
+        id: 'leverage',
         header: () => (
           <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
-            USERNAME
+            LEVERAGE
           </Text>
         ),
         cell: (info) => (
           <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
-            {info.getValue()}
+            {info.getValue()}x
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('tp', {
+        id: 'tp',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            TAKE PROFIT
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue() || 'N/A'}
+          </Text>
+        ),
+      }),
+      columnHelper.accessor('sl', {
+        id: 'sl',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            STOP LOSS
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue() || 'N/A'}
           </Text>
         ),
       }),
