@@ -156,6 +156,19 @@ import {
           </Text>
         ),
       }),
+      columnHelper.accessor('call', {
+        id: 'call',
+        header: () => (
+          <Text fontSize={{ sm: '10px', lg: '12px' }} color="gray.400">
+            CALL
+          </Text>
+        ),
+        cell: (info) => (
+          <Text align="center" color={textColor} fontSize="sm" fontWeight="700">
+            {info.getValue()}
+          </Text>
+        ),
+      }),
       columnHelper.accessor('tp', {
         id: 'tp',
         header: () => (
