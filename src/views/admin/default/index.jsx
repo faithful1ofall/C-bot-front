@@ -665,6 +665,11 @@ export default function UserReports() {
     // Navigate to the edit route
     navigate(`/admin/edit`);
   };
+  // Function to handle navigation and setting local storage
+  const handleClosehook = async() => {
+    await fetchPosition();
+    onTradingHookTriggerClose();
+  };
 
   return (
     <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
@@ -850,7 +855,7 @@ export default function UserReports() {
     {isTradingHookTriggerOpen && (
       <TradingHookTriggerModal
         isOpen={isTradingHookTriggerOpen}
-        onClose={onTradingHookTriggerClose}
+        onClose={handleClosehook}
         strategies={strategies}
       />
     )}
@@ -871,6 +876,7 @@ export default function UserReports() {
           onClose={onUserClose}
           jwttoken={jwttoken}
           useredit={useredit}
+          fetchusers={fetchUsers}
         />
       )}
 

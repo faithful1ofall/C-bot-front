@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 
-const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit }) => {
+const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit, fetchusers }) => {
 
     const toast = useToast();
     const [olduser, setOldUser] = useState(null);
@@ -32,6 +32,7 @@ const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit }) => {
         const data1 = await response1.json();
         setOldUser(data1);
         setNewUser(data1);
+        await fetchusers();
       } catch (error) {
         toast({
           title: 'Error fetching user details.',
@@ -42,7 +43,7 @@ const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit }) => {
         });
         console.error('Request failed', error);
       }
-    }, [jwttoken, toast]);
+    }, [jwttoken, toast, fetchusers]);
 
     useEffect(() => {
       if(useredit === '') {
