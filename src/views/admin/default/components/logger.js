@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Box,
   Flex,
@@ -13,65 +13,73 @@ const Logger = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1); // Page counter for pagination
+  const [hasMore, setHasMore] = useState(true); // To track if there are more logs to load
+  const observerRef = useRef(); // Ref for the observer
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const jwttoken = localStorage.getItem("jwtToken");
 
-  // Simulating a WebSocket connection or API call to fetch logs
+  // Fetch logs based on the page
+  const fetchLogs = async (page) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/logs?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        }
+      });
+      const data = await response.json();
+      console.log('datalogs api', data.logs);
+
+      setLogs((prevLogs) => [...prevLogs, ...data.logs]);
+      setHasMore(data.logs.length > 0); // Check if there are more logs to load
+    } catch (err) {
+      setError('Error fetching logs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchLogs = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/logs`,  {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${jwttoken}`,
-            }
-        }); // Replace with your API endpoint
-        const data = await response.json();
-        console.log('datalogs api', data.logs);
-        setLogs(data.logs); // Assuming your API returns logs in this format
-      } catch (err) {
-        setError('Error fetching logs');
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Fetch the initial set of logs
+    fetchLogs(page);
+  }, [page, jwttoken]);
 
-    fetchLogs();
+  // Observer callback to load more logs when scrolled to bottom
+  const lastLogRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observerRef.current) observerRef.current.disconnect();
 
-    // Optional: Setup a WebSocket connection for live updates
-     const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET); // Replace with your WebSocket URL
-    socket.onmessage = (event) => {
-        const newLog = JSON.parse(event.data);
-        console.log('socketlog', newLog);
-        setLogs((prevLogs) => [newLog, ...prevLogs]);
-    }; 
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1); // Load next page
+        }
+      });
 
-    return () => {
-      socket.close();
-    }; 
-  }, [jwttoken]);
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore]
+  );
 
   const openLoggerInNewTab = () => {
     window.open('/admin/logger', '_blank', 'noopener,noreferrer');
   };
 
   const formatTimestamp = (timestamp) => {
-    if (timestamp){
-        const date = new Date(timestamp);
-        const formattedDate = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true,
-        }).format(date);
-
-        return formattedDate;
+    if (timestamp) {
+      const date = new Date(timestamp);
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      }).format(date);
     }
-    
   };
 
   return (
@@ -89,27 +97,32 @@ const Logger = () => {
       <Button mb={2} onClick={() => openLoggerInNewTab()} colorScheme="blue">
         Open in New Tab
       </Button>
-      {loading && (
-        <Flex justifyContent="center" alignItems="center">
-          <Spinner />
-        </Flex>
-      )}
       {error && (
         <Text color="red.400" mb={4}>
           {error}
         </Text>
       )}
       <VStack spacing={2} align="start">
-        {logs.map((log, index) => (
-          <Text key={index} color={textColor} fontSize="sm">
-            <strong>{formatTimestamp(log.timestamp)}:</strong> {log.message}
-          </Text>
-        ))}
+        {logs.map((log, index) => {
+          // Attach ref to the last log for infinite scrolling
+          const isLastLog = logs.length === index + 1;
+          return (
+            <Text
+              ref={isLastLog ? lastLogRef : null}
+              key={index}
+              color={textColor}
+              fontSize="sm"
+            >
+              <strong>{formatTimestamp(log.timestamp)}:</strong> {log.message}
+            </Text>
+          );
+        })}
       </VStack>
-    {/*   <Button mt={4} onClick={() => setLogs([])} colorScheme="red">
-        Clear Logs
-      </Button> */}
-      
+      {loading && (
+        <Flex justifyContent="center" alignItems="center" mt={4}>
+          <Spinner />
+        </Flex>
+      )}
     </Box>
   );
 };
