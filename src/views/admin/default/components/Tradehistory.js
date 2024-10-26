@@ -12,8 +12,8 @@ import {
     useColorModeValue,
     Spinner,
   } from '@chakra-ui/react';
-  import React, { useEffect, useState, useRef, useCallback } from 'react';
-  
+import * as React from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
   import {
     createColumnHelper,
     flexRender,
@@ -34,7 +34,7 @@ import {
     const [tradeHistory, setPositionsHistory] = useState([]); // Your trade positions data
       const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+ // const [error, setError] = useState(null);
   const [page, setPage] = useState(1); // Page counter for pagination
   const [hasMore, setHasMore] = useState(true); // To track if there are more logs to load
   const observerRef = useRef(); // Ref for the observer
@@ -327,7 +327,7 @@ import {
               ))}
             </Thead>
             <Tbody>
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map((row, index) => (
                 <Tr key={row.id} ref={index === table.getRowModel().rows.length - 1 ? lastLogRef : null}>
                   {row.getVisibleCells().map((cell) => (
                       
