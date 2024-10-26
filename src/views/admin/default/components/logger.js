@@ -18,9 +18,12 @@ const Logger = () => {
   const observerRef = useRef(); // Ref for the observer
   const textColor = useColorModeValue('secondaryGray.900', 'white');
   const jwttoken = localStorage.getItem("jwtToken");
+  const isMainWindow = window.location.pathname.includes('/admin/logger')
+
+  console.log("isMainWindow", isMainWindow);
 
   // Fetch logs based on the page
-  const fetchLogs = async (page) => {
+  const fetchLogs = useCallback(async (page) => {
     setLoading(true);
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/logs?page=${page}`, {
@@ -39,12 +42,12 @@ const Logger = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [jwttoken]);
 
   useEffect(() => {
     // Fetch the initial set of logs
     fetchLogs(page);
-  }, [page, jwttoken]);
+  }, [page, jwttoken, fetchLogs]);
 
   // Observer callback to load more logs when scrolled to bottom
   const lastLogRef = useCallback(
@@ -85,6 +88,7 @@ const Logger = () => {
   return (
     <Box
       p={4}
+      mt={12}
       bg={useColorModeValue('gray.50', 'gray.800')}
       borderRadius="lg"
       boxShadow="md"
@@ -94,9 +98,11 @@ const Logger = () => {
       <Text fontSize="2xl" fontWeight="bold" color={textColor} mb={2}>
         Activity Logs
       </Text>
+      {!isMainWindow && (
       <Button mb={2} onClick={() => openLoggerInNewTab()} colorScheme="blue">
         Open in New Tab
       </Button>
+      )}
       {error && (
         <Text color="red.400" mb={4}>
           {error}
