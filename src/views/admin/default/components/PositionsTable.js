@@ -250,7 +250,7 @@ import {
         </Flex>
         <Box>
           <Table variant="simple" color="gray.500" mb="24px" mt="12px">
-            <Thead>
+            <Thead position="sticky" top="0" zIndex="docked" bg={useColorModeValue('gray.50', 'gray.800')}>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
