@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 // chakra imports
 import { Box, Flex, HStack, Text, useColorModeValue } from "@chakra-ui/react";
 
@@ -143,15 +143,14 @@ export function SidebarLinks(props) {
     <>
       {createLinks(routes)}
       {/* Logout link */}
-      <NavLink onClick={handleLogout} to="#" style={{ textDecoration: 'none' }}>
-        <Box>
+    
+        <Box onClick={handleLogout}>
           <HStack spacing="22px" py='5px' ps='10px'>
             <Text color={textColor} fontWeight="normal">
               Logout
             </Text>
           </HStack>
         </Box>
-      </NavLink>
     </>
   );
 }
