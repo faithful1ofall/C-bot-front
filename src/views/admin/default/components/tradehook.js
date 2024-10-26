@@ -38,16 +38,33 @@ const TradingHookTriggerModal = React.memo(({ isOpen, onClose, strategies }) => 
           const data = await response.json();
           console.log('hooking', data);
     
-          // Fetch updated position data
-         // await fetchPosition();
-    
-          toast({
-            title: 'Trade hook successful.',
-            description: `Trade executed successfully.`,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
+          if (data.data.msg && Object.keys(data.data.msg).length > 0) {
+            // Concatenate all error messages from data.errors array into one string
+            const allErrorMessages = Object.entries(data.data.msg).map(([userId, messages]) => {
+              // Join each user's error messages into a single line
+              const userErrors = messages.map((msg) => `• ${msg.msg || "Unknown error"}`).join('\n');
+              return `User ID ${userId}:\n${userErrors || "no error to display"} `;
+            }).join('\n\n'); // Separate each user's errors with extra newline for readability
+          
+            // Display a single toast with all error messages
+            toast({
+              title: 'Trade hook errors encountered.',
+              description: allErrorMessages,
+              status: 'error',
+              duration: 16000,
+              isClosable: true,
+            });
+          } else {
+            // If no errors, display a success message
+            toast({
+              title: 'Trade hook successful.',
+              description: 'Trade executed successfully.',
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+                    
         } catch (error) {
           toast({
             title: 'Error initiating trade hook.',
