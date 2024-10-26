@@ -10,8 +10,9 @@ import {
     Thead,
     Tr,
     useColorModeValue,
+    Spinner,
   } from '@chakra-ui/react';
-  import * as React from 'react';
+  import React, { useEffect, useState, useRef, useCallback } from 'react';
   
   import {
     createColumnHelper,
@@ -26,10 +27,65 @@ import {
   
   const columnHelper = createColumnHelper();
   
-  export default function TradeHistoryTable({ tradeHistory }) {
+  export default function TradeHistoryTable() {
     const [sorting, setSorting] = React.useState([]);
     const textColor = useColorModeValue('secondaryGray.900', 'white');
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
+    const [tradeHistory, setPositionsHistory] = useState([]); // Your trade positions data
+      const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1); // Page counter for pagination
+  const [hasMore, setHasMore] = useState(true); // To track if there are more logs to load
+  const observerRef = useRef(); // Ref for the observer
+  const textColor = useColorModeValue('secondaryGray.900', 'white');
+  const jwttoken = localStorage.getItem("jwtToken");
+  
+
+      
+        // Fetch logs based on the page
+  const fetchPositionhistory = useCallback(async (page) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/all-past-trades?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwttoken}`,
+        }
+      });
+      const data = await response.json();
+      console.log('position history', data);
+
+        setPositionsHistory((prevHistory) => [...prevHistory, ...data.pastTrades]);
+      setHasMore(data.pastTrades && data.pastTrades.length > 0);
+    } catch (err) {
+      setError('Error fetching logs');
+    } finally {
+      setLoading(false);
+    }
+  }, [jwttoken]);
+
+  useEffect(() => {
+    // Fetch the initial set of logs
+    fetchPositionhistory(page);
+  }, [page, fetchPositionhistory]);
+
+  // Observer callback to load more logs when scrolled to bottom
+  const lastLogRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1); // Load next page
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore]
+  );
   
     const columns = [
       columnHelper.accessor('dateOpened', {
@@ -273,8 +329,9 @@ import {
             </Thead>
             <Tbody>
               {table.getRowModel().rows.map((row) => (
-                <Tr key={row.id}>
+                <Tr key={row.id} ref={index === table.getRowModel().rows.length - 1 ? lastLogRef : null}>
                   {row.getVisibleCells().map((cell) => (
+                      
                     <Td
                       key={cell.id}
                       fontSize={{ sm: '14px' }}
@@ -287,6 +344,11 @@ import {
                 </Tr>
               ))}
             </Tbody>
+                  {loading && (
+        <Flex justifyContent="center" alignItems="center" mt={4}>
+          <Spinner />
+        </Flex>
+      )}
           </Table>
         </Box>
       </Card>
