@@ -38,8 +38,7 @@ import {
   const [page, setPage] = useState(1); // Page counter for pagination
   const [hasMore, setHasMore] = useState(true); // To track if there are more logs to load
   const observerRef = useRef(); // Ref for the observer
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const jwttoken = localStorage.getItem("jwtToken");
+    const jwttoken = localStorage.getItem("jwtToken");
   
 
       
