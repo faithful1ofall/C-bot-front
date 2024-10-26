@@ -30,7 +30,7 @@ export function SidebarLinks(props) {
   const handleLogout = () => {
     // Perform logout logic here
     localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
-    navigate("/auth/sign-in"); // Redirect to login page
+    navigate("/auth/sign-in", { replace: true }); // Redirect to login page
   };
 
   // this function creates the links from the secondary accordions (for example auth -> sign-in -> default)
