@@ -28,7 +28,7 @@ import {
   
   const columnHelper = createColumnHelper();
   
-  export default function TradePositionTable() {
+  export default function TradePositionTable({ onClosePosition }) {
     const [sorting, setSorting] = React.useState([]);
     const textColor = useColorModeValue('secondaryGray.900', 'white');
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
