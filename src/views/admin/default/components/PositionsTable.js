@@ -270,6 +270,9 @@ import {
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </Text>
+                           <Button colorScheme="blue">
+                                  Refresh
+                            </Button>
                     </Th>
                   ))}
                 </Tr>
