@@ -46,7 +46,7 @@ const UserModal = React.memo(({ isOpen, onClose, jwttoken, useredit, fetchusers 
     }, [jwttoken, toast, fetchusers]);
 
     useEffect(() => {
-      if(useredit === '') {
+      if(useredit !== '') {
         handleEditUser(useredit);
       }      
     }, [handleEditUser, useredit]);
