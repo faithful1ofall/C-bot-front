@@ -13,14 +13,14 @@ import SignInCentered from 'views/auth/signIn';
 
 const routes = [
   {
-    name: 'Bot Admin interface',
+    name: 'Home',
     layout: '/admin',
     path: '/default',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <MainDashboard />,
   },
   {
-    name: 'Edit Strategy',
+    name: 'Strategy',
     layout: '/admin',
     path: '/edit',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
@@ -41,7 +41,7 @@ const routes = [
     component: <SignInCentered />,
   },
   {
-    name: 'Logger',
+    name: 'Logs',
     layout: '/admin',
     path: '/logger',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
