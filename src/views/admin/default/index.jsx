@@ -667,7 +667,7 @@ export default function UserReports() {
   };
   // Function to handle navigation and setting local storage
   const handleClosehook = async() => {
-    await fetchPosition();
+ //   await fetchPosition();
     onTradingHookTriggerClose();
   };
 
