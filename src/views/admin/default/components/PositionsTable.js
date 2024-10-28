@@ -28,10 +28,41 @@ import {
   
   const columnHelper = createColumnHelper();
   
-  export default function TradePositionTable({ positions, onClosePosition }) {
+  export default function TradePositionTable() {
     const [sorting, setSorting] = React.useState([]);
     const textColor = useColorModeValue('secondaryGray.900', 'white');
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
+
+     const [positions, setPosition] = React.useState([]);
+    const  onRefresh = async() => {
+    
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-open-positions`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`, // Attach the token
+          },
+        },
+      );
+
+      const data = await response.json(); // Parse the JSON response
+
+      if (!response.ok) {
+        console.log('positions error data', data);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setPosition(data.positions);
+      console.log(data.positions);
+    } catch (err) {
+      console.error(err);
+    }
+
+        
+
+    }
   
     const columns = [
       columnHelper.accessor('openTime', {
@@ -247,6 +278,9 @@ import {
           >
             Open Trade Positions
           </Text>
+                 <Button colorScheme="blue" onClick={onRefresh}>
+            Refresh
+          </Button>
         </Flex>
         <Box>
           <Table variant="simple" color="gray.500" mb="24px" mt="12px">
@@ -270,9 +304,6 @@ import {
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </Text>
-                           <Button colorScheme="blue">
-                                  Refresh
-                            </Button>
                     </Th>
                   ))}
                 </Tr>
