@@ -33,7 +33,7 @@ const Logger = () => {
     return () => {
       socket.close();
     }; 
-  }, [jwttoken]);
+  
 
   // Fetch logs based on the page
   const fetchLogs = useCallback(async (page) => {
