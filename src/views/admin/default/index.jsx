@@ -445,7 +445,7 @@ export default function UserReports() {
     fetchStrategies
   ]);
 
-  const handleuseractive = async (userIdd, currentstatus) => {
+  const handleuseractive = useCallback(async (userIdd, currentstatus) => {
     const activate = {
       active: !currentstatus,
     };
@@ -488,7 +488,7 @@ export default function UserReports() {
     }
 
     console.log('User activate Update', activate);
-  };
+  } [jwttoken, fetchUsers]);
 
   const handleactive = async (strategyIdd, currentstatus) => {
     const activate = {
