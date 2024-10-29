@@ -934,7 +934,7 @@ export default function UserReports() {
             </Flex>
             <Switch
               isChecked={user?.active}
-              onChange={handleuseractive(user.id, user.active)}
+              onChange={() => handleuseractive(user.id, user.active)}
               colorScheme="teal"
             />
 
