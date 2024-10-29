@@ -303,7 +303,7 @@ export default function UserReports() {
       if (enabledPermissions.length > 0) {
         toast({
           title: 'IP Limit Used and Total Per minute(1 minute)',
-          description: `${permissions.usedlimit}/${permissions.limit} per-minute.`,
+          description: `${permissions.usedlimit}/${permissions.limit} per-minute. userid ${usid}`,
           status: 'success',
           duration: 7000,
           isClosable: true,
