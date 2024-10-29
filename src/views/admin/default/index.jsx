@@ -129,32 +129,6 @@ export default function UserReports() {
     }
   }, [jwttoken]);
 
-  const fetchPosition = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-open-positions`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`, // Attach the token
-          },
-        },
-      );
-
-      const data = await response.json(); // Parse the JSON response
-
-      if (!response.ok) {
-        console.log('positions error data', data);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      setPositions(data);
-      console.log(data);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [jwttoken]);
-
   const handleClosePosition = async (position) => {
     try {
       const response = await fetch(
@@ -187,7 +161,6 @@ export default function UserReports() {
         duration: 5000,
         isClosable: true,
       });
-      fetchPosition();
     } catch (err) {
       toast({
         title: 'Error closing trade.',
@@ -465,11 +438,9 @@ export default function UserReports() {
   useEffect(() => {
     fetchUsers();
     fetchStrategies();
-    fetchPosition();
     fetchPositionhistory();
   }, [
     fetchPositionhistory,
-    fetchPosition,
     fetchUsers,
     fetchStrategies
   ]);
@@ -1134,7 +1105,6 @@ export default function UserReports() {
           borderWidth="1px"
         />
         <TradePositionTable
-          positions={positions?.positions}
           onClosePosition={handleClosePosition}
         />
 
