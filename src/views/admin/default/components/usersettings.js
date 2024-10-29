@@ -12,9 +12,10 @@ import {
   Stack
 } from '@chakra-ui/react'; // Assuming you're using Chakra UI
 
-const GeneralExchangeSettingsModal = ({ balance, userid }) => {
+const GeneralExchangeSettingsModal = ({ userid }) => {
   
   const [settings, setSettings] = useState({});
+  const [balance, setBalance] = useState({});
   
   const toast = useToast();
   
@@ -108,6 +109,32 @@ console.log("Updated Fields", updatedFields);
     }
   };
 
+  const fetchAccountinfo = async (accuserid, assetpass) => {
+    const assetfind = 'USDT' || assetpass;
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        const error = await response.json();
+        return error.message.msg;
+      }
+      const data = await response.json(); // Parse the JSON response
+      setBalance(data);
+      
+    } catch (err) {
+      console.error(err.message);
+      
+    }
+  };
+
 
   return (
     <Box mt="4" bg="gray.50" p="4" borderRadius="md">
@@ -119,9 +146,12 @@ console.log("Updated Fields", updatedFields);
           </FormControl>
 
           {/* User Account Balance */}
-          <FormControl mt="4">
+          <FormControl mt="4" display="flex" justifyContent="space-between" alignItems="center">
             <FormLabel>User Account Balance</FormLabel>
             <Text>Available balance in Futures Account (USDT): {balance?.balance?.availableBalance || 0} USDT</Text>
+            <Button onClick={fetchAccountinfo(userid)} size="sm" ml="2">
+          Refresh
+        </Button>
           </FormControl>
 
 
