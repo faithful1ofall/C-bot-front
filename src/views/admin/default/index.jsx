@@ -642,6 +642,11 @@ export default function UserReports() {
     onTradingHookTriggerClose();
   };
 
+  const MemoizedSwitch = React.memo(({ isChecked, onChange }) => (
+  <Switch isChecked={isChecked} onChange={onChange} colorScheme="teal" />
+));
+
+
   return (
     <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
       <Box mt={15} position="relative" textAlign="left">
@@ -930,11 +935,11 @@ export default function UserReports() {
                 </MenuList>
               </Menu>
             </Flex>
-            <Switch
-              isChecked={user?.active}
-              onChange={() => handleuseractive(user.id, user.active)}
-              colorScheme="teal"
-            />
+            <MemoizedSwitch
+  isChecked={user?.active}
+  onChange={() => handleuseractive(user.id, !user.active)}
+/>
+            
 
             <Box mt="4">
               <Text>User Name: {user?.name}</Text>
