@@ -288,16 +288,10 @@ import {
             Open Trade Positions
           </Text>
                  <Button colorScheme="blue" onClick={onRefresh}>
-
-                {loading && (
-        <Flex justifyContent="center" alignItems="center" mt={4}>
-          <Spinner />
-        </Flex>
+                {loading ? 
+          <Spinner size="sm" /> : 'Refresh'
+        
       )}
-
-{!loading && (
-            Refresh
-    )}
           </Button>
         </Flex>
         <Box>
