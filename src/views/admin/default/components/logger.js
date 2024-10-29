@@ -11,7 +11,6 @@ import {
 
 const Logger = () => {
   const [logs, setLogs] = useState([]);
-//  const [matchlogs, setMatchLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1); // Page counter for pagination
@@ -105,9 +104,9 @@ const Logger = () => {
   const matchlogs = logs.filter(log => log.message.toLowerCase().includes('match'));
   // Separate error logs and regular logs
   const errorLogs = logs.filter(log => log.type === 'error' || log.message.toLowerCase().includes('error'));
-  const regularLogs = logs.filter(log => !errorLogs.includes(log));
   
   return (
+    <>
     <Box
       p={4}
       mt={12}
@@ -143,18 +142,7 @@ const Logger = () => {
           ))}
         </VStack>
       </Box>
-   <Box mb={6}>
-        <Text fontSize="xl" fontWeight="bold" color="red.500" mb={2}>
-          Match Logs
-        </Text>
-        <VStack spacing={2} align="start">
-          {matchlogs.map((log, index) => (
-            <Text key={index} color="red.500" fontSize="sm">
-              <strong>{formatTimestamp(log.timestamp)}:</strong> {log.message}
-            </Text>
-          ))}
-        </VStack>
-      </Box>
+   
    
       <VStack spacing={2} align="start">
         {logs.map((log, index) => {
@@ -178,6 +166,19 @@ const Logger = () => {
         </Flex>
       )}
     </Box>
+        <Box mb={6}>
+        <Text fontSize="xl" fontWeight="bold" color="red.500" mb={2}>
+          Match Logs
+        </Text>
+        <VStack spacing={2} align="start">
+          {matchlogs.map((log, index) => (
+            <Text key={index} color="red.500" fontSize="sm">
+              <strong>{formatTimestamp(log.timestamp)}:</strong> {log.message}
+            </Text>
+          ))}
+        </VStack>
+      </Box>
+        </>
   );
 };
 
