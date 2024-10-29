@@ -22,17 +22,7 @@ const Logger = () => {
 
   console.log("isMainWindow", isMainWindow);
 
-      // Optional: Setup a WebSocket connection for live updates
-    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET); // Replace with your WebSocket URL
-    socket.onmessage = (event) => {
-        const newLog = JSON.parse(event.data);
-        console.log('socketlog', newLog);
-        setLogs((prevLogs) => [newLog, ...prevLogs]);
-    }; 
-
-    return () => {
-      socket.close();
-    }; 
+      
   
 
   // Fetch logs based on the page
@@ -60,6 +50,18 @@ const Logger = () => {
   useEffect(() => {
     // Fetch the initial set of logs
     fetchLogs(page);
+
+    // Optional: Setup a WebSocket connection for live updates
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET); // Replace with your WebSocket URL
+    socket.onmessage = (event) => {
+        const newLog = JSON.parse(event.data);
+        console.log('socketlog', newLog);
+        setLogs((prevLogs) => [newLog, ...prevLogs]);
+    }; 
+
+    return () => {
+      socket.close();
+    }; 
   }, [page, jwttoken, fetchLogs]);
 
   // Observer callback to load more logs when scrolled to bottom
