@@ -17,10 +17,11 @@ import {
 } from '@chakra-ui/react';
 
 
-const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) => {
+const TransferModal = ({ isOpen, onClose, userid }) => {
   const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
   const [transferAmount, setTransferAmount] = useState();
   const [asset, setAsset] = useState('USDT');
+  const [balance, setBalance] = useState({});
   const toast = useToast();
   const jwttoken = localStorage.getItem("jwtToken");
 
@@ -59,6 +60,32 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
       setTransferDirection('');
     } catch (error) {
       console.error('Transfer error:', error);
+    }
+  };
+
+  const fetchAccountinfo = async (accuserid, assetpass) => {
+    const assetfind = 'USDT' || assetpass;
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwttoken}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        const error = await response.json();
+        return error.message.msg;
+      }
+      const data = await response.json(); // Parse the JSON response
+      setBalance(data);
+      
+    } catch (err) {
+      console.error(err.message);
+      
     }
   };
 
@@ -114,10 +141,13 @@ const TransferModal = ({ isOpen, onClose, balance, userid, fetchAccountinfo }) =
           <Text mt={4}>
             Funding Available Balance (USD): {balance?.balance?.fundingBalance || 0}
           </Text>
+          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid)}>
+            Refresh
+          </Button>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleTransfer}>
+          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer}>
             Confirm Transfer
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
