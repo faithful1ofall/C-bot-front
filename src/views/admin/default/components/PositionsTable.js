@@ -291,7 +291,7 @@ import {
                 {loading ? 
           <Spinner size="sm" /> : 'Refresh'
         
-      )}
+      }
           </Button>
         </Flex>
         <Box>
