@@ -488,7 +488,7 @@ export default function UserReports() {
     }
 
     console.log('User activate Update', activate);
-  } [jwttoken, fetchUsers]);
+  }, [jwttoken, fetchUsers]);
 
   const handleactive = async (strategyIdd, currentstatus) => {
     const activate = {
