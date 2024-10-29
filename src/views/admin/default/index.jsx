@@ -279,7 +279,8 @@ export default function UserReports() {
           duration: 5000,
           isClosable: true,
         });
-      }, [jwttoken]);
+      
+      }
 
       const { exchangeInfo } = await response.json(); // Parse the JSON response
 
@@ -311,7 +312,7 @@ export default function UserReports() {
     } catch (error) {
       console.error('Error fetching API info:', error);
     }
-  };
+  }, [jwttoken]);
 
   const fetchUsers = useCallback(async () => {
     try {
