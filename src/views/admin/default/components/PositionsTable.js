@@ -34,6 +34,8 @@ import {
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
 
      const [positions, setPosition] = React.useState([]);
+      const jwttoken = localStorage.getItem("jwtToken");
+  
     const  onRefresh = async() => {
     
     try {
