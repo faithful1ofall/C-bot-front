@@ -100,6 +100,10 @@ const Logger = () => {
     }
   };
 
+  // Separate error logs and regular logs
+  const errorLogs = logs.filter(log => log.type === 'error' || log.message.toLowerCase().includes('error'));
+  const regularLogs = logs.filter(log => !errorLogs.includes(log));
+  
   return (
     <Box
       p={4}
@@ -123,6 +127,20 @@ const Logger = () => {
           {error}
         </Text>
       )}
+
+ <Box mb={6}>
+        <Text fontSize="xl" fontWeight="bold" color="red.500" mb={2}>
+          Error Logs
+        </Text>
+        <VStack spacing={2} align="start">
+          {errorLogs.map((log, index) => (
+            <Text key={index} color="red.500" fontSize="sm">
+              <strong>{formatTimestamp(log.timestamp)}:</strong> {log.message}
+            </Text>
+          ))}
+        </VStack>
+      </Box>
+   
       <VStack spacing={2} align="start">
         {logs.map((log, index) => {
           // Attach ref to the last log for infinite scrolling
