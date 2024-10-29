@@ -886,7 +886,6 @@ export default function UserReports() {
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      fetchAccountinfo(user.id);
                       setTransferUserId(user.id);
                       setIsGeneralSettingsOpen((prev) =>
                         prev === user.id ? null : user.id,
