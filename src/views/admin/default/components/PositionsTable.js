@@ -12,6 +12,7 @@ import {
     Thead,
     Tr,
     useColorModeValue,
+    Spinner,
   } from '@chakra-ui/react';
   import * as React from 'react';
   
@@ -34,9 +35,12 @@ import {
     const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
 
      const [positions, setPosition] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+   
       const jwttoken = localStorage.getItem("jwtToken");
   
     const  onRefresh = async() => {
+        setLoading(true);
     
     try {
       const response = await fetch(
@@ -52,14 +56,17 @@ import {
       const data = await response.json(); // Parse the JSON response
 
       if (!response.ok) {
+          setLoading(false);
         console.log('positions error data', data);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       setPosition(data.positions);
       console.log(data.positions);
+        setLoading(false);
     } catch (err) {
       console.error(err);
+        setLoading(false);
     }
 
         
@@ -281,7 +288,16 @@ import {
             Open Trade Positions
           </Text>
                  <Button colorScheme="blue" onClick={onRefresh}>
+
+                {loading && (
+        <Flex justifyContent="center" alignItems="center" mt={4}>
+          <Spinner />
+        </Flex>
+      )}
+
+{!loading && (
             Refresh
+    )}
           </Button>
         </Flex>
         <Box>
