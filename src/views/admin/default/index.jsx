@@ -258,7 +258,7 @@ export default function UserReports() {
     }
   };
 
-  const fetchapiinfo = async (usid) => {
+  const fetchapiinfo = useCallback( async (usid) => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-exchange-info/${usid}`,
@@ -279,7 +279,7 @@ export default function UserReports() {
           duration: 5000,
           isClosable: true,
         });
-      }
+      }, [jwttoken]);
 
       const { exchangeInfo } = await response.json(); // Parse the JSON response
 
@@ -646,6 +646,13 @@ export default function UserReports() {
   <Switch isChecked={isChecked} onChange={onChange} colorScheme="teal" />
 ));
 
+const MemoizedMenuItem = React.memo(({ onClick, children }) => (
+  <MenuItem onClick={onClick}>
+    {children}
+  </MenuItem>
+));
+
+
 
   return (
     <Box pt={{ base: '40px', md: '80px', xl: '80px' }}>
@@ -917,13 +924,13 @@ export default function UserReports() {
                   >
                     Edit User
                   </MenuItem>
-                  <MenuItem onClick={() => fetchtradeinfo(user.id)}>
+                  <MemoizedMenuItem onClick={() => fetchtradeinfo(user.id)}>
                     Validate API connection
-                  </MenuItem>
-                  <MenuItem onClick={() => fetchapiinfo(user.id)}>
+                  </MemoizedMenuItem>
+                  <MemoizedMenuItem onClick={() => fetchapiinfo(user.id)}>
                     {' '}
                     API IP Limit{' '}
-                  </MenuItem>
+                  </MemoizedMenuItem>
                   <MenuItem
                     onClick={() => {
                       SetUserEdit(user.id);
