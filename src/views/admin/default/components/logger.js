@@ -22,6 +22,19 @@ const Logger = () => {
 
   console.log("isMainWindow", isMainWindow);
 
+      // Optional: Setup a WebSocket connection for live updates
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET); // Replace with your WebSocket URL
+    socket.onmessage = (event) => {
+        const newLog = JSON.parse(event.data);
+        console.log('socketlog', newLog);
+        setLogs((prevLogs) => [newLog, ...prevLogs]);
+    }; 
+
+    return () => {
+      socket.close();
+    }; 
+  }, [jwttoken]);
+
   // Fetch logs based on the page
   const fetchLogs = useCallback(async (page) => {
     setLoading(true);
