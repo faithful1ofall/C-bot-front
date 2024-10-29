@@ -148,7 +148,7 @@ console.log("Updated Fields", updatedFields);
           {/* User Account Balance */}
           <FormControl mt="4" display="flex" justifyContent="space-between" alignItems="center">
             <FormLabel>User Account Balance</FormLabel>
-            <Text>Available balance in Futures Account (USDT): {balance?.balance?.availableBalance || 0} USDT</Text>
+            <Text> {balance?.balance?.availableBalance || 0} USDT</Text>
             <Button onClick={() => fetchAccountinfo(userid)} size="sm" ml="2">
           Refresh
         </Button>
