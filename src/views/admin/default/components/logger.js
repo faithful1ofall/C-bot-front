@@ -11,7 +11,7 @@ import {
 
 const Logger = () => {
   const [logs, setLogs] = useState([]);
-  const [matchlogs, setMatchLogs] = useState([]);
+//  const [matchlogs, setMatchLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1); // Page counter for pagination
@@ -102,7 +102,7 @@ const Logger = () => {
   };
 
   
-  setMatchLogs( log.message.toLowerCase().includes('match'));
+  const matchlogs = logs.filter(log => log.message.toLowerCase().includes('match'));
   // Separate error logs and regular logs
   const errorLogs = logs.filter(log => log.type === 'error' || log.message.toLowerCase().includes('error'));
   const regularLogs = logs.filter(log => !errorLogs.includes(log));
