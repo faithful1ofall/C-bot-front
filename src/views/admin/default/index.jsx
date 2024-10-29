@@ -937,7 +937,7 @@ export default function UserReports() {
             </Flex>
             <MemoizedSwitch
   isChecked={user?.active}
-  onChange={() => handleuseractive(user.id, !user.active)}
+  onChange={() => handleuseractive(user.id, user.active)}
 />
             
 
