@@ -165,12 +165,12 @@ const Logger = () => {
       maxHeight="400px"
       overflowY="auto"
         >
-        <Text fontSize="xl" fontWeight="bold" color="red.500" mb={2}>
+        <Text fontSize="xl" fontWeight="bold" color="blue.500" mb={2}>
           Match Logs
         </Text>
         <VStack spacing={2} align="start">
           {matchlogs.map((log, index) => (
-            <Text key={index} color="red.500" fontSize="sm">
+            <Text key={index} color="blue.500" fontSize="sm">
               <strong>{formatTimestamp(log.timestamp)}:</strong> {log.message}
             </Text>
           ))}
