@@ -37,8 +37,10 @@ const TradingHookTriggerModal = React.memo(({ isOpen, onClose, strategies }) => 
     
           const data = await response.json();
           console.log('hooking', data);
+
+            const hasErrors = Object.values(data.data.msg).some((messages) => messages.length > 0);
     
-          if (data.data.msg && Object.keys(data.data.msg).length > 0 && Object.values(data.data.msg).some((messages) => messages.length > 0)) {
+          if (data.data.msg && Object.keys(data.data.msg).length > 0 && hasErrors) {
             // Concatenate all error messages from data.errors array into one string
             const allErrorMessages = Object.entries(data.data.msg).map(([userId, messages]) => {
               // Join each user's error messages into a single line
