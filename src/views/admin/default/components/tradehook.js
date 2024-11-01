@@ -46,7 +46,7 @@ const TradingHookTriggerModal = React.memo(({ isOpen, onClose, strategies }) => 
               return `User ID ${userId}:\n${userErrors || "no error to display"} `;
             }).join('\n\n'); // Separate each user's errors with extra newline for readability
 
-              if (
+              
             // Display a single toast with all error messages
             toast({
               title: 'Trade hook errors encountered.',
