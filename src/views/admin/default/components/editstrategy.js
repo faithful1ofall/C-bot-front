@@ -408,7 +408,7 @@ const EditStrategyForm = React.memo(
             </NumberInput>
                 <FormLabel mt="4">calls Order Type </FormLabel>
           <Select
-            value={newStrategyName.orderType || ''}
+            value={newStrategyName.callorderType || ''}
             onChange={(e) => handleChange('callorderType', e.target.value)}
           >
             <option value="limit">Limit Order</option>
