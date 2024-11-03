@@ -61,6 +61,7 @@ const EditStrategyForm = React.memo(
       },
       takeProfit: '',
       orderType: '',
+      callorderType: 'limit',
       isDelayEnabled: {
         active: false,
         offset: 0,
@@ -98,6 +99,7 @@ const EditStrategyForm = React.memo(
   ...data1,
   tradingPair: data1.tradingPair || 'ETHUSDT', // Default if not provided
           orderType: data1.orderType || 'market',
+          callorderType: data1.callorderType || 'market',
   marginMode: data1.marginMode || 'CROSSED', // Default if not provided
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
@@ -126,6 +128,7 @@ const EditStrategyForm = React.memo(
             funds: firstCall.funds, // Sync funds
             tp: firstCall.tp,       // Sync TP
             negTrigger: firstCall.negTrigger, // Sync negative trigger
+            
           };
         }
 
@@ -396,12 +399,22 @@ const EditStrategyForm = React.memo(
             </Checkbox>
           </Flex>
           {newStrategyName.isNegativeCandleEnabled && (
+            <div>
             <NumberInput
               value={newStrategyName.negativeCandleTrigger || ''}
               onChange={(e) => handleChange('negativeCandleTrigger', e)}
             >
               <NumberInputField />
             </NumberInput>
+                <FormLabel mt="4">calls Order Type </FormLabel>
+          <Select
+            value={newStrategyName.orderType || ''}
+            onChange={(e) => handleChange('callorderType', e.target.value)}
+          >
+            <option value="limit">Limit Order</option>
+            <option value="market">Market Order</option>
+          </Select>
+                </div>
           )}
         </FormControl>
 
