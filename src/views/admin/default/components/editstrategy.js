@@ -371,6 +371,7 @@ const EditStrategyForm = React.memo(
           </FormControl>
 
           <FormControl mb="4">
+              <Flex alignItems="center">
             <FormLabel>Enable Take Profit Force Close</FormLabel>
               <Checkbox
               isChecked={newStrategyName.tpforceclose || false}
@@ -378,6 +379,7 @@ const EditStrategyForm = React.memo(
             >
               Enable
             </Checkbox>
+                </Flex>
             <FormLabel>Initial Call TP%</FormLabel>
             <InputGroup>
               <NumberInput
@@ -562,6 +564,7 @@ const EditStrategyForm = React.memo(
 
         <FormControl>
           <FormLabel>Stop Loss Settings</FormLabel>
+            <Flex alignItems="center">
 <FormLabel>Enable Stop Loss Force Close</FormLabel>
               <Checkbox
               isChecked={newStrategyName.slforceclose || false}
@@ -569,6 +572,7 @@ const EditStrategyForm = React.memo(
             >
               Enable
             </Checkbox>
+                </Flex>
 
           {/* Stop Loss % (Current Trade) */}
           {!newStrategyName.stopLoss?.tradableAmount && (
