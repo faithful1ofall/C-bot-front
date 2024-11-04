@@ -106,8 +106,8 @@ const EditStrategyForm = React.memo(
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
   isNegativeCandleEnabled: data1.isNegativeCandleEnabled !== undefined ? data1.isNegativeCandleEnabled : false, // Use undefined check
-          slforceclose: data1.slforceclose || true,
-          tpforceclose: data1.tpforceclose || true,
+          slforceclose: data1.slforceclose !== undefined ? data1.slforceclose: true,
+          tpforceclose: data1.tpforceclose !== undefined ? data1.tpforceclose: true,
 }));
         
           
