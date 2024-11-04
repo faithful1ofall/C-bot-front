@@ -72,6 +72,8 @@ const EditStrategyForm = React.memo(
         compounding: false,
       },
       leverage: '',
+      slforceclose: true,
+      tpforceclose: true,
       marginMode: '',
     });
 
@@ -104,6 +106,8 @@ const EditStrategyForm = React.memo(
   timeFrame: data1.timeFrame || '15s', // Default if not provided
   tradeDirection: data1.tradeDirection || 'Buy', // Default if not provided
   isNegativeCandleEnabled: data1.isNegativeCandleEnabled !== undefined ? data1.isNegativeCandleEnabled : false, // Use undefined check
+          slforceclose: data1.slforceclose || true,
+          tpforceclose: data1.tpforceclose || true,
 }));
         
           
@@ -367,6 +371,13 @@ const EditStrategyForm = React.memo(
           </FormControl>
 
           <FormControl mb="4">
+            <FormLabel>Enable Take Profit Force Close</FormLabel>
+              <Checkbox
+              isChecked={newStrategyName.tpforceclose || false}
+              onChange={(e) => handleChange('tpforceclose', e.target.checked)}
+            >
+              Enable
+            </Checkbox>
             <FormLabel>Initial Call TP%</FormLabel>
             <InputGroup>
               <NumberInput
@@ -551,6 +562,13 @@ const EditStrategyForm = React.memo(
 
         <FormControl>
           <FormLabel>Stop Loss Settings</FormLabel>
+<FormLabel>Enable Stop Loss Force Close</FormLabel>
+              <Checkbox
+              isChecked={newStrategyName.slforceclose || false}
+              onChange={(e) => handleChange('slforceclose', e.target.checked)}
+            >
+              Enable
+            </Checkbox>
 
           {/* Stop Loss % (Current Trade) */}
           {!newStrategyName.stopLoss?.tradableAmount && (
