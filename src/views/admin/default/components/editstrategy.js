@@ -425,8 +425,13 @@ const EditStrategyForm = React.memo(
             onChange={(e) => handleChange('callorderType', e.target.value)}
           >
             <option value="limit">Limit Order</option>
-            <option value="market">Market Order will use the selected time frame</option>
+            <option value="market">Market Order</option>
           </Select>
+            {newStrategyName.callorderType === 'market' && (
+  <Text mt="2" fontStyle="italic" bg="gray.100" p="2" borderRadius="md">
+    Market Order will use the selected time frame
+  </Text>
+)}
                 </div>
           )}
         </FormControl>
