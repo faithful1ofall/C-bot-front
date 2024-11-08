@@ -1098,6 +1098,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
               <StrategyDeleteConfirmationModal
                 isOpen={isDeleteOpen}
                 onClose={onDeleteClose}
+                strategyname={strategy.name}
                 todelete={strategy.id}
                 jwttoken={jwttoken}
               />
