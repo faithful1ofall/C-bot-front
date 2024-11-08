@@ -53,9 +53,13 @@ const StrategyDeleteConfirmationModal = React.memo(({ isOpen, onClose, jwttoken,
       <ModalContent>
         <ModalHeader>Strategy Delete Confirmation</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          Are you sure you want to delete this strategy {strategyname}? This action cannot be undone.
-        </ModalBody>
+        ModalBody>
+      Are you sure you want to delete the strategy{' '}
+      <Text as="span" fontWeight="bold" color="red.500">
+        {strategyname}
+      </Text>
+      ? This action cannot be undone.
+    </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>
             Cancel
