@@ -53,7 +53,7 @@ const StrategyDeleteConfirmationModal = React.memo(({ isOpen, onClose, jwttoken,
       <ModalContent>
         <ModalHeader>Strategy Delete Confirmation</ModalHeader>
         <ModalCloseButton />
-        ModalBody>
+        <ModalBody>
       Are you sure you want to delete the strategy{' '}
       <Text as="span" fontWeight="bold" color="red.500">
         {strategyname}
