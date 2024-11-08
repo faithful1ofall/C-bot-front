@@ -1072,12 +1072,14 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
                   <MenuItem
+                    py={3}
                     onClick={() => {
                       handleEditStrategy(strategy.id)
                       }}
                   >
                    Edit Strategy
                   </MenuItem>
+                  <Divider />
                   <MenuItem
                     onClick={() => {
                       onDeleteOpen();
