@@ -96,6 +96,7 @@ export default function UserReports() {
   // new parameters
 
   const [useredit, SetUserEdit] = useState(false);
+  const [strategyedit, SetStrategyEdit] = useState(false);
 
   const [accountinfo, setAccountinfo] = useState(0);
 
@@ -1080,6 +1081,8 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
                   <MenuItem
                     onClick={() => {
                       onDeleteOpen();
+                      SetStrategyEdit(strategy);
+                      
                     }}
                   >
                     Delete Strategy
@@ -1098,8 +1101,8 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
               <StrategyDeleteConfirmationModal
                 isOpen={isDeleteOpen}
                 onClose={onDeleteClose}
-                strategyname={strategy.name}
-                todelete={strategy.id}
+                strategyname={strategyedit.name}
+                todelete={strategyedit.id}
                 jwttoken={jwttoken}
               />
             )}
