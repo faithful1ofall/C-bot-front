@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, useToast } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Button, useToast, Text } from '@chakra-ui/react';
 
 const StrategyDeleteConfirmationModal = React.memo(({ isOpen, onClose, jwttoken, todelete, strategyname }) => {
     const toast = useToast();
