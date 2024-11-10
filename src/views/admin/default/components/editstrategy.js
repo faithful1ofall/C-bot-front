@@ -356,12 +356,12 @@ const EditStrategyForm = React.memo(
         </FormControl>
 
         <FormControl mb="4">
-          <FormLabel>Initial Call</FormLabel>
+          <FormLabel>Initial Entry</FormLabel>
         </FormControl>
 
         <Box mt="4" p="4" bg="gray.100" borderRadius="md">
           <FormControl mb="4">
-            <FormLabel>Initail Call Funds %</FormLabel>
+            <FormLabel>Initail Entry Funds %</FormLabel>
             <NumberInput
               value={newStrategyName.calls[0]?.funds || ''}
               onChange={(valueString) => handleCallChange(0, 'funds', isNaN(valueString) ? 0 : valueString)}
@@ -380,7 +380,7 @@ const EditStrategyForm = React.memo(
               Enable
             </Checkbox>
                 </Flex>
-            <FormLabel>Initial Call TP%</FormLabel>
+            <FormLabel>Initial Entry TP%</FormLabel>
             <InputGroup>
               <NumberInput
                 value={newStrategyName.calls[0]?.tp || ''}
