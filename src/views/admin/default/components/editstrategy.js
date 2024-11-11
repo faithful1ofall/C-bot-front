@@ -257,6 +257,21 @@ const EditStrategyForm = React.memo(
 
     return (
       <Box mt="20" bg="gray.50" p="4" borderRadius="md">
+
+      <Flex align="center" mb="4">
+    <Link onClick={() => navigate('/admin/default')} display="flex" alignItems="center">
+      <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
+      <Text color="blue.500">Back to Home</Text>
+    </Link>
+  </Flex>
+
+  {/* Divider */}
+  <Divider mb="4" />
+
+  {/* Webhook Box Text */}
+  <Text fontWeight="bold" mb="4">
+    Webhook Box
+  </Text>
         {/* Form Content Goes Here */}
         <FormControl mb="4">
           <FormLabel>Strategy Name</FormLabel>
