@@ -1068,7 +1068,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             >
               <Text fontWeight="bold">{strategy.name}</Text>
 
-                <Flex mt={4} align="left" justify="space-between">
+                <Flex mt={4} align="left" justify="flex-start">
         <Text
           color="blue.500"
           cursor="pointer"
@@ -1076,6 +1076,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
         >
           edit
         </Text>
+      <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
         <Text
           color="red.500"
           cursor="pointer"
