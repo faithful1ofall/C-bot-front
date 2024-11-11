@@ -1068,6 +1068,26 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             >
               <Text fontWeight="bold">{strategy.name}</Text>
 
+                <Flex mt={4} align="left" justify="space-between">
+        <Text
+          color="blue.500"
+          cursor="pointer"
+          onClick={() => handleEditStrategy(strategy.id)}
+        >
+          edit
+        </Text>
+        <Text
+          color="red.500"
+          cursor="pointer"
+          onClick={() => {
+            onDeleteOpen();
+            SetStrategyEdit(strategy);
+          }}
+        >
+          delete
+        </Text>
+      </Flex>
+
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
