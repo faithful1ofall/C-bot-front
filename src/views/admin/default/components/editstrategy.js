@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Checkbox,
+  Divider,
   Flex,
   Stack,
   Text,
   InputRightElement,
+  Icon,
   FormControl,
   FormLabel,
   NumberInput,
@@ -18,9 +20,15 @@ import {
   useToast,
   Button,
 } from '@chakra-ui/react';
+import {
+  MdArrowBack
+} from 'react-icons/md';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 const EditStrategyForm = React.memo(
   () => {
+
+    const navigate = useNavigate();
 
     const strategyid = localStorage.getItem('strategyid');
 
@@ -259,7 +267,7 @@ const EditStrategyForm = React.memo(
       <Box mt="20" bg="gray.50" p="4" borderRadius="md">
 
       <Flex align="center" mb="4">
-    <Link onClick={() => navigate('/admin/default')} display="flex" alignItems="center">
+    <NavLink onClick={() => navigate('/admin/default')} display="flex" alignItems="center">
       <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
       <Text color="blue.500">Back to Home</Text>
     </Link>
