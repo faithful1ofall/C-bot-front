@@ -1068,27 +1068,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             >
               <Text fontWeight="bold">{strategy.name}</Text>
 
-                <Flex mt={4} align="left" justify="flex-start">
-        <Text
-          color="blue.500"
-          cursor="pointer"
-          onClick={() => handleEditStrategy(strategy.id)}
-        >
-          edit
-        </Text>
-      <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
-        <Text
-          color="red.500"
-          cursor="pointer"
-          onClick={() => {
-            onDeleteOpen();
-            SetStrategyEdit(strategy);
-          }}
-        >
-          delete
-        </Text>
-      </Flex>
-
+                
               <Menu>
                 <MenuButton as={IconButton} icon={<MdMoreVert />} />
                 <MenuList>
@@ -1120,6 +1100,26 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
                 colorScheme="teal"
               />
             </Flex>
+            <Flex mt={4} align="left" justify="flex-start">
+        <Text
+          color="blue.500"
+          cursor="pointer"
+          onClick={() => handleEditStrategy(strategy.id)}
+        >
+          edit
+        </Text>
+      <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
+        <Text
+          color="red.500"
+          cursor="pointer"
+          onClick={() => {
+            onDeleteOpen();
+            SetStrategyEdit(strategy);
+          }}
+        >
+          delete
+        </Text>
+      </Flex>
             {isDeleteOpen && (
               <StrategyDeleteConfirmationModal
                 isOpen={isDeleteOpen}
