@@ -270,7 +270,7 @@ const EditStrategyForm = React.memo(
     <NavLink onClick={() => navigate('/admin/default')} display="flex" alignItems="center">
       <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
       <Text color="blue.500">Back to Home</Text>
-    </Link>
+    </NavLink>
   </Flex>
 
   {/* Divider */}
