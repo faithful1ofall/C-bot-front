@@ -4,7 +4,7 @@ const useLocalStorageStrategies = (key) => {
   const [strategies, setStrategies] = useState(() => {
     // Initial fetch from localStorage and parse as an array
     const savedStrategies = localStorage.getItem(key);
-    return savedStrategies ? JSON.parse(savedStrategies) : [];
+    return savedStrategies ? savedStrategies : [];
   });
 
   useEffect(() => {
