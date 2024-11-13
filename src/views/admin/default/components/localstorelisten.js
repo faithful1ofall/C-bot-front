@@ -2,26 +2,25 @@ import { useState, useEffect } from 'react';
 
 const useLocalStorageStrategies = (key) => {
   const [strategies, setStrategies] = useState(() => {
-    // Initial fetch from localStorage
+    // Initial fetch from localStorage and parse as an array
     const savedStrategies = localStorage.getItem(key);
     return savedStrategies ? JSON.parse(savedStrategies) : [];
   });
 
   useEffect(() => {
     const handleStorageChange = () => {
+      // Parse the updated value from localStorage
       const updatedStrategies = localStorage.getItem(key);
-      if (updatedStrategies) {
-        setStrategies(JSON.parse(updatedStrategies));
-      }
+      setStrategies(updatedStrategies ? JSON.parse(updatedStrategies) : []);
     };
 
-    // Listen for changes in localStorage (also works across tabs)
+    // Listen for 'storage' event for cross-tab updates
     window.addEventListener('storage', handleStorageChange);
 
-    // For single-tab updates, use a custom event
+    // Custom event for single-tab updates
     window.addEventListener('strategiesUpdate', handleStorageChange);
 
-    // Cleanup listeners
+    // Cleanup listeners on component unmount
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('strategiesUpdate', handleStorageChange);
@@ -34,6 +33,7 @@ const useLocalStorageStrategies = (key) => {
     window.dispatchEvent(new Event('strategiesUpdate'));
   };
 
+  // Return the parsed array and the update function
   return [strategies, updateStrategies];
 };
 
