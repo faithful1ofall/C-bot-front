@@ -23,12 +23,10 @@ import {
 import {
   MdArrowBack
 } from 'react-icons/md';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const EditStrategyForm = React.memo(
   () => {
-
-    const navigate = useNavigate();
 
     const strategyid = localStorage.getItem('strategyid');
 

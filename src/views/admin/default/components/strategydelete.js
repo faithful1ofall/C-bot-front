@@ -23,8 +23,6 @@ const StrategyDeleteConfirmationModal = React.memo(({ isOpen, onClose, jwttoken,
               isClosable: true,
             });
             onClose();
-           // fetchStrategies();
-            // fetchUsers();
           } else {
             toast({
               title: 'Error deleting strategy.',

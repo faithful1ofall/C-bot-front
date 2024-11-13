@@ -54,7 +54,6 @@ const handleHookKeyChange = (e) => {
             isClosable: true,
           });
           console.log('Strategy added successfully');
-         // fetchStrategies();
           navigate("/admin/default");
 
         } else {
@@ -79,7 +78,6 @@ const handleHookKeyChange = (e) => {
       }
 
      // setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
-   //  fetchStrategies();
   };
   
   return (

@@ -37,6 +37,8 @@ export function SidebarLinks(props) {
   const createLinks = (routes) => {
     return routes.map((route, index) => {
       if (route.name === 'Sign In') return null;
+      if (route.name === 'Create Strategy') return null;
+      if (route.name === 'Edit Strategy') return null;
       if (route.category) {
         return (
           <>

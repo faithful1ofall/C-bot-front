@@ -6,6 +6,7 @@ import { MdHome, MdLock } from 'react-icons/md';
 import MainDashboard from 'views/admin/default';
 import CreateStrategyModal from 'views/admin/default/components/createstrategy';
 import EditStrategyForm from 'views/admin/default/components/editstrategy';
+import StrategiesList from 'views/admin/default/components/strategylist';
 import Logger from 'views/admin/default/components/logger';
 
 // Auth Imports
@@ -20,11 +21,18 @@ const routes = [
     component: <MainDashboard />,
   },
   {
-    name: 'Strategy',
+    name: 'Edit Strategy',
     layout: '/admin',
     path: '/edit',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <EditStrategyForm />
+  },
+  {
+    name: 'Strategy',
+    layout: '/admin',
+    path: '/strategylist',
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    component: <StrategiesList />
   },
   {
     name: 'Create Strategy',

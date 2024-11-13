@@ -24,7 +24,7 @@ import {
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   MdAttachMoney,
@@ -32,7 +32,6 @@ import {
   MdShowChart,
   MdCheckCircle,
   MdPerson,
-  MdAddAlert,
   MdMoreVert,
   MdMonetizationOn,
 } from 'react-icons/md';
@@ -42,10 +41,12 @@ import TradePositionTable from './components/PositionsTable';
 import TradeHistoryTable from './components/Tradehistory';
 import LoggerDropdown from './components/loggerdrop';
 import TradingHookTriggerModal from './components/tradehook';
-import StrategyDeleteConfirmationModal from './components/strategydelete';
 import UserDeleteConfirmationModal from './components/userdelete';
 import UserModal from './components/adduser';
 import TradingPairs from './components/tradingpair';
+import StrategiesList from './components/strategylist';
+import useLocalStorageStrategies from './components/localstorelisten';
+
 
 export default function UserReports() {
   const toast = useToast();
@@ -53,15 +54,13 @@ export default function UserReports() {
 
   const jwttoken = localStorage.getItem('jwtToken');
 
+  const strategies = useLocalStorageStrategies('botstrategies');
+
+  const activestrategies = localStorage.getItem('activestrategies');
+
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
   const [isLinkStrategyOpen, setLinkStrategyOpen] = useState(false);
 
-
-  const {
-    isOpen: isDeleteOpen,
-    onOpen: onDeleteOpen,
-    onClose: onDeleteClose,
-  } = useDisclosure();
   const {
     isOpen: isDeleteOpen1,
     onOpen: onDeleteOpen1,
@@ -88,7 +87,6 @@ export default function UserReports() {
   const brandColor = useColorModeValue('brand.500', 'white');
   const boxBg = useColorModeValue('secondaryGray.300', 'whiteAlpha.100');
   const [users, setUsers] = useState([]);
-  const [strategies, setStrategies] = useState([]);
   const [selectedStrategyId, setSelectedStrategyId] = useState([]);
   const [selectedStrategyIds, setSelectedStrategyIds] = useState([]);
   const [transferuserid, setTransferUserId] = useState('');
@@ -96,13 +94,12 @@ export default function UserReports() {
   // new parameters
 
   const [useredit, SetUserEdit] = useState(false);
-  const [strategyedit, SetStrategyEdit] = useState(false);
-
-  const [accountinfo, setAccountinfo] = useState(0);
 
  // const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
-  const [positions, setPositions] = useState([]); // Your trade positions data
+ const positions = localStorage.getItem("botpositions");
   const [positionshistory, setPositionsHistory] = useState([]); // Your trade positions data
+
+
 
   const fetchPositionhistory = useCallback(async () => {
     try {
@@ -171,33 +168,6 @@ export default function UserReports() {
         isClosable: true,
       });
       console.error(err, 'close posiotn error');
-    }
-  };
-
-  
-  const fetchAccountinfo = async (accuserid, assetpass) => {
-    const assetfind = 'USDT' || assetpass;
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const error = await response.json();
-        return error.message.msg;
-      }
-      const data = await response.json(); // Parse the JSON response
-      setAccountinfo(data);
-      return data;
-    } catch (err) {
-      console.error(err.message);
-      return err.message;
     }
   };
 
@@ -313,7 +283,7 @@ export default function UserReports() {
     } catch (error) {
       console.error('Error fetching API info:', error);
     }
-  }, [jwttoken]);
+  }, [jwttoken, toast]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -385,27 +355,7 @@ export default function UserReports() {
     }
   };
 
-  const fetchStrategies = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/strategies`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json(); // Parse the JSON response
-      setStrategies(data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }, [jwttoken]);
-
+  
   useEffect(() => {
     const isTokenExpired = (token) => {
       const base64Url = token.split('.')[1]; // Get payload part
@@ -439,12 +389,10 @@ export default function UserReports() {
 
   useEffect(() => {
     fetchUsers();
-    fetchStrategies();
     fetchPositionhistory();
   }, [
     fetchPositionhistory,
-    fetchUsers,
-    fetchStrategies
+    fetchUsers
   ]);
 
   const handleuseractive = useCallback(async (userIdd, currentstatus) => {
@@ -490,54 +438,7 @@ export default function UserReports() {
     }
 
     console.log('User activate Update', activate);
-  }, [jwttoken, fetchUsers]);
-
-  const handleactive = async (strategyIdd, currentstatus) => {
-    const activate = {
-      active: !currentstatus,
-    };
-
-    try {
-      await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/strategy/${strategyIdd}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwttoken}`,
-          },
-          body: JSON.stringify(activate),
-        },
-      );
-      if (!currentstatus) {
-        toast({
-          title: 'Strategy actived successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Strategy deactived successfully.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      toast({
-        title: 'Failed to activate strategy.',
-        description: 'Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      console.error('Request failed', error);
-    }
-
-    await fetchStrategies();
-    console.log('activate Update', activate);
-  };
+  }, [jwttoken, fetchUsers, toast]);
 
   
 
@@ -632,13 +533,6 @@ export default function UserReports() {
   
 
   // Function to handle navigation and setting local storage
-  const handleEditStrategy = (strategyId) => {
-    // Set local storage items
-    localStorage.setItem("strategyid", strategyId);    
-    // Navigate to the edit route
-    navigate(`/admin/edit`);
-  };
-  // Function to handle navigation and setting local storage
   const handleClosehook = async() => {
  //   await fetchPosition();
     onTradingHookTriggerClose();
@@ -729,7 +623,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             />
           }
           name="Active trade(s)"
-          value={positions?.positions?.length || 0}
+          value={positions || 0}
         />
         <MiniStatistics
           startContent={
@@ -748,7 +642,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             />
           }
           name="Total strategies"
-          value={strategies.length}
+          value={strategies?.length || 0}
         />
         <MiniStatistics
           startContent={
@@ -767,7 +661,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             />
           }
           name="Active strategies"
-          value={strategies.filter((strategy) => strategy.active).length}
+          value={activestrategies || 0}
         />
         <MiniStatistics
           startContent={
@@ -966,7 +860,6 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
               <Box mt="4" bg="gray.50" p="4" borderRadius="md">
                 <GeneralExchangeSettingsModal
                   userid={transferuserid}
-                  balance={accountinfo}
                 />
               </Box>
             )}
@@ -1020,7 +913,6 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
                   isOpen={isTransferOpen}
                   onClose={onTransferClose}
                   userid={transferuserid}
-                  balance={accountinfo}
                 />
               </Box>
             )}
@@ -1028,89 +920,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
         ))}
       </SimpleGrid>
 
-      <Box mt={5} position="relative" textAlign="left">
-        <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
-          STRATEGIES
-        </Text>
-        <Divider
-          mt={-1}
-          borderColor="black.400"
-          borderWidth="1px"
-        />
-      </Box>
-
-      <Button
-        as={NavLink}
-        to="/admin/create" 
-        mt="20px"
-        leftIcon={<Icon as={MdAddAlert} />}
-        colorScheme="blue"
-      >
-        Create Strategy
-      </Button>
-
-      <SimpleGrid
-        mt="20px"
-        columns={{ base: 1, md: 2, lg: 3, '2xl': 3 }}
-        gap="20px"
-      >
-        {strategies.map((strategy) => (
-          <Box
-            key={strategy.id}
-            p="5"
-            shadow="md"
-            borderWidth="1px"
-            borderRadius="md"
-          >
-            <Flex
-              align="center"
-              justify="space-between"
-            >
-              <Text fontWeight="bold">{strategy.name}</Text>
-
-                
-              
-              <Switch
-                ml="auto"
-                isChecked={strategy.active}
-                onChange={() => {
-                  handleactive(strategy.id, strategy.active);
-                }}
-                colorScheme="teal"
-              />
-            </Flex>
-            <Flex mt={4} align="left" justify="flex-start">
-        <Text
-          color="blue.500"
-          cursor="pointer"
-          onClick={() => handleEditStrategy(strategy.id)}
-        >
-          edit
-        </Text>
-      <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
-        <Text
-          color="red.500"
-          cursor="pointer"
-          onClick={() => {
-            onDeleteOpen();
-            SetStrategyEdit(strategy);
-          }}
-        >
-          delete
-        </Text>
-      </Flex>
-            {isDeleteOpen && (
-              <StrategyDeleteConfirmationModal
-                isOpen={isDeleteOpen}
-                onClose={onDeleteClose}
-                strategyname={strategyedit.name}
-                todelete={strategyedit.id}
-                jwttoken={jwttoken}
-              />
-            )}
-          </Box>
-        ))}
-      </SimpleGrid>
+      <StrategiesList />
 
       <Box mt={5} position="relative" textAlign="left">
         <Text as="span" zIndex={1} fontSize="2xl" fontWeight="bold">
