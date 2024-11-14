@@ -160,13 +160,16 @@ const StrategiesList = () => {
 
                   <Flex mt={4} align="left" justify="flex-start">
   <IconButton
-    icon={<MdEdit />}
-    colorScheme="blue"
-    aria-label="Edit strategy"
-    variant="ghost"
-    onClick={() => handleEditStrategy(strategy.id)}
-    size="sm"
-  />
+  icon={<MdEdit />}
+  colorScheme="blue"
+  aria-label="Edit strategy"
+  variant="ghost"
+  onClick={() => handleEditStrategy(strategy.id)}
+  size="sm"
+  bg="gray.100"
+  _hover={{ bg: "gray.200" }}
+  _active={{ bg: "gray.300" }}
+/>
 
   <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
 
@@ -180,6 +183,9 @@ const StrategiesList = () => {
       SetStrategyEdit(strategy);
     }}
     size="sm"
+      bg="gray.100"
+  _hover={{ bg: "gray.200" }}
+  _active={{ bg: "gray.300" }}
   />
 </Flex>
 
