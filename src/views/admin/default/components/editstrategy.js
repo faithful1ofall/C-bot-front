@@ -338,11 +338,12 @@ const EditStrategyForm = React.memo(
     return (
       <Box mt="20" bg="gray.50" p="4" borderRadius="md">
 
-      <Flex align="left" mb="4" justify="flex-start">
-    <NavLink to='/admin/strategylist' display="flex" alignItems="center">
-      <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
-      <Text color="blue.500">Back to Home</Text>
-    </NavLink>
+      <Flex align="left" mb="4" justify="flex-start" flexWrap="wrap">
+  {/* Back to Home Link */}
+  <NavLink to="/admin/strategylist" display="flex" alignItems="center" mb={{ base: 2, md: 0 }}>
+    <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
+    <Text color="blue.500">strategies</Text>
+  </NavLink>
 {/* Divider */}
   <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" display={{ base: "none", md: "block" }} />
 
