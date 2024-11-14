@@ -338,14 +338,33 @@ const EditStrategyForm = React.memo(
     return (
       <Box mt="20" bg="gray.50" p="4" borderRadius="md">
 
-      <Flex align="left" mb="4" justify="flex-start" flexWrap="wrap">
+      <Flex
+  align="center"
+  mb="4"
+  justify="flex-start"
+  flexWrap="wrap"
+  gap={4}
+>
   {/* Back to Home Link */}
-  <NavLink to="/admin/strategylist" display="flex" alignItems="center" mb={{ base: 2, md: 0 }}>
+  <Flex
+    as={NavLink}
+    to="/admin/strategylist"
+    display="flex"
+    alignItems="center"
+    flex="1"
+    minW="150px"
+  >
     <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
-    <Text color="blue.500">strategies</Text>
-  </NavLink>
-{/* Divider */}
-  <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" display={{ base: "none", md: "block" }} />
+    <Text color="blue.500">Strategies</Text>
+  </Flex>
+
+  {/* Divider */}
+  <Divider
+    orientation="vertical"
+    height="20px"
+    borderColor="gray.300"
+    display={{ base: "none", md: "block" }}
+  />
 
   {/* Webhook Button */}
   <Button
@@ -353,13 +372,13 @@ const EditStrategyForm = React.memo(
     colorScheme="teal"
     variant="solid"
     size="sm"
+    flex="1"
+    minW="150px"
     onClick={() => tradinghook(newStrategyName.hookkey || '')}
-    mb={{ base: 2, md: 0 }}
   >
     Test Webhook
   </Button>
-  </Flex>
-
+</Flex>
   
         {/* Form Content Goes Here */}
         <FormControl mb="4">
