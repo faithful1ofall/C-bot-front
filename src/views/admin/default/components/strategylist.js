@@ -7,12 +7,13 @@ import {
   Divider,
   Button,
   Icon,
+  IconButton,
   SimpleGrid,
   Switch,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { MdAddAlert } from 'react-icons/md';
+import { MdAddAlert, MdEdit, MdDelete } from 'react-icons/md';
 import { useNavigate, NavLink } from 'react-router-dom';
 import StrategyDeleteConfirmationModal from './strategydelete';
 
@@ -157,29 +158,32 @@ const StrategiesList = () => {
               />
             </Flex>
 
-            <Flex mt={4} align="left" justify="flex-start">
-              <Text
-                color="blue.500"
-                cursor="pointer"
-                onClick={() => handleEditStrategy(strategy.id)}
-              >
-                edit
-              </Text>
+                  <Flex mt={4} align="left" justify="flex-start">
+  <IconButton
+    icon={<MdEdit />}
+    colorScheme="blue"
+    aria-label="Edit strategy"
+    variant="ghost"
+    onClick={() => handleEditStrategy(strategy.id)}
+    size="sm"
+  />
 
-              <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
+  <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
 
-              <Text
-                color="red.500"
-                cursor="pointer"
-                onClick={() => {
-                  onDeleteOpen();
-                  SetStrategyEdit(strategy);
-                }}
-              >
-                delete
-              </Text>
-            </Flex>
+  <IconButton
+    icon={<MdDelete />}
+    colorScheme="red"
+    aria-label="Delete strategy"
+    variant="ghost"
+    onClick={() => {
+      onDeleteOpen();
+      SetStrategyEdit(strategy);
+    }}
+    size="sm"
+  />
+</Flex>
 
+            
             {isDeleteOpen && (
               <StrategyDeleteConfirmationModal
                 isOpen={isDeleteOpen}
