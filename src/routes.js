@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from '@chakra-ui/react';
-import { MdHome, MdLock } from 'react-icons/md';
+import { MdHome, MdLock, MdList } from 'react-icons/md';
 
 // Admin Imports
 import MainDashboard from 'views/admin/default';
@@ -31,7 +31,7 @@ const routes = [
     name: 'Strategy',
     layout: '/admin',
     path: '/strategylist',
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    icon: <Icon as={MdList} width="20px" height="20px" color="inherit" />,
     component: <StrategiesList />
   },
   {
