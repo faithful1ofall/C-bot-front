@@ -21,7 +21,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import {
-  MdArrowBack
+  MdArrowBack, MdLink
 } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 
@@ -261,23 +261,105 @@ const EditStrategyForm = React.memo(
       }
     };
 
+    const tradinghook = async (strategykey) => {
+        const hooking = {
+          strategy: strategykey,
+        };
+    
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(hooking),
+            },
+          );
+    
+          if (!response.ok) {
+            const errorData = await response.json();
+            toast({
+              title: 'Error initiating trade hook.',
+              description: `Trade not executed, info: ${errorData.error}`,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+            throw new Error(errorData.error || 'Error initiating trade hook.');
+          }
+    
+          const data = await response.json();
+          console.log('hooking', data);
+
+            const hasErrors = Object.values(data.data.msg).some((messages) => messages.length > 0);
+    
+          if (data.data.msg && Object.keys(data.data.msg).length > 0 && hasErrors) {
+            // Concatenate all error messages from data.errors array into one string
+            const allErrorMessages = Object.entries(data.data.msg).map(([userId, messages]) => {
+              // Join each user's error messages into a single line
+              const userErrors = messages.map((msg) => `• ${msg.msg || "Unknown error"}`).join('\n');
+              return `User ID ${userId}:\n${userErrors || "no error to display"} `;
+            }).join('\n\n'); // Separate each user's errors with extra newline for readability
+
+              
+            // Display a single toast with all error messages
+            toast({
+              title: 'Trade hook errors encountered.',
+              description: allErrorMessages,
+              status: 'error',
+              duration: 16000,
+              isClosable: true,
+            });
+          } else {
+            // If no errors, display a success message
+            toast({
+              title: 'Trade hook successful.',
+              description: 'Trade executed successfully.',
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+                    
+        } catch (error) {
+          toast({
+            title: 'Error initiating trade hook.',
+            description: error.error || 'Please try again later.',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          console.error('Request failed', error);
+        }
+      };
+
     return (
       <Box mt="20" bg="gray.50" p="4" borderRadius="md">
 
-      <Flex align="center" mb="4">
-    <NavLink to='/admin/default' display="flex" alignItems="center">
+      <Flex align="left" mb="4" justify="flex-start">
+    <NavLink to='/admin/strategylist' display="flex" alignItems="center">
       <Icon as={MdArrowBack} mr="2" /> {/* Back Icon */}
       <Text color="blue.500">Back to Home</Text>
     </NavLink>
+{/* Divider */}
+  <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" display={{ base: "none", md: "block" }} />
+
+  {/* Webhook Button */}
+  <Button
+    leftIcon={<MdLink />}
+    colorScheme="teal"
+    variant="solid"
+    size="sm"
+    onClick={() => tradinghook(newStrategyName.hookkey || '')}
+    mb={{ base: 2, md: 0 }}
+  >
+    Test Webhook
+  </Button>
   </Flex>
 
-  {/* Divider */}
-  <Divider mb="4" />
-
-  {/* Webhook Box Text */}
-  <Text fontWeight="bold" mb="4">
-    Webhook Box
-  </Text>
+  
         {/* Form Content Goes Here */}
         <FormControl mb="4">
           <FormLabel>Strategy Name</FormLabel>
