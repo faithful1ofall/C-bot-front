@@ -48,6 +48,8 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
 
       const data = await response.json();
       // Show success toast popup
+      
+      if (data.success){
       toast({
         title: 'Internal Transfer Successful',
         description: `You have successfully transferred ${transferAmount} ${asset}.`,
@@ -56,10 +58,23 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
         isClosable: true,
       });
       console.log('Transfer successful:', data);
+        
     //  await fetchAccountinfo(userid);
       // Reset modal state after success
       setTransferAmount(0);
       setLoading(false);
+      } else {
+
+        toast({
+        title: 'Internal Transfer Error',
+        description: `${data.message.msg || data.message}.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      setLoading(false);
+      }
+        
     } catch (error) {
       setLoading(false);
       console.error('Transfer error:', error);
