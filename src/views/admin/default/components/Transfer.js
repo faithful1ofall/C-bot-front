@@ -20,12 +20,14 @@ import {
 const TransferModal = ({ isOpen, onClose, userid }) => {
   const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
   const [transferAmount, setTransferAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [asset, setAsset] = useState('USDT');
   const [balance, setBalance] = useState({});
   const toast = useToast();
   const jwttoken = localStorage.getItem("jwtToken");
 
   const handleTransfer = async (user, assetused) => {
+    setLoading(true);
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${user}`, {
         method: 'POST',
@@ -57,13 +59,15 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
     //  await fetchAccountinfo(userid);
       // Reset modal state after success
       setTransferAmount(0);
-      setTransferDirection('');
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('Transfer error:', error);
     }
   };
 
   const fetchAccountinfo = async (accuserid, assetpass) => {
+    setLoading(true);
     const assetfind = assetpass || 'USDT';
 
     try {
@@ -82,9 +86,10 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
       }
       const data = await response.json(); // Parse the JSON response
       setBalance(data);
-      
+      setLoading(false);
     } catch (err) {
       console.error(err.message);
+      setLoading(false);
       
     }
   };
@@ -141,13 +146,13 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
           <Text mt={4}>
             Funding Available Balance (USD): {balance?.balance?.fundingBalance || 0}
           </Text>
-          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid, asset)}>
+          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid, asset)} isLoading={loading}>
             Refresh
           </Button>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)}>
+          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)} isLoading={loading}>
             Confirm Transfer
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
