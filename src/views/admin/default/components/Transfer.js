@@ -20,14 +20,14 @@ import {
 const TransferModal = ({ isOpen, onClose, userid }) => {
   const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
   const [transferAmount, setTransferAmount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({ refresh: false, transfer: false });
   const [asset, setAsset] = useState('USDT');
   const [balance, setBalance] = useState({});
   const toast = useToast();
   const jwttoken = localStorage.getItem("jwtToken");
 
   const handleTransfer = async (user, assetused) => {
-    setLoading(true);
+    setLoading((prev) => ({ ...prev, transfer: true }));
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${user}`, {
         method: 'POST',
@@ -62,7 +62,7 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
     //  await fetchAccountinfo(userid);
       // Reset modal state after success
       setTransferAmount(0);
-      setLoading(false);
+      setLoading((prev) => ({ ...prev, transfer: false }));
       } else {
 
         toast({
@@ -72,17 +72,17 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
         duration: 5000,
         isClosable: true,
       });
-      setLoading(false);
+      setLoading((prev) => ({ ...prev, transfer: false }));
       }
         
     } catch (error) {
-      setLoading(false);
+      setLoading((prev) => ({ ...prev, transfer: false }));
       console.error('Transfer error:', error);
     }
   };
 
   const fetchAccountinfo = async (accuserid, assetpass) => {
-    setLoading(true);
+    setLoading((prev) => ({ ...prev, refresh: true }));
     const assetfind = assetpass || 'USDT';
 
     try {
@@ -97,14 +97,30 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
       );
       if (!response.ok) {
         const error = await response.json();
+        toast({
+        title: 'Balance Refresh Error',
+        description: `${error.message.msg || error.message}.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+        setLoading((prev) => ({ ...prev, refresh: false }));
+        
         return error.message.msg;
-      }
+        }
       const data = await response.json(); // Parse the JSON response
       setBalance(data);
-      setLoading(false);
+      setLoading((prev) => ({ ...prev, refresh: false }));
     } catch (err) {
+toast({
+        title: 'Balance Refresh Error',
+        description: `${err.message.msg || err.message}.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       console.error(err.message);
-      setLoading(false);
+      setLoading((prev) => ({ ...prev, refresh: false }));
       
     }
   };
@@ -161,13 +177,13 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
           <Text mt={4}>
             Funding Available Balance (USD): {balance?.balance?.fundingBalance || 0}
           </Text>
-          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid, asset)} isLoading={loading}>
+          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid, asset)} isLoading={loading.refresh}>
             Refresh
           </Button>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)} isLoading={loading}>
+          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)} isLoading={loading.transfer}>
             Confirm Transfer
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
