@@ -76,6 +76,13 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
       }
         
     } catch (error) {
+      toast({
+        title: 'Internal Transfer Error',
+        description: `${error.message.msg || error.message}.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       setLoading((prev) => ({ ...prev, transfer: false }));
       console.error('Transfer error:', error);
     }
