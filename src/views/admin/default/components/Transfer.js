@@ -25,7 +25,7 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
   const toast = useToast();
   const jwttoken = localStorage.getItem("jwtToken");
 
-  const handleTransfer = async (user) => {
+  const handleTransfer = async (user, assetused) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${user}`, {
         method: 'POST',
@@ -35,7 +35,7 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
         },
         body: JSON.stringify({
             transfertype: transferDirection,
-            asset: asset,
+            asset: assetused,
             amount: transferAmount,
         }),
       });
@@ -64,7 +64,7 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
   };
 
   const fetchAccountinfo = async (accuserid, assetpass) => {
-    const assetfind = 'USDT' || assetpass;
+    const assetfind = assetpass || 'USDT';
 
     try {
       const response = await fetch(
@@ -141,13 +141,13 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
           <Text mt={4}>
             Funding Available Balance (USD): {balance?.balance?.fundingBalance || 0}
           </Text>
-          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid)}>
+          <Button colorScheme="blue" mr={3} onClick={() => fetchAccountinfo(userid, asset)}>
             Refresh
           </Button>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid)}>
+          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)}>
             Confirm Transfer
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
