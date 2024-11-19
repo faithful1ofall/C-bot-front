@@ -19,15 +19,15 @@ import {
 
 const TransferModal = ({ isOpen, onClose, userid }) => {
   const [transferDirection, setTransferDirection] = useState("MAIN_UMFUTURE"); // Default direction
-  const [transferAmount, setTransferAmount] = useState();
+  const [transferAmount, setTransferAmount] = useState(0);
   const [asset, setAsset] = useState('USDT');
   const [balance, setBalance] = useState({});
   const toast = useToast();
   const jwttoken = localStorage.getItem("jwtToken");
 
-  const handleTransfer = async () => {
+  const handleTransfer = async (user) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${userid}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/binance/user-universal-transfer/${user}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer}>
+          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid)}>
             Confirm Transfer
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
