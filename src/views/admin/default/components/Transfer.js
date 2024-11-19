@@ -78,7 +78,7 @@ const TransferModal = ({ isOpen, onClose, userid }) => {
     } catch (error) {
       toast({
         title: 'Internal Transfer Error',
-        description: `${error.message.msg || error.message}.`,
+        description: `${error.message}.`,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -131,6 +131,9 @@ toast({
       
     }
   };
+
+  // Check if all fields are valid
+  const isTransferDisabled = !transferAmount || transferAmount <= 0;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -190,7 +193,7 @@ toast({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)} isLoading={loading.transfer}>
+          <Button colorScheme="blue" mr={3} onClick={() => handleTransfer(userid, asset)} isLoading={loading.transfer} isDisabled={isTransferDisabled}>
             Confirm Transfer
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
