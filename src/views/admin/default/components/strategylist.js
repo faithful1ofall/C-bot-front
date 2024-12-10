@@ -58,7 +58,7 @@ const StrategiesList = () => {
       const data = await response.json(); // Parse the JSON response
       setStrategies(data);
       const activestrategies = data.filter((strategy) => strategy.active).length;
-      localStorage.setItem("botstrategies", data);
+      localStorage.setItem("botstrategies", JSON.stringify(data));
       localStorage.setItem("activestrategies", activestrategies);
     } catch (err) {
       console.error(err.message);
