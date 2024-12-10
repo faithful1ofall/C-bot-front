@@ -34,12 +34,9 @@ function SignIn() {
 
   const toast = useToast(); // Initialize toast
   
-  const jwttoken = localStorage.getItem('jwtToken');
-
-
-  
   useEffect(() => {
     try{
+    const jwttoken = localStorage.getItem('jwtToken');
     const isTokenExpired = (token) => {
       try{
       const base64Url = token.split('.')[1]; // Get payload part
