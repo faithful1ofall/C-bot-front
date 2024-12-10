@@ -54,8 +54,8 @@ export default function UserReports() {
 
   const jwttoken = localStorage.getItem('jwtToken');
 
-  const strategies = useLocalStorageStrategies('botstrategies');
-
+//  const strategies = useLocalStorageStrategies('botstrategies');
+  const strategies= JSON.parse(localStorage.getItem('botstrategies'))
   const activestrategies = localStorage.getItem('activestrategies');
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
