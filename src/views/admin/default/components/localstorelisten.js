@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 const useLocalStorageStrategies = (key) => {
   const [strategies, setStrategies] = useState(() => {
     // Initial fetch from localStorage and parse as an array
-    const savedStrategies = JSON.parse(localStorage.getItem(key));
+    const savedStrategies = localStorage.getItem(key);
     return savedStrategies ? savedStrategies : [];
   });
 
