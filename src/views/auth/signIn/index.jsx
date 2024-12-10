@@ -33,6 +33,35 @@ function SignIn() {
   const handleClick = () => setShow(!show);
 
   const toast = useToast(); // Initialize toast
+  
+  const jwttoken = localStorage.getItem('jwtToken');
+
+  useEffect(() => {
+    const isTokenExpired = (token) => {
+      const base64Url = token.split('.')[1]; // Get payload part
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join(''),
+      );
+
+      const decoded = JSON.parse(jsonPayload);
+      const currentTime = Date.now() / 1000;
+
+      console.log('decoded', decoded.exp, currentTime);
+      return decoded.exp <= currentTime;
+    };
+
+    if (!isTokenExpired(jwttoken)) {
+      navigate('/admin/default');
+      console.log('Token already exists');
+    }
+    
+  }, [jwttoken, navigate]);
 
   const handleSignin = async () => {
     setLoading(true);
@@ -48,6 +77,8 @@ function SignIn() {
 
       const data = await response.json();
       const token = data.token; // Assume the JWT is in the 'token' field
+
+      
 
       if (response.ok) {
         console.log('Signed in successfully', data);
