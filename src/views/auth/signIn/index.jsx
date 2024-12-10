@@ -56,9 +56,12 @@ function SignIn() {
       return decoded.exp <= currentTime;
     };
 
-    if (!isTokenExpired(jwttoken)) {
-      navigate('/admin/default');
-      console.log('Token already exists');
+    if (jwttoken) {
+
+      if (!isTokenExpired(jwttoken)) {
+         navigate('/admin/default');
+         console.log('Token already exists');
+       }
     }
     
   }, [jwttoken, navigate]);
