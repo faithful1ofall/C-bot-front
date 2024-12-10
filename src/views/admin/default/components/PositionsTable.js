@@ -63,7 +63,7 @@ import {
 
       setPosition(data.positions);
       console.log(data.positions);
-      localStorage.setItem("botpositions", data.positions.lenght);
+      localStorage.setItem("botpositions", data.positions.length);
         setLoading(false);
     } catch (err) {
       console.error(err);
