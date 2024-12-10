@@ -24,7 +24,7 @@ export default function Main() {
             <AdminLayout theme={currentTheme} setTheme={setCurrentTheme} />
           }
         />
-        <Route path="/" element={<Navigate to="/admin" replace />} />
+        <Route path="/" element={<Navigate to="/auth" replace />} />
       </Routes>
       </ChakraProvider>
   );
