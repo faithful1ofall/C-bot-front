@@ -381,7 +381,7 @@ export default function UserReports() {
       console.log('Token has expired');
     }
 
-    if (!jwttoken) {
+    if (jwttoken === undefined) {
       navigate('/auth/sign-in');
       console.error('No JWT token found');
     }
