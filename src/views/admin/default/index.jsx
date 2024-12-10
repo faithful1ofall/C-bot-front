@@ -850,7 +850,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
                 Strategies:{' '}
                 {user.strategyIds
                   .map(
-                    (id) => strategies.find((s) => s.id === id)?.name || 'None',
+                    (id) => strategies.find((s) => s === id)?.name || 'None',
                   )
                   .join(', ')}
               </Text>
