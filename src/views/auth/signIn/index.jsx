@@ -39,8 +39,9 @@ function SignIn() {
 
   
   useEffect(() => {
+    try{
     const isTokenExpired = (token) => {
-      try {
+      try{
       const base64Url = token.split('.')[1]; // Get payload part
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(
@@ -69,6 +70,11 @@ function SignIn() {
          navigate('/admin/default');
          console.log('Token already exists');
        }
+    } catch(error){
+      console.error("error in  token check", error);
+    
+
+    }
     
   }, [jwttoken, navigate]);
 
