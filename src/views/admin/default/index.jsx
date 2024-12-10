@@ -623,7 +623,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             />
           }
           name="Active trade(s)"
-          value={positions ? positions : 0}
+          value={positions !== undefined ? positions : 0}
         />
         <MiniStatistics
           startContent={
