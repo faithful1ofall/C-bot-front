@@ -604,7 +604,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             />
           }
           name="Active users"
-          value={users.filter((user) => user.active).length}
+          value={users.filter((user) => user.active).length || 0}
         />
         <MiniStatistics
           startContent={
@@ -623,7 +623,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
             />
           }
           name="Active trade(s)"
-          value={positions || 0}
+          value={positions || '0'}
         />
         <MiniStatistics
           startContent={
@@ -850,7 +850,7 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
                 Strategies:{' '}
                 {user.strategyIds
                   .map(
-                    (id) => strategies.find((s) => s === id)?.name || 'None',
+                    (id) => strategies.find((s) => s.id === id)?.name || 'None',
                   )
                   .join(', ')}
               </Text>
