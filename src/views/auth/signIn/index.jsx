@@ -36,8 +36,11 @@ function SignIn() {
   
   const jwttoken = localStorage.getItem('jwtToken');
 
+
+  
   useEffect(() => {
     const isTokenExpired = (token) => {
+      try {
       const base64Url = token.split('.')[1]; // Get payload part
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(
@@ -54,15 +57,18 @@ function SignIn() {
 
       console.log('decoded', decoded.exp, currentTime);
       return decoded.exp <= currentTime;
+      } catch(error) {
+        console.error("Invalid token", error);
+        return true;
+      }
     };
 
-    if (jwttoken) {
+    
 
-      if (!isTokenExpired(jwttoken)) {
+      if (jwttoken && !isTokenExpired(jwttoken)) {
          navigate('/admin/default');
          console.log('Token already exists');
        }
-    }
     
   }, [jwttoken, navigate]);
 
