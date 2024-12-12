@@ -377,12 +377,16 @@ export default function UserReports() {
     };
 
     if (isTokenExpired(jwttoken)) {
-      navigate('/auth/sign-in');
+      localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
+    navigate("/auth/sign-in", { replace: true }); 
+     // navigate('/auth/sign-in');
       console.log('Token has expired');
     }
 
     if (jwttoken === undefined) {
-      navigate('/auth/sign-in');
+      localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
+    navigate("/auth/sign-in", { replace: true }); 
+    //  navigate('/auth/sign-in');
       console.error('No JWT token found');
     }
   }, [jwttoken, navigate]);
