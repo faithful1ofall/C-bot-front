@@ -1,4 +1,3 @@
-// Chakra import
 import {
   Avatar,
   Box,
@@ -20,12 +19,10 @@ import {
   useDisclosure,
   Switch,
 } from '@chakra-ui/react';
-// Custom components
 import MiniStatistics from 'components/card/MiniStatistics';
 import IconBox from 'components/icons/IconBox';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import {
   MdAttachMoney,
   MdAutorenew,
@@ -45,17 +42,15 @@ import UserDeleteConfirmationModal from './components/userdelete';
 import UserModal from './components/adduser';
 import TradingPairs from './components/tradingpair';
 import StrategiesList from './components/strategylist';
-import useLocalStorageStrategies from './components/localstorelisten';
-
+import apiService from 'services/api';
+import { useAuth } from 'hooks/useApi';
 
 export default function UserReports() {
   const toast = useToast();
   const navigate = useNavigate();
+  const { checkTokenExpiry, logout } = useAuth();
 
-  const jwttoken = localStorage.getItem('jwtToken');
-
-//  const strategies = useLocalStorageStrategies('botstrategies');
-  const strategies= JSON.parse(localStorage.getItem('botstrategies'))
+  const strategies = JSON.parse(localStorage.getItem('botstrategies'));
   const activestrategies = localStorage.getItem('activestrategies');
 
   const [isGeneralSettingsOpen, setIsGeneralSettingsOpen] = useState(false);
@@ -103,113 +98,57 @@ export default function UserReports() {
 
   const fetchPositionhistory = useCallback(async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-past-trades`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`, // Attach the token
-          },
-        },
-      );
-
-      const data = await response.json(); // Parse the JSON response
-
-      if (!response.ok) {
-        console.log('positions error data', data);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      const data = await apiService.getBinancePastTrades();
       setPositionsHistory(data);
-      console.log(data);
     } catch (err) {
-      console.error(err);
-    }
-  }, [jwttoken]);
-
-  const handleClosePosition = async (position) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/close-position/${position.userId}/${position.symbol}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`, // Attach the token
-          },
-        },
-      );
-
-      const data = await response.json(); // Parse the JSON response
-
-      if (!response.ok) {
-        console.log('Closed positions error data', data);
-        toast({
-          title: 'Error closing trade.',
-          description: 'Please try again later.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      console.log(data, 'closed position success');
+      console.error('Error fetching position history:', err);
       toast({
-        title: 'Trade closed successfully.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (err) {
-      toast({
-        title: 'Error closing trade.',
-        description: 'Please try again later.',
+        title: 'Error loading positions',
+        description: err.message,
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-      console.error(err, 'close posiotn error');
     }
-  };
+  }, [toast]);
 
-  const fetchtradeinfo = async (usid) => {
+  const handleClosePosition = useCallback(async (position) => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/valid/${usid}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const error = await response.json();
-        console.log(error);
-        toast({
-          title: 'Error',
-          description: `There was an issue fetching Validation info. ${JSON.stringify(error.message)}`,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+      await apiService.closePosition(position.userId, position.symbol);
+      
+      toast({
+        title: 'Trade closed successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      
+      fetchPositionhistory();
+    } catch (err) {
+      toast({
+        title: 'Error closing trade',
+        description: err.message || 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [toast, fetchPositionhistory]);
 
-      const { data } = await response.json(); // Parse the JSON response
-      // Display enabled permissions
+  const fetchtradeinfo = useCallback(async (usid) => {
+    try {
+      const { data } = await apiService.validateBinanceCredentials(usid);
+      
       const permissions = {
         Reading: data.enableReading,
         Futures: data.enableFutures,
         UniversalTransfer: data.permitsUniversalTransfer,
       };
 
-      console.log('User Permissions:', permissions);
-
-      // Generate success message based on enabled permissions
       const enabledPermissions = Object.entries(permissions)
         .filter(([_, value]) => value)
         .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
 
-      // If any permissions are enabled, show the success message
       if (enabledPermissions.length > 0) {
         const formattedPermissions =
           enabledPermissions.length > 2
@@ -217,7 +156,7 @@ export default function UserReports() {
             : enabledPermissions.join(' and ');
 
         toast({
-          title: 'API Successfully Validated!',
+          title: 'API Successfully Validated',
           description: `${formattedPermissions} enabled.`,
           status: 'success',
           duration: 7000,
@@ -225,171 +164,89 @@ export default function UserReports() {
         });
       }
     } catch (error) {
-      console.error('Error fetching Validation info:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'There was an issue fetching validation info.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
-  };
+  }, [toast]);
 
-  const fetchapiinfo = useCallback( async (usid) => {
+  const fetchapiinfo = useCallback(async (usid) => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/all-exchange-info/${usid}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const error = await response.json();
-        console.log(error);
-        toast({
-          title: 'Error',
-          description: `There was an issue fetching API info. ${JSON.stringify(error.message)}`,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      
-      }
+      const { exchangeInfo } = await apiService.getBinanceExchangeInfo(usid);
 
-      const { exchangeInfo } = await response.json(); // Parse the JSON response
-
-      console.log('User api info data:', exchangeInfo);
-
-      // Display enabled permissions
       const permissions = {
         limit: exchangeInfo[0].exchangeInfo[0].limit,
         usedlimit: exchangeInfo[0].headersInfo.usedIPWeight1M,
       };
 
-      console.log('User Permissions:', permissions);
-
-      // Generate success message based on enabled permissions
-      const enabledPermissions = Object.entries(permissions)
-        .filter(([_, value]) => value)
-        .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
-
-      // If any permissions are enabled, show the success message
-      if (enabledPermissions.length > 0) {
-        toast({
-          title: 'IP Limit Used and Total Per minute(1 minute)',
-          description: `${permissions.usedlimit}/${permissions.limit} per-minute. userid ${usid}`,
-          status: 'success',
-          duration: 7000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching API info:', error);
-    }
-  }, [jwttoken, toast]);
-
-  const fetchUsers = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/users`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`, // Attach the token
-          },
-        },
-      );
-
-      const data = await response.json(); // Parse the JSON response
-
-      if (!response.ok) {
-        console.log(data, jwttoken);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      setUsers(data);
-      console.log(data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }, [jwttoken]);
-
-  const deleteuser = async (id) => {
-    console.log('user id', id);
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/users/${id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`, // Attach the token
-          },
-        },
-      );
-
-      if (response.ok) {
-        toast({
-          title: 'User deleted successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        fetchUsers();
-        onDeleteClose1();
-      } else {
-        toast({
-          title: 'Error deleting user.',
-          description: 'Please try again later.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        console.error('Failed to delete User');
-      }
+      toast({
+        title: 'IP Limit Used and Total Per minute(1 minute)',
+        description: `${permissions.usedlimit}/${permissions.limit} per-minute. userid ${usid}`,
+        status: 'success',
+        duration: 7000,
+        isClosable: true,
+      });
     } catch (error) {
       toast({
-        title: 'Error deleting user.',
-        description: 'Please try again later.',
+        title: 'Error fetching API info',
+        description: error.message,
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-      console.error('Error deleting User:', error);
     }
-  };
+  }, [toast]);
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      const data = await apiService.getUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      toast({
+        title: 'Error loading users',
+        description: err.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [toast]);
+
+  const deleteuser = useCallback(async (id) => {
+    try {
+      await apiService.deleteUser(id);
+      
+      toast({
+        title: 'User deleted successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      
+      fetchUsers();
+      onDeleteClose1();
+    } catch (error) {
+      toast({
+        title: 'Error deleting user',
+        description: error.message || 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [toast, fetchUsers, onDeleteClose1]);
 
   
   useEffect(() => {
-    const isTokenExpired = (token) => {
-      const base64Url = token.split('.')[1]; // Get payload part
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join(''),
-      );
-
-      const decoded = JSON.parse(jsonPayload);
-      const currentTime = Date.now() / 1000;
-
-      console.log('decoded', decoded.exp, currentTime);
-      return decoded.exp <= currentTime;
-    };
-
-    if (isTokenExpired(jwttoken)) {
-      localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
-    navigate("/auth/sign-in", { replace: true }); 
-     // navigate('/auth/sign-in');
-      console.log('Token has expired');
+    if (!checkTokenExpiry()) {
+      logout();
     }
-
-    if (jwttoken === undefined) {
-      localStorage.removeItem('jwtToken'); // Clear JWT token from local storage
-    navigate("/auth/sign-in", { replace: true }); 
-    //  navigate('/auth/sign-in');
-      console.error('No JWT token found');
-    }
-  }, [jwttoken, navigate]);
+  }, [checkTokenExpiry, logout]);
 
   useEffect(() => {
     fetchUsers();
@@ -400,140 +257,70 @@ export default function UserReports() {
   ]);
 
   const handleuseractive = useCallback(async (userIdd, currentstatus) => {
-    const activate = {
-      active: !currentstatus,
-    };
-
     try {
-      await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userIdd}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwttoken}`,
-        },
-        body: JSON.stringify(activate),
+      await apiService.updateUser(userIdd, {
+        active: !currentstatus,
       });
 
-      if (!currentstatus) {
-        toast({
-          title: 'User activated successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'User deactivated successfully.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+      toast({
+        title: !currentstatus ? 'User activated successfully' : 'User deactivated successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
       await fetchUsers();
     } catch (error) {
       toast({
-        title: 'Error activating user.',
-        description: 'Please try again later.',
+        title: 'Error updating user',
+        description: error.message || 'Please try again later.',
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-      console.error('Request failed', error);
     }
-
-    console.log('User activate Update', activate);
-  }, [jwttoken, fetchUsers, toast]);
+  }, [fetchUsers, toast]);
 
   
 
   
-  const handleLinkStrategyToUser = async (userId, strategyid, boole) => {
-    if (boole) {
-      try {
-        await fetch(
-          `${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${jwttoken}`,
-            },
-          },
-        );
+  const handleLinkStrategyToUser = useCallback(async (userId, strategyid, boole) => {
+    try {
+      if (boole) {
+        await apiService.unlinkStrategyFromUser(userId, strategyid);
+        
         toast({
-          title: 'Strategy unlinked from user successfully.',
+          title: 'Strategy unlinked from user successfully',
           status: 'success',
           duration: 5000,
           isClosable: true,
         });
-      } catch (error) {
+
+        setSelectedStrategyIds((prev) => prev.filter((id) => id !== strategyid));
+      } else {
+        await apiService.linkStrategyToUser(userId, strategyid);
+        
         toast({
-          title: 'Error unlinking strategy from user.',
-          description: 'Please try again.',
-          status: 'error',
+          title: 'Strategy linked to user successfully',
+          status: 'success',
           duration: 5000,
           isClosable: true,
         });
-        console.error('Error:', error);
+
+        setSelectedStrategyIds((prev) => [...prev, strategyid]);
       }
+
       fetchUsers();
-
-      const updatedStrategyIds = selectedStrategyIds.filter(
-        (id) => id !== strategyid,
-      );
-
-      // Set the new array as the state
-      setSelectedStrategyIds(updatedStrategyIds);
-    } else {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKENDAPI}/api/users/${userId}/strategies/${strategyid}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${jwttoken}`,
-            },
-          },
-        );
-
-        const data = await response.json();
-        console.log('linking', data);
-
-        if (response.ok) {
-          toast({
-            title: 'Strategy linked to user successfully.',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
-          fetchUsers();
-
-          const updatedStrategyIds = [...selectedStrategyIds, strategyid];
-
-          // Set the new array as the state
-          setSelectedStrategyIds(updatedStrategyIds);
-        } else {
-          toast({
-            title: 'Error linking strategy to user.',
-            description: 'Please try again.',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
-          console.error('Error adding user:', data.error);
-        }
-      } catch (error) {
-        toast({
-          title: 'Error linking strategy to user.',
-          description: 'Please try again.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        console.error('Error:', error);
-      }
+    } catch (error) {
+      toast({
+        title: boole ? 'Error unlinking strategy' : 'Error linking strategy',
+        description: error.message || 'Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
-  };
+  }, [fetchUsers, toast]);
   
 
   // Function to handle navigation and setting local storage
@@ -757,7 +544,6 @@ const MemoizedMenuItem = React.memo(({ onClick, children }) => (
         <UserModal
           isOpen={isUserOpen}
           onClose={onUserClose}
-          jwttoken={jwttoken}
           useredit={useredit}
           fetchusers={fetchUsers}
         />

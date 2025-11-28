@@ -1,7 +1,5 @@
-/* eslint-disable */
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-// Chakra imports
+import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -15,82 +13,64 @@ import {
   InputRightElement,
   Text,
   useColorModeValue,
-  useToast, // Import useToast
-} from "@chakra-ui/react";
-
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { RiEyeCloseLine } from "react-icons/ri";
+  useToast,
+} from '@chakra-ui/react';
+import { MdOutlineRemoveRedEye } from 'react-icons/md';
+import { RiEyeCloseLine } from 'react-icons/ri';
+import apiService from 'services/api';
 
 function SignIn() {
-  // Chakra color mode
-  const textColor = useColorModeValue("navy.700", "white");
-  const textColorSecondary = "gray.400";
-  const brandStars = useColorModeValue("brand.500", "brand.400");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const textColor = useColorModeValue('navy.700', 'white');
+  const textColorSecondary = 'gray.400';
+  const brandStars = useColorModeValue('brand.500', 'brand.400');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
+  const [show, setShow] = useState(false);
+  const toast = useToast();
 
-  const toast = useToast(); // Initialize toast
-  
-  
+  const handleClick = useCallback(() => setShow((prev) => !prev), []);
 
-  const handleSignin = async () => {
+  const handleSignin = useCallback(async () => {
+    if (!password || password.length < 8) {
+      toast({
+        title: 'Invalid password',
+        description: 'Password must be at least 8 characters.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/admin/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password }), // Pass the password state
+      const data = await apiService.adminSignIn(password);
+      
+      localStorage.setItem('jwtToken', data.token);
+      
+      toast({
+        title: 'Sign-in successful',
+        description: 'You have been signed in successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
       });
 
-      const data = await response.json();
-      const token = data.token; // Assume the JWT is in the 'token' field
-
-      
-
-      if (response.ok) {
-        console.log('Signed in successfully', data);
-        
-        // Save the JWT in local storage
-        localStorage.setItem("jwtToken", token);
-        toast({
-          title: "Sign-in successful.",
-          description: "You have been signed in successfully.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-
-        navigate("/admin/default");
-      } else {
-        setLoading(false);
-        console.error('Error signing in', data);
-        toast({
-          title: "Sign-in failed.",
-          description: data.error || "An error occurred while signing in.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+      navigate('/admin/default');
     } catch (error) {
-      console.error('Request failed', error);
       toast({
-        title: "Request failed.",
-        description: "Unable to sign in. Please try again later.",
-        status: "error",
+        title: 'Sign-in failed',
+        description: error.message || 'Unable to sign in. Please try again.',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
     } finally {
-      setLoading(false); // Reset loading state after request completes
+      setLoading(false);
     }
-  };
+  }, [password, navigate, toast]);
 
   return (
     <Flex

@@ -9,197 +9,234 @@ import {
   RadioGroup,
   Radio,
   useToast,
-  Stack
-} from '@chakra-ui/react'; // Assuming you're using Chakra UI
+  Stack,
+} from '@chakra-ui/react';
+import apiService from 'services/api';
 
-const GeneralExchangeSettingsModal = ({ userid }) => {
-  
+const GeneralExchangeSettingsModal = React.memo(({ userid }) => {
   const [settings, setSettings] = useState({});
   const [balance, setBalance] = useState({});
-  
-  const toast = useToast();
-  
   const [originalsettings, setOriginalSettings] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const jwttoken = localStorage.getItem("jwtToken");
+  const toast = useToast();
 
   const fetchSettings = useCallback(async (useridset) => {
-    if(useridset){
-      try {        
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${useridset}/settings`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${jwttoken}`,
-          }
-        });
-        
-        if (!response.ok) {
-          
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setSettings(data.settings);
-        setOriginalSettings(data.settings);
-      } catch (err) {
-        console.error(err.message);
-      }
-    }    
-  }, [jwttoken]);
+    if (!useridset) return;
+
+    try {
+      const data = await apiService.getUserSettings(useridset);
+      setSettings(data.settings);
+      setOriginalSettings(data.settings);
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+      toast({
+        title: 'Error loading settings',
+        description: err.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [toast]);
 
   useEffect(() => {
     fetchSettings(userid);
   }, [fetchSettings, userid]);
 
-  const handleSave = async () => {
-
+  const handleSave = useCallback(async () => {
     const updatedFields = {};
 
-console.log("COMPARE", settings, originalsettings);
-
-// Check if originalsettings exists
-if (originalsettings) {
-  Object.keys(settings).forEach((key) => {
-    if (settings[key] !== originalsettings[key]) {
-      updatedFields[key] = settings[key];
+    if (originalsettings) {
+      Object.keys(settings).forEach((key) => {
+        if (settings[key] !== originalsettings[key]) {
+          updatedFields[key] = settings[key];
+        }
+      });
+    } else {
+      Object.assign(updatedFields, settings);
     }
-  });
-} else {
-  // If originalsettings is not set, treat all settings as updated
-  Object.assign(updatedFields, settings);
-}
 
-console.log("Updated Fields", updatedFields);
+    if (Object.keys(updatedFields).length === 0) {
+      toast({
+        title: 'No changes to save',
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsSaving(true);
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/users/${userid}/settings`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwttoken}`,
-        },
-        body: JSON.stringify(updatedFields),
+      await apiService.updateUserSettings(userid, updatedFields);
+
+      toast({
+        title: 'Settings saved successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
       });
 
-      if (!response.ok) {
-        toast({
-  title: "Error saving Settings.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
-        throw new Error('Settings save failed');
-      }
-
-      const data = await response.json();
-      console.log('Settings save successful:', data);
-      toast({
-  title: "Settings saved successfully.",
-  status: "success",
-  duration: 5000,
-  isClosable: true,
-});
-      // Reset modal state after success
+      setOriginalSettings(settings);
     } catch (error) {
-      console.error('Settings error:', error);
       toast({
-  title: "Error saving Settings.",
-  status: "error",
-  duration: 5000,
-  isClosable: true,
-});
+        title: 'Error saving settings',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSaving(false);
     }
-  };
+  }, [settings, originalsettings, userid, toast]);
 
-  const fetchAccountinfo = async (accuserid, assetpass) => {
-    const assetfind = 'USDT' || assetpass;
+  const fetchAccountinfo = useCallback(
+    async (accuserid, assetpass = 'USDT') => {
+      setIsRefreshing(true);
 
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetfind}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const error = await response.json();
-        return error.message.msg;
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKENDAPI}/api/binance/account-info/${accuserid}/${assetpass}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message?.msg || 'Failed to fetch balance');
+        }
+
+        const data = await response.json();
+        setBalance(data);
+
+        toast({
+          title: 'Balance refreshed',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (err) {
+        toast({
+          title: 'Error fetching balance',
+          description: err.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsRefreshing(false);
       }
-      const data = await response.json(); // Parse the JSON response
-      setBalance(data);
-      
-    } catch (err) {
-      console.error(err.message);
-      
-    }
-  };
+    },
+    [toast]
+  );
 
+
+  const handleRadioChange = useCallback((field, value) => {
+    setSettings((prev) => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleCheckboxChange = useCallback((e) => {
+    setSettings((prev) => ({ ...prev, stickSettings: e.target.checked }));
+  }, []);
 
   return (
     <Box mt="4" bg="gray.50" p="4" borderRadius="md">
-        <Text>General Exchange Settings</Text>
-          {/* Futures Account Type */}
-          <FormControl mt="4">
-            <FormLabel>Futures Account Type</FormLabel>
-            <Text>Default: USD-M futures</Text>
-          </FormControl>
+      <Text fontWeight="bold" mb={4}>
+        General Exchange Settings
+      </Text>
 
-          {/* User Account Balance */}
-          <FormControl mt="4" display="flex" justifyContent="space-between" alignItems="center">
-            <FormLabel>User Account Balance</FormLabel>
-            <Text> {balance?.balance?.availableBalance || 0} USDT</Text>
-            <Button onClick={() => fetchAccountinfo(userid)} size="sm" ml="2">
+      <FormControl mt="4">
+        <FormLabel>Futures Account Type</FormLabel>
+        <Text>Default: USD-M futures</Text>
+      </FormControl>
+
+      <FormControl
+        mt="4"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <FormLabel>User Account Balance</FormLabel>
+        <Text>{balance?.balance?.availableBalance || 0} USDT</Text>
+        <Button
+          onClick={() => fetchAccountinfo(userid)}
+          size="sm"
+          ml="2"
+          isLoading={isRefreshing}
+          loadingText="Refreshing..."
+        >
           Refresh
         </Button>
-          </FormControl>
+      </FormControl>
 
+      <FormControl mt="4">
+        <FormLabel>Hedge Mode/One Way Mode</FormLabel>
+        <RadioGroup
+          onChange={(value) => handleRadioChange('hedgeMode', value)}
+          value={settings.hedgeMode?.toString()}
+        >
+          <Stack direction="row">
+            <Radio value="false">One Way</Radio>
+            <Radio value="true">Hedge Mode</Radio>
+          </Stack>
+        </RadioGroup>
+        <Text mt="2">
+          Default mode is{' '}
+          {!settings.hedgeMode ? 'One Way Mode' : 'Hedge Mode'}.
+        </Text>
+      </FormControl>
 
-          {/* Hedge Mode / One Way Mode */}
-          <FormControl mt="4">
-            <FormLabel>Hedge Mode/One Way Mode</FormLabel>
-            <RadioGroup
-  onChange={(value) => setSettings({ ...settings, hedgeMode: value })}
-  value={settings.hedgeMode?.toString()}
->
-  <Stack direction="row">
-                <Radio value="false">One Way</Radio>
-                <Radio value="true">Hedge Mode</Radio>
-              </Stack>
-            </RadioGroup>
-            <Text mt="2">Default mode is {!settings.hedgeMode ? 'One Way Mode' : 'Hedge Mode'}.</Text>
-          </FormControl>
+      <FormControl mt="4">
+        <FormLabel>Single Asset / Multi Asset Mode</FormLabel>
+        <RadioGroup
+          onChange={(value) => handleRadioChange('assetMode', value)}
+          value={settings.assetMode?.toString()}
+        >
+          <Stack direction="row">
+            <Radio value="false">Single Asset Mode (SAM)</Radio>
+            <Radio value="true">Multi Asset Mode (MAM)</Radio>
+          </Stack>
+        </RadioGroup>
+        <Text mt="2">
+          Default is{' '}
+          {!settings?.assetMode
+            ? 'Single Asset Mode (SAM)'
+            : 'Multi Asset Mode (MAM)'}
+          .
+        </Text>
+      </FormControl>
 
-          {/* Single Asset / Multi Asset Mode */}
-          <FormControl mt="4">
-            <FormLabel>Single Asset / Multi Asset Mode</FormLabel>
-            <RadioGroup onChange={(value) => setSettings({ ...settings, assetMode: value })} value={settings.assetMode?.toString()}>
-              <Stack direction="row">
-                <Radio value="false">Single Asset Mode (SAM)</Radio>
-                <Radio value="true">Multi Asset Mode (MAM)</Radio>
-              </Stack>
-            </RadioGroup>
-            <Text mt="2">Default is {!settings?.assetMode ? 'Single Asset Mode (SAM)' : 'Multi Asset Mode (MAM)'}.</Text>
-          </FormControl>
+      <FormControl mt="6">
+        <Checkbox
+          isChecked={settings.stickSettings}
+          onChange={handleCheckboxChange}
+        >
+          Stick Settings
+        </Checkbox>
+        <Text mt="2">
+          The bot ensures these settings are applied before any trade execution.
+        </Text>
+      </FormControl>
 
-          {/* Stick Settings Button */}
-          <FormControl mt="6">
-            <Checkbox 
-                isChecked={settings.stickSettings} 
-                onChange={(e) => setSettings({ ...settings, stickSettings: e.target.checked })}>
-                Stick Settings
-            </Checkbox>
-            <Text mt="2">
-                The bot ensures these settings are applied before any trade execution.
-            </Text>
-            </FormControl>
-
-       
-            <Button colorScheme="teal" onClick={handleSave}>   
-              Save Settings
-            </Button>
-          </Box>
+      <Button
+        colorScheme="teal"
+        onClick={handleSave}
+        mt={4}
+        isLoading={isSaving}
+        loadingText="Saving..."
+      >
+        Save Settings
+      </Button>
+    </Box>
   );
-};
+});
 
 export default GeneralExchangeSettingsModal;

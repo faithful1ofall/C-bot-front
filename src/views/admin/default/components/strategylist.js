@@ -1,4 +1,3 @@
-// StrategiesList.js
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
@@ -16,108 +15,76 @@ import {
 import { MdAddAlert, MdEdit, MdDelete } from 'react-icons/md';
 import { useNavigate, NavLink } from 'react-router-dom';
 import StrategyDeleteConfirmationModal from './strategydelete';
+import apiService from 'services/api';
 
-const StrategiesList = () => {
+const StrategiesList = React.memo(() => {
+  const toast = useToast();
+  const navigate = useNavigate();
 
-    const toast = useToast();
-    const navigate = useNavigate();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
 
-    const jwttoken = localStorage.getItem('jwtToken');
+  const [strategies, setStrategies] = useState([]);
+  const [strategyedit, SetStrategyEdit] = useState(false);
 
-    const {
-        isOpen: isDeleteOpen,
-        onOpen: onDeleteOpen,
-        onClose: onDeleteClose,
-      } = useDisclosure();
-
-      const [strategies, setStrategies] = useState([]);
-      const [strategyedit, SetStrategyEdit] = useState(false);
-
-       // Function to handle navigation and setting local storage
-  const handleEditStrategy = (strategyId) => {
-    // Set local storage items
-    localStorage.setItem("strategyid", strategyId);    
-    // Navigate to the edit route
-    navigate(`/admin/edit`);
-  };
+  const handleEditStrategy = useCallback((strategyId) => {
+    localStorage.setItem('strategyid', strategyId);
+    navigate('/admin/edit');
+  }, [navigate]);
 
   const fetchStrategies = useCallback(async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/strategies`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${jwttoken}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json(); // Parse the JSON response
+      const data = await apiService.getStrategies();
       setStrategies(data);
+      
       const activestrategies = data.filter((strategy) => strategy.active).length;
-      localStorage.setItem("botstrategies", JSON.stringify(data));
-      localStorage.setItem("activestrategies", activestrategies);
+      localStorage.setItem('botstrategies', JSON.stringify(data));
+      localStorage.setItem('activestrategies', activestrategies);
     } catch (err) {
-      console.error(err.message);
-    }
-  }, [jwttoken]);
-
-  useEffect(() => {
-    fetchStrategies();
-  }, [
-    fetchStrategies
-  ]);
-
-
-  const handleactive = async (strategyIdd, currentstatus) => {
-    const activate = {
-      active: !currentstatus,
-    };
-
-    try {
-      await fetch(
-        `${process.env.REACT_APP_BACKENDAPI}/api/strategy/${strategyIdd}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwttoken}`,
-          },
-          body: JSON.stringify(activate),
-        },
-      );
-      if (!currentstatus) {
-        toast({
-          title: 'Strategy actived successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Strategy deactived successfully.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    } catch (error) {
+      console.error('Error fetching strategies:', err);
       toast({
-        title: 'Failed to activate strategy.',
-        description: 'Please try again.',
+        title: 'Error fetching strategies',
+        description: err.message,
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-      console.error('Request failed', error);
     }
+  }, [toast]);
 
-    await fetchStrategies();
-    console.log('activate Update', activate);
-  };
+  useEffect(() => {
+    fetchStrategies();
+  }, [fetchStrategies]);
+
+  const handleactive = useCallback(async (strategyIdd, currentstatus) => {
+    try {
+      await apiService.updateStrategy(strategyIdd, {
+        active: !currentstatus,
+      });
+
+      toast({
+        title: !currentstatus
+          ? 'Strategy activated successfully'
+          : 'Strategy deactivated successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      fetchStrategies();
+    } catch (error) {
+      toast({
+        title: 'Error updating strategy',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [toast, fetchStrategies]);
 
 
 
@@ -146,7 +113,13 @@ const StrategiesList = () => {
         gap="20px"
       >
         {strategies.map((strategy) => (
-          <Box key={strategy.id} p="5" shadow="md" borderWidth="1px" borderRadius="md">
+          <Box
+            key={strategy.id}
+            p="5"
+            shadow="md"
+            borderWidth="1px"
+            borderRadius="md"
+          >
             <Flex align="center" justify="space-between">
               <Text fontWeight="bold">{strategy.name}</Text>
 
@@ -158,45 +131,48 @@ const StrategiesList = () => {
               />
             </Flex>
 
-                  <Flex mt={4} align="left" justify="flex-start">
-  <IconButton
-  icon={<MdEdit />}
-  colorScheme="blue"
-  aria-label="Edit strategy"
-  variant="ghost"
-  onClick={() => handleEditStrategy(strategy.id)}
-  size="sm"
-  bg="gray.100"
-  _hover={{ bg: "gray.200" }}
-  _active={{ bg: "gray.300" }}
-/>
+            <Flex mt={4} align="left" justify="flex-start">
+              <IconButton
+                icon={<MdEdit />}
+                colorScheme="blue"
+                aria-label="Edit strategy"
+                variant="ghost"
+                onClick={() => handleEditStrategy(strategy.id)}
+                size="sm"
+                bg="gray.100"
+                _hover={{ bg: 'gray.200' }}
+                _active={{ bg: 'gray.300' }}
+              />
 
-  <Divider orientation="vertical" mx={2} height="20px" borderColor="gray.300" />
+              <Divider
+                orientation="vertical"
+                mx={2}
+                height="20px"
+                borderColor="gray.300"
+              />
 
-  <IconButton
-    icon={<MdDelete />}
-    colorScheme="red"
-    aria-label="Delete strategy"
-    variant="ghost"
-    onClick={() => {
-      onDeleteOpen();
-      SetStrategyEdit(strategy);
-    }}
-    size="sm"
-      bg="gray.100"
-  _hover={{ bg: "gray.200" }}
-  _active={{ bg: "gray.300" }}
-  />
-</Flex>
+              <IconButton
+                icon={<MdDelete />}
+                colorScheme="red"
+                aria-label="Delete strategy"
+                variant="ghost"
+                onClick={() => {
+                  onDeleteOpen();
+                  SetStrategyEdit(strategy);
+                }}
+                size="sm"
+                bg="gray.100"
+                _hover={{ bg: 'gray.200' }}
+                _active={{ bg: 'gray.300' }}
+              />
+            </Flex>
 
-            
             {isDeleteOpen && (
               <StrategyDeleteConfirmationModal
                 isOpen={isDeleteOpen}
                 onClose={onDeleteClose}
                 strategyname={strategyedit?.name}
                 todelete={strategyedit?.id}
-                jwttoken={jwttoken}
               />
             )}
           </Box>
@@ -204,6 +180,6 @@ const StrategiesList = () => {
       </SimpleGrid>
     </Box>
   );
-};
+});
 
 export default StrategiesList;

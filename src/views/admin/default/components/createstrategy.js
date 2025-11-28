@@ -1,117 +1,113 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   FormControl,
   FormLabel,
   Input,
   useToast,
   Button,
-  Box
+  Box,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import apiService from 'services/api';
 
-const CreateStrategyModal = React.memo(({ 
-  isCreateStrategyOpen
-}) => {
-
-  const jwttoken = localStorage.getItem('jwtToken');
+const CreateStrategyModal = React.memo(() => {
   const navigate = useNavigate();
-
   const toast = useToast();
-const tradingViewLink = `${process.env.REACT_APP_BACKENDAPI}/api/tradingview-webhook`;
-const [newStrategyName, setNewStrategyName] = useState({
-  name: "",
-  hookkey: ""
+  
+  const [newStrategyName, setNewStrategyName] = useState({
+    name: '',
+    hookkey: '',
   });
-const handleNameChange = (e) => {
-  setNewStrategyName((prev) => ({ ...prev, name: e.target.value }))
-};
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-const handleHookKeyChange = (e) => {
-  setNewStrategyName((prev) => ({ ...prev, hookkey: e.target.value }))
-};
+  const tradingViewLink = useMemo(
+    () => apiService.getTradingViewWebhookUrl(),
+    []
+  );
 
-  const handleSubmit = async() => {
-    const newStrategy = {
-      name: newStrategyName.name,
-      hookkey: newStrategyName.hookkey
-    };
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKENDAPI}/api/strategy`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwttoken}`,
-          },
-          body:  JSON.stringify(newStrategy),
-        });
-    
-        if (response.ok) {
-          console.log("newStrategy", newStrategy);
-          toast({
-            title: "Strategy created successfully.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
-          console.log('Strategy added successfully');
-          navigate("/admin/default");
+  const handleNameChange = useCallback((e) => {
+    setNewStrategyName((prev) => ({ ...prev, name: e.target.value }));
+  }, []);
 
-        } else {
-          toast({
-            title: "Error creating strategy.",
-            description: "Please verify the inputs and try again.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-          console.error('Error adding strategy');
-        }
-      } catch (error) {
-        toast({
-          title: "Error creating strategy.",
-          description: "Please verify the inputs and try again.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        console.error('Request failed', error);
-      }
+  const handleHookKeyChange = useCallback((e) => {
+    setNewStrategyName((prev) => ({ ...prev, hookkey: e.target.value }));
+  }, []);
 
-     // setStrategies((prevStrategies) => [...prevStrategies, newStrategy]);
-  };
+  const handleSubmit = useCallback(async () => {
+    if (!newStrategyName.name || !newStrategyName.hookkey) {
+      toast({
+        title: 'Validation error',
+        description: 'Please fill in all required fields.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await apiService.createStrategy({
+        name: newStrategyName.name,
+        hookkey: newStrategyName.hookkey,
+      });
+
+      toast({
+        title: 'Strategy created successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      navigate('/admin/default');
+    } catch (error) {
+      toast({
+        title: 'Error creating strategy',
+        description: error.message || 'Please verify the inputs and try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [newStrategyName, navigate, toast]);
   
   return (
     <Box mt={20}>
-          <FormControl isRequired>
-            <FormLabel>Strategy Name</FormLabel>
-            <Input 
-              value={newStrategyName.name} 
-              onChange={handleNameChange} 
-              placeholder="Enter strategy name" 
-            />
-          </FormControl>
+      <FormControl isRequired>
+        <FormLabel>Strategy Name</FormLabel>
+        <Input
+          value={newStrategyName.name}
+          onChange={handleNameChange}
+          placeholder="Enter strategy name"
+        />
+      </FormControl>
 
-        <FormControl isRequired>
-            <FormLabel>Webhook Key</FormLabel>
-            <Input 
-              value={newStrategyName.hookkey} 
-              onChange={handleHookKeyChange} 
-              placeholder="Enter webhook key" 
-            />
-       </FormControl>
-        <FormControl>
-            <FormLabel mb="4">TradingView Link</FormLabel>
-            <Input 
-              value={tradingViewLink} 
-              isReadOnly 
-              placeholder="Enter TradingView link" 
-            />
-          </FormControl>
+      <FormControl isRequired mt={4}>
+        <FormLabel>Webhook Key</FormLabel>
+        <Input
+          value={newStrategyName.hookkey}
+          onChange={handleHookKeyChange}
+          placeholder="Enter webhook key"
+        />
+      </FormControl>
 
-          <Button mt={5} colorScheme="teal" onClick={handleSubmit}>
-            Create Strategy
-          </Button>
-       
+      <FormControl mt={4}>
+        <FormLabel>TradingView Link</FormLabel>
+        <Input value={tradingViewLink} isReadOnly />
+      </FormControl>
+
+      <Button
+        mt={5}
+        colorScheme="teal"
+        onClick={handleSubmit}
+        isLoading={isSubmitting}
+        loadingText="Creating..."
+      >
+        Create Strategy
+      </Button>
     </Box>
   );
 });
